@@ -8,6 +8,26 @@ import { UpdateLifeguardInput } from './dto/update-lifeguard.input';
 export class LifeguardResolver {
   constructor(private readonly lifeguardService: LifeguardService) {}
 
+  @Query(() => [Lifeguard], { name: 'lifeguards' })
+getLifeguards() {
+  return [
+    {
+      id: "1",
+      name: 'Duif',
+      fullname: 'Duif',
+      category: 'Roekoes',
+      url: 'test',
+      observations: 1,
+      description: 'test',
+      active: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ]
+}
+
+
+
   @Mutation(() => Lifeguard)
   createLifeguard(@Args('createLifeguardInput') createLifeguardInput: CreateLifeguardInput) {
     return this.lifeguardService.create(createLifeguardInput);
