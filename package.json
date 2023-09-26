@@ -2,7 +2,7 @@
   "name": "mike-kasper",
   "version": "0.0.0",
   "scripts": {
-    "dev":"todo"
+    "dev": "todo"
   },
   "keywords": [],
   "author": "Mike & Kasper",
@@ -25,5 +25,8 @@
     "proseWrap": "preserve",
     "htmlWhitespaceSensitivity": "css",
     "endOfLine": "lf"
+  },
+  "dependencies": {
+    "lucide-vue-next": "^0.279.0"
   }
 }
