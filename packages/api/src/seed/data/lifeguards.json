@@ -1,0 +1,102 @@
+[
+    {
+        "name": "Sara",
+        "surname": "Smith",
+        "email": "sara@gmail.com",
+        "phonNumber": 3258746987,
+        "zipCode": 9000,
+        "street": "Street 1",
+        "numberOfHouse": 87,
+        "birth": "1998-09-23T16:35:21.154+00:00"
+    },
+    {
+        "name": "John",
+        "surname": "Doe",
+        "email": "john.doe@example.com",
+        "phoneNumber": 9876543210,
+        "zipCode": 8000,
+        "street": "Main Street",
+        "numberOfHouse": 123,
+        "birth": "1985-05-12T08:45:00.000+00:00"
+    },
+    {
+        "name": "Emma",
+        "surname": "Johnson",
+        "email": "emma.j@example.com",
+        "phoneNumber": 5551234567,
+        "zipCode": 7000,
+        "street": "Oak Avenue",
+        "numberOfHouse": 45,
+        "birth": "1990-11-30T12:15:30.500+00:00"
+    },
+    {
+        "name": "Alex",
+        "surname": "Brown",
+        "email": "alex.brown@example.com",
+        "phoneNumber": 1112223333,
+        "zipCode": 6000,
+        "street": "Maple Street",
+        "numberOfHouse": 67,
+        "birth": "1982-03-18T19:20:45.800+00:00"
+    },
+    {
+        "name": "Sophie",
+        "surname": "Clark",
+        "email": "sophie.c@example.com",
+        "phoneNumber": 9998887777,
+        "zipCode": 5000,
+        "street": "Cedar Lane",
+        "numberOfHouse": 89,
+        "birth": "1995-07-08T14:00:00.000+00:00"
+    },
+    {
+        "name": "Daniel",
+        "surname": "Wilson",
+        "email": "daniel.w@example.com",
+        "phoneNumber": 3334445555,
+        "zipCode": 4000,
+        "street": "Pine Street",
+        "numberOfHouse": 12,
+        "birth": "1989-02-05T10:10:10.100+00:00"
+    },
+    {
+        "name": "Olivia",
+        "surname": "Miller",
+        "email": "olivia.m@example.com",
+        "phoneNumber": 7776665555,
+        "zipCode": 3000,
+        "street": "Willow Lane",
+        "numberOfHouse": 34,
+        "birth": "1993-04-17T18:30:00.000+00:00"
+    },
+    {
+        "name": "William",
+        "surname": "Jones",
+        "email": "william.j@example.com",
+        "phoneNumber": 4445556666,
+        "zipCode": 2000,
+        "street": "Birch Avenue",
+        "numberOfHouse": 56,
+        "birth": "1987-09-10T05:55:55.555+00:00"
+    },
+    {
+        "name": "Ella",
+        "surname": "Smith",
+        "email": "ella.s@example.com",
+        "phoneNumber": 6667778888,
+        "zipCode": 1000,
+        "street": "Sycamore Lane",
+        "numberOfHouse": 78,
+        "birth": "1997-12-25T00:00:00.000+00:00"
+    },
+    {
+        "name": "Mason",
+        "surname": "Anderson",
+        "email": "mason.a@example.com",
+        "phoneNumber": 2223334444,
+        "zipCode": 9500,
+        "street": "Cypress Street",
+        "numberOfHouse": 90,
+        "birth": "1991-06-15T21:45:15.150+00:00"
+    }
+]
