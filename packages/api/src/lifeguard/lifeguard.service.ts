@@ -45,4 +45,14 @@ export class LifeguardService {
   remove(id: number) {
     return `This action removes a #${id} lifeguard`;
   }
+
+  // Function for seeding
+  save(lifeguard: Lifeguard[]): Promise<Lifeguard[]> {
+    return this.lifeguardsRepository.save(lifeguard)
+  }
+
+  truncate(): Promise<void> {
+    return this.lifeguardsRepository.clear()
+  }
+
 }
