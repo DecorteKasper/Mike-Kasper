@@ -15,16 +15,6 @@ export class LifeguardResolver {
 
   @Query(() => [Lifeguard], { name: 'lifeguard' })
   findAll() {
-
-
-    // return [
-    //   {
-    //        id: '1',
-    //        name: 'Mike',
-    //        surname: 'vanoosthuyze',
-    //        zipcode: 8520,
-    //  },]
-
     return this.lifeguardService.findAll();
   }
 
