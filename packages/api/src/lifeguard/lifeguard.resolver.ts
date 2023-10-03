@@ -22,7 +22,7 @@ export class LifeguardResolver {
   }
 
   @Query(() => Lifeguard, { name: 'lifeguard' })
-  findOne(@Args('id', { type: () => string }) id: string) {
+  findOne(@Args('id', { type: () => String }) id: string) {
     return this.lifeguardService.findOne(id);
   }
 

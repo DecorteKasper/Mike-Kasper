@@ -3,6 +3,6 @@ import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 
 @InputType()
 export class UpdateLifeguardInput extends PartialType(CreateLifeguardInput) {
-  @Field(() => Int)
+  @Field(() => String)
   id: string;
 }

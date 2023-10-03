@@ -1,4 +1,5 @@
 import { ObjectType, Field, Int, ID  } from '@nestjs/graphql';
+import { ObjectId } from 'mongodb';
 import { Column, Entity, ObjectIdColumn } from 'typeorm';
 
 
@@ -6,9 +7,11 @@ import { Column, Entity, ObjectIdColumn } from 'typeorm';
 @ObjectType()
 export class Lifeguard {
 
-  @ObjectIdColumn()
+  
+  
   @Field(() => ID)
-  id: string
+  @ObjectIdColumn()
+  id: ObjectId
 
   @Column() // Database link - Typeorm
   @Field({ nullable: true })

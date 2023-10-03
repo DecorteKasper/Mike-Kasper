@@ -9,7 +9,6 @@
 
     <div v-if="lifeguards" class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 grid-rows-auto gap-12">
       <div v-for="lifeguard in lifeguards.lifeguards" class="flex items-center gap-6">
-        <img class="w-48" :src="`/birds/${lifeguard.name}.webp`" :alt="`Picture of ${lifeguard.name}.`" />
         <div>
           <h2 class="text-lg font-semibold tracking-wide">
             {{ lifeguard.name }}
@@ -31,6 +30,7 @@ interface Lifeguard {
   id: string
   name: string
   surname: string
+  email: string
 }
 
 export default {
@@ -51,4 +51,3 @@ export default {
   },
 }
 </script>
-@/graphql/bird.query
