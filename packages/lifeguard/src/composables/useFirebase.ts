@@ -14,6 +14,8 @@ import {
 import firebase from 'firebase/compat/app'
 import { ref } from 'vue'
 
+// Een test
+
 // Shared state
 const app = initializeApp({
   apiKey: import.meta.env.VITE_apiKey,
