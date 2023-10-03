@@ -11,35 +11,35 @@ export class Lifeguard {
   id: string
 
   @Column() // Database link - Typeorm
-  @Field()
+  @Field({ nullable: true })
   name: string
 
   @Column() // Database link - Typeorm
-  @Field()
+  @Field({ nullable: true })
   surname: string
 
   @Column() // Database link - Typeorm
-  @Field()
+  @Field({ nullable: true })
   email: string
 
   @Column() // Database link - Typeorm
-  @Field()
+  @Field({ nullable: true })
   phoneNumber: number
 
   @Column() // Database link - Typeorm
-  @Field()
+  @Field({ nullable: true })
   zipCode: number
 
   @Column() // Database link - Typeorm
-  @Field()
+  @Field({ nullable: true })
   street: string
 
   @Column() // Database link - Typeorm
-  @Field()
+  @Field({ nullable: true })
   numberOfHouse: number
 
   @Column() // Database link - Typeorm
-  @Field()
+  @Field({ nullable: true })
   birth: Date
 
 }
