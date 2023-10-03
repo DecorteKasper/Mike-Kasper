@@ -34,17 +34,14 @@ export class LifeguardService {
   }
 
 
-  findOne(id: number) {
+  findOne(id: string) {
     return `This action returns a #${id} lifeguard`;
   }
 
-  update(id: number, updateLifeguardInput: UpdateLifeguardInput) {
+  update(id: string, updateLifeguardInput: UpdateLifeguardInput) {
     return `This action updates a #${id} lifeguard`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} lifeguard`;
-  }
 
   // Function for seeding
   save(lifeguard: Lifeguard[]): Promise<Lifeguard[]> {

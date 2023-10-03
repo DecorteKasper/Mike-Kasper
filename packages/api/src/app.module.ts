@@ -6,9 +6,13 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { LifeguardModule } from './lifeguard/lifeguard.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SeedModule } from './seed/seed.module';
+import { AuthenticationModule } from './authentication/authentication.module';
+import { ConfigModule } from '@nestjs/config';
+
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
       GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
@@ -22,6 +26,7 @@ import { SeedModule } from './seed/seed.module';
         useUnifiedTopology: true, // Disable deprecated warnings
     }),
      SeedModule,
+     AuthenticationModule,
   ],
   
   controllers: [AppController],

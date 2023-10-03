@@ -3,6 +3,9 @@ import { LifeguardService } from './lifeguard.service';
 import { Lifeguard } from './entities/lifeguard.entity';
 import { CreateLifeguardInput } from './dto/create-lifeguard.input';
 import { UpdateLifeguardInput } from './dto/update-lifeguard.input';
+import { FirebaseUser } from '../authentication/decorators/user.decorator';
+import { UserRecord } from 'firebase-admin/auth';
+import { string } from 'yargs';
 
 @Resolver(() => Lifeguard)
 export class LifeguardResolver {
@@ -13,13 +16,13 @@ export class LifeguardResolver {
     return this.lifeguardService.create(createLifeguardInput);
   }
 
-  @Query(() => [Lifeguard], { name: 'lifeguard' })
-  findAll() {
+  @Query(() => [Lifeguard], { name: 'lifeguards' })
+  findAll(@FirebaseUser() CurrentUser: UserRecord) {
     return this.lifeguardService.findAll();
   }
 
   @Query(() => Lifeguard, { name: 'lifeguard' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne(@Args('id', { type: () => string }) id: string) {
     return this.lifeguardService.findOne(id);
   }
 
@@ -27,9 +30,5 @@ export class LifeguardResolver {
   updateLifeguard(@Args('updateLifeguardInput') updateLifeguardInput: UpdateLifeguardInput) {
     return this.lifeguardService.update(updateLifeguardInput.id, updateLifeguardInput);
   }
-
-  @Mutation(() => Lifeguard)
-  removeLifeguard(@Args('id', { type: () => Int }) id: number) {
-    return this.lifeguardService.remove(id);
-  }
+  
 }
