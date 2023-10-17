@@ -24,6 +24,10 @@ export default {
 }
 </script>
 
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Open+Sans:wght@400;500;600;700&display=swap');
+</style>
+
 <template>
   <div class="flex flex-col min-h-screen">
     <AppHeader />
