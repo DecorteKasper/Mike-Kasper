@@ -80,6 +80,7 @@ import { ref } from 'vue'
 import { type AuthError } from 'firebase/auth'
 
 import useFirebase from '@/composables/useFirebase' 
+import { useMutation } from '@vue/apollo-composable'
 
 export default {
   setup() {
@@ -93,13 +94,18 @@ export default {
     })
     const error = ref<AuthError | null>(null)
 
+    const { mutate: addUser, loading: addUserLoading, onDone: addUserCreated } = useMutation<CustomUser>(ADD_USER)
+
     const handleRegister = () => {
       
       register(newUser.value.name, newUser.value.email, newUser.value.password).then((user) => {
         console.log("Registration succesfull", user)
-
-      })
-      .catch((err) => {
+        addUser({ 
+          locale: locale.value,
+        }).then((result) => {
+          console.log("User added")
+        })
+      }).catch((err) => {
         error.value = err
       })
     }

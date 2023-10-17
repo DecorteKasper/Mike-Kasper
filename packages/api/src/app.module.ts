@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SeedModule } from './seed/seed.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from './users/users.module';
 
 
 @Module({
@@ -27,6 +28,7 @@ import { ConfigModule } from '@nestjs/config';
     }),
      SeedModule,
      AuthenticationModule,
+     UsersModule,
   ],
   
   controllers: [AppController],
