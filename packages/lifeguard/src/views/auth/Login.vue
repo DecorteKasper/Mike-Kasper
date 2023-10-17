@@ -1,6 +1,6 @@
 <template>
-    <form @submit.prevent="handleLogin" class="w-full">
-      <h1 class="text-4xl font-bold tracking-wider">Login {{ firebaseUser }}</h1>
+    <form @submit.prevent="handleLogin" class="w-full shadow-cardShadow rounded-cardRadius">
+      <h1 class="text-4xl font-bold tracking-wider ">Login {{ firebaseUser }}</h1>
       <p class="text-neutral-500 mb-4">
         Login to your account, check your birds.
       </p>

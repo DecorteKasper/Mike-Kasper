@@ -23,5 +23,13 @@ export default defineConfig({
             xl: '30px',  // Extra groot
             xxl: '40px',  // 2 keer groot
         },
+        borderRadius: {
+            inputFieldRadius: '10px',
+            cardRadius: '20px',
+            buttonRadius: '10px',
+        },
+        boxShadow: {
+            cardShadow: '0px 0px 30px rgba(0, 0, 0, 0.08)',
+        },
       },
 })
