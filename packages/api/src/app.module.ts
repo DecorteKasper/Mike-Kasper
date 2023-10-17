@@ -9,6 +9,7 @@ import { SeedModule } from './seed/seed.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
+import { PostenModule } from './posten/posten.module';
 
 
 @Module({
@@ -29,6 +30,7 @@ import { UsersModule } from './users/users.module';
      SeedModule,
      AuthenticationModule,
      UsersModule,
+     PostenModule,
   ],
   
   controllers: [AppController],
