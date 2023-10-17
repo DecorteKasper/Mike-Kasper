@@ -6,8 +6,6 @@ import { Column, Entity, ObjectIdColumn } from 'typeorm';
 @Entity()
 @ObjectType()
 export class Lifeguard {
-
-  
   
   @Field(() => ID)
   @ObjectIdColumn()

@@ -3,7 +3,7 @@ import { CreateLifeguardInput } from './dto/create-lifeguard.input';
 import { UpdateLifeguardInput } from './dto/update-lifeguard.input';
 import { Lifeguard } from './entities/lifeguard.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ObjectId, Repository } from 'typeorm';
 
 @Injectable()
 export class LifeguardService {
@@ -28,9 +28,12 @@ export class LifeguardService {
     return this.lifeguardsRepository.save(L)
   }
 
-
-  findAll() {
-      return this.lifeguardsRepository.find()
+  findAll(uid?: string) {
+    if (uid) {
+      return this.lifeguardsRepository.find({ 
+        where: { id: new ObjectId(uid) },
+      })
+    } else return this.lifeguardsRepository.find()
   }
 
 

@@ -6,6 +6,8 @@ import { UpdateLifeguardInput } from './dto/update-lifeguard.input';
 import { FirebaseUser } from '../authentication/decorators/user.decorator';
 import { UserRecord } from 'firebase-admin/auth';
 import { string } from 'yargs';
+import { FirebaseGuard } from 'src/authentication/guards/firebase.guard';
+import { UseGuards } from '@nestjs/common';
 
 @Resolver(() => Lifeguard)
 export class LifeguardResolver {
@@ -16,10 +18,13 @@ export class LifeguardResolver {
     return this.lifeguardService.create(createLifeguardInput);
   }
 
+
+  @UseGuards(FirebaseGuard)
   @Query(() => [Lifeguard], { name: 'lifeguards' })
-  findAll(@FirebaseUser() CurrentUser: UserRecord) {
-    return this.lifeguardService.findAll();
+  findAll(@FirebaseUser() user: UserRecord) {
+    return this.lifeguardService.findAll(user.uid);
   }
+
 
   @Query(() => Lifeguard, { name: 'lifeguard' })
   findOne(@Args('id', { type: () => String }) id: string) {
