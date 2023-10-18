@@ -1,9 +1,10 @@
 <script lang="ts">
-import { provide } from 'vue';
+import { provide, ref } from 'vue';
 import AppFooter from './components/generic/FooterApp.vue'
 import AppHeader from './components/generic/HeaderApp.vue'
 import useGraphql from './composables/useGraphql';
 import { DefaultApolloClient } from '@vue/apollo-composable'
+import { onAuthStateChanged, getAuth } from 'firebase/auth';
 
 
 export default {
@@ -14,12 +15,22 @@ export default {
 
   setup() {
     const { apolloClient } = useGraphql()
+    const isLoggedIn = ref(false);
+
+    // Luister naar de wijzigingen in de authenticatiestatus
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      isLoggedIn.value = !!user; // Als er een gebruiker is, is de gebruiker ingelogd
+    });
+
 
     // Maak alles beschikbaar in de scope*
     provide(DefaultApolloClient, apolloClient)
     // * behalve in composables...
 
-    return {}
+    return {
+      isLoggedIn,
+    }
   },
 }
 </script>
@@ -29,11 +40,14 @@ export default {
 </style>
 
 <template>
-  <div class="flex flex-col min-h-screen">
+  <div v-if="isLoggedIn" class="flex flex-col min-h-screen">
     <AppHeader />
 
     <RouterView class="flex-1" />
 
     <AppFooter />
+  </div>
+  <div v-else class="flex flex-col min-h-screen">
+    <RouterView class="flex-1" />
   </div>
 </template>

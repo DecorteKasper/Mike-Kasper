@@ -11,6 +11,7 @@ export default defineConfig({
             black: '#000000',
             gray: '#F5F5F5',
             dark_grey: '#E9E9E9',
+            dark_grey2: '##535353',
         },
         fontFamily: {
             lato: ['Lato', 'sans-serif'],
