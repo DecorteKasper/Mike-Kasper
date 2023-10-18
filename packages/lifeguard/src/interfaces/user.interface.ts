@@ -1,4 +1,7 @@
-//enum toevoegen
+export enum Role {
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+}
 
 export interface CustomUser{
     id: string

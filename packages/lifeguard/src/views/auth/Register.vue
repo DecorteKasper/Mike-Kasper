@@ -78,14 +78,19 @@
 <script lang="ts">
 import { ref } from 'vue'
 import { type AuthError } from 'firebase/auth'
-
 import useFirebase from '@/composables/useFirebase' 
 import { useMutation } from '@vue/apollo-composable'
+import { useI18n } from 'vue-i18n'
+import useCustomUser from '@/composables/useCustomUser'
+import type { CustomUser } from '@/interfaces/user.interface'
+import { ADD_USER } from '@/graphql/user.mutation'
 
 export default {
   setup() {
     // Composables
     const { register } = useFirebase()
+    const { locale } = useI18n()
+    const { customUser } = useCustomUser()
 
     const newUser = ref({
       name: '',
