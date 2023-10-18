@@ -17,9 +17,17 @@ export class UsersResolver {
   @UseGuards(FirebaseGuard)
   @Mutation(() => User)
   createUser(@Args('createUserInput') createUserInput: CreateUserInput, @FirebaseUser() user: UserRecord,) {
+
+    // if (user.uid !== createUserInput.uid) {
+    //   // This is a security check. The uid of the user that is authenticated in Firebase must match the uid of the user that is being created.
+    //   throw new Error('You can only create a user for yourself.')
+    //   }
+
+
     return this.usersService.create(user.uid, createUserInput);
   }
 
+  
   @AllowedRoles(Role.ADMIN)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Query(() => [User], { name: 'users' })
@@ -32,10 +40,12 @@ export class UsersResolver {
     return this.usersService.findOne(id);
   }
 
+  @UseGuards(FirebaseGuard)
   @Mutation(() => User)
-  updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
-    return this.usersService.update(updateUserInput.id, updateUserInput);
+  updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput, @FirebaseUser() user: UserRecord,) {
+    return this.usersService.update(user.uid, updateUserInput);
   }
+
 
   @Mutation(() => User)
   removeUser(@Args('string', { type: () => String }) id: string) {

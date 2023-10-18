@@ -12,6 +12,7 @@
   "dependencies": {
     "@apollo/client": "^3.8.4",
     "@vue/apollo-composable": "^4.0.0-beta.11",
+    "@vue/apollo-util": "^4.0.0-beta.6",
     "firebase": "^10.4.0",
     "lucide-vue-next": "^0.279.0",
     "vue": "^3.3.4",

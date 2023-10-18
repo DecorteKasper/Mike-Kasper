@@ -89,7 +89,6 @@ export default {
   setup() {
     // Composables
     const { register } = useFirebase()
-    const { locale } = useI18n()
     const { customUser } = useCustomUser()
 
     const newUser = ref({
@@ -99,26 +98,33 @@ export default {
     })
     const error = ref<AuthError | null>(null)
 
-    const { mutate: addUser, loading: addUserLoading, onDone: addUserCreated } = useMutation<CustomUser>(ADD_USER)
+    const {
+      mutate: addUser,
+      loading: addUserLoading,
+      onDone: addUserCreated
+    } = useMutation<CustomUser>(ADD_USER)
 
-    const handleRegister = () => {
-      
-      register(newUser.value.name, newUser.value.email, newUser.value.password).then((user) => {
-        console.log("Registration succesfull", user)
-        addUser({ 
-          locale: locale.value,
-        }).then((result) => {
-          console.log("User added")
+    const handleRegister = () => { 
+      register(newUser.value.name, newUser.value.email, newUser.value.password)
+        .then(() => {
+          addUser({ 
+            createUserInput: {
+              locale: "nl",
+            },
+          }).then((result) => {
+            if (!result?.data) throw new Error('Custom user creation failed.')
+            customUser.value = result.data
+          })
         })
-      }).catch((err) => {
-        error.value = err
+        .catch((err) => {
+          error.value = err
       })
     }
 
     return {
       newUser,
       error,
-
+      addUserLoading,
       handleRegister,
     }
   },
