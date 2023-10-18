@@ -27,6 +27,7 @@
     "endOfLine": "lf"
   },
   "dependencies": {
-    "lucide-vue-next": "^0.279.0"
+    "lucide-vue-next": "^0.279.0",
+    "react": "^18.2.0"
   }
 }
