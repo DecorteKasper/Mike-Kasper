@@ -78,14 +78,18 @@
 <script lang="ts">
 import { ref } from 'vue'
 import { type AuthError } from 'firebase/auth'
-
 import useFirebase from '@/composables/useFirebase' 
 import { useMutation } from '@vue/apollo-composable'
+import { useI18n } from 'vue-i18n'
+import useCustomUser from '@/composables/useCustomUser'
+import type { CustomUser } from '@/interfaces/user.interface'
+import { ADD_USER } from '@/graphql/user.mutation'
 
 export default {
   setup() {
     // Composables
     const { register } = useFirebase()
+    const { customUser } = useCustomUser()
 
     const newUser = ref({
       name: '',
@@ -94,26 +98,33 @@ export default {
     })
     const error = ref<AuthError | null>(null)
 
-    const { mutate: addUser, loading: addUserLoading, onDone: addUserCreated } = useMutation<CustomUser>(ADD_USER)
+    const {
+      mutate: addUser,
+      loading: addUserLoading,
+      onDone: addUserCreated
+    } = useMutation<CustomUser>(ADD_USER)
 
-    const handleRegister = () => {
-      
-      register(newUser.value.name, newUser.value.email, newUser.value.password).then((user) => {
-        console.log("Registration succesfull", user)
-        addUser({ 
-          locale: locale.value,
-        }).then((result) => {
-          console.log("User added")
+    const handleRegister = () => { 
+      register(newUser.value.name, newUser.value.email, newUser.value.password)
+        .then(() => {
+          addUser({ 
+            createUserInput: {
+              locale: "nl",
+            },
+          }).then((result) => {
+            if (!result?.data) throw new Error('Custom user creation failed.')
+            customUser.value = result.data
+          })
         })
-      }).catch((err) => {
-        error.value = err
+        .catch((err) => {
+          error.value = err
       })
     }
 
     return {
       newUser,
       error,
-
+      addUserLoading,
       handleRegister,
     }
   },
