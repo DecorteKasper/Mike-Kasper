@@ -32,7 +32,7 @@
       <div class="mt-16">
         <label
           for="email"
-          class="text-sm mb-4 font-lato block dark:text-gray-200"
+          class="text-sm mb-4 font-lato block"
         >
           Email
         </label>
@@ -48,7 +48,7 @@
       <div class="mt-6">
         <label
           for="password"
-          class="text-sm mb-4 font-lato block text-gray-700 dark:text-gray-200"
+          class="text-sm mb-4 font-lato block text-gray-700"
         >
           Wachtwoord
         </label>
@@ -67,12 +67,9 @@
         </RouterLink>
       </div> 
 
+      <!-- Button -->
       <div class="flex justify-center">
-      <button
-        class="mt-14 px-8 py-2 rounded-buttonRadius bg-green font-bold text-white hover:bg-dark_green focus:outline-none  focus-visible:bg-dark_green"
-      >
-        Login
-      </button>
+        <PrimaryButton label="Login" />
     </div>
       <div class="flex justify-center">
         <RouterLink
@@ -90,8 +87,16 @@
   <script lang="ts">
   import { ref } from 'vue'
   import useFirebase from '@/composables/useFirebase'
+  import PrimaryButton from '@/components/generic/PrimaryButton.vue'
   
   export default {
+
+
+    components: {
+      PrimaryButton,
+    },
+
+
     setup() {
       // Composables
       const { login, firebaseUser } = useFirebase()
