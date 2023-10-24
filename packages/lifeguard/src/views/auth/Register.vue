@@ -54,14 +54,14 @@
     </svg>
 
 
-    <form @submit.prevent="" class="w-full mt-10 shadow-cardShadow rounded-cardRadius px-28 py-12">
+    <form @submit.prevent="handleRegister" class="w-full mt-10 shadow-cardShadow rounded-cardRadius px-28 py-12">
       <h1 class="text-xl font-lato font-bold">Maak een account aan</h1>
-      <!-- <p> {{ newUser }}</p> -->
+      <p> {{ newUser }}</p>
 
 
-      <!-- <div v-if="error">
+      <div v-if="error">
         <p class="text-red-600">{{ error.message }}</p>
-      </div> -->
+      </div>
 
       <div class="mt-6 flex">
 
@@ -73,7 +73,7 @@
             class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-green"
             v-model="newUser.name" />
           <!-- <div class="text-red-600" v-if="!validations.newUser.name.required">Voornaam is verplicht!</div> -->
-          <span class="text-red" v-if="v$.name.$error"> {{ v$.name.$errors[0].$message }}</span>
+          <span class="text-red font-lato text-xs" v-if="v$.name.$error"> {{ v$.name.$errors[0].$message }}</span>
         </div>
         <!-- surname -->
         <div>
@@ -83,7 +83,7 @@
 
           <input type="text" name="surname" id="surname" placeholder="Achternaam" v-model="newUser.surname"
             class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-green" />
-          <span class="text-red" v-if="v$.surname.$error"> {{ v$.surname.$errors[0].$message }}</span>
+          <span class="text-red font-lato text-xs" v-if="v$.surname.$error"> {{ v$.surname.$errors[0].$message }}</span>
         </div>
       </div>
 
@@ -95,7 +95,7 @@
         <input type="text" name="email" id="email" placeholder="test.test@gmail.com"
           class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-green"
           v-model="newUser.email" />
-        <span class="text-red" v-if="v$.email.$error"> {{ v$.email.$errors[0].$message }}</span>
+        <span class="text-red font-lato text-xs" v-if="v$.email.$error"> {{ v$.email.$errors[0].$message }}</span>
       </div>
 
 
@@ -107,15 +107,15 @@
 
         <div class="mt-4">
           <label class="radio-job mr-4">
-            <input type="radio" value="redder" name="job" class="hidden" v-model="newUser.job">
+            <input type="radio" value="200" name="job" class="hidden" v-model="newUser.job">
             <span
-              :class="{ 'bg-red text-md font-bold text-white px-10 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': newUser.job === 'redder', 'bg-dark_grey text-md text-black px-10 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': newUser.job !== 'redder' }">Redder</span>
+              :class="{ 'bg-red text-md font-bold text-white px-10 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': newUser.job === '200', 'bg-dark_grey text-md text-black px-10 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': newUser.job !== '200' }">Redder</span>
           </label>
 
           <label class="radio-job">
-            <input type="radio" value="ehbo" name="job" class="hidden" v-model="newUser.job">
+            <input type="radio" value="100" name="job" class="hidden" v-model="newUser.job">
             <span
-              :class="{ 'bg-red text-md font-bold text-white px-10 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': newUser.job === 'ehbo', 'bg-dark_grey text-md  text-black px-10 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': newUser.job !== 'ehbo' }">EHBO</span>
+              :class="{ 'bg-red text-md font-bold text-white px-10 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': newUser.job === '100', 'bg-dark_grey text-md  text-black px-10 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': newUser.job !== '100' }">EHBO</span>
           </label>
         </div>
       </div>
@@ -125,12 +125,11 @@
         <label for="job" class="text-md block font-semibold tracking-wider text-gray-700 dark:text-gray-200">
           Selecteer uw jobfunctie
         </label>
-        <select name="cars" id="cars">
-          <option value="volvo">Volvo</option>
-          <option value="saab">Saab</option>
-          <option value="mercedes">Mercedes</option>
-          <option value="audi">Audi</option>
-        </select>
+        <!-- <DropDown :bottom="true" :label="Label" theme="auto">
+          <span>any tag item</span>
+          <a>any tag item</a>
+        </DropDown> -->
+
 
       </div>
 
@@ -160,7 +159,7 @@
       </div>
 
       <div class="flex justify-center">
-        <PrimaryButton label="Registreer" @click="SubmitForm" />
+        <PrimaryButton label="Registreer" />
       </div>
       <div class="flex justify-center">
         <RouterLink
@@ -184,17 +183,23 @@ import type { CustomUser } from '@/interfaces/user.interface'
 import { ADD_USER } from '@/graphql/user.mutation'
 import PrimaryButton from '@/components/generic/PrimaryButton.vue'
 import { useVuelidate } from '@vuelidate/core'
-import { required, email, sameAs, minLength } from '@vuelidate/validators'
+import { required, email, sameAs, minLength, helpers } from '@vuelidate/validators'
+
+// import { DropDown } from 'vue3-dropper';
+import 'vue3-dropper/dist/base.css';
 
 
 
 export default {
 
+  components: {
+    PrimaryButton,
+  },
+
   setup() {
     const { register } = useFirebase();
     const { customUser } = useCustomUser();
     const error = ref<AuthError | null>(null);
-    const selectedOption = ref<string | null>(null);
     const { mutate: addUser, loading: addUserLoading, onDone: addUserCreated } = useMutation<CustomUser>(ADD_USER);
 
     const newUser = reactive({
@@ -205,29 +210,29 @@ export default {
         passwordrepeat: '',
       },
       email: '',
-      job: 'redder',
+      job: '200',
     });
 
     const rules = computed(() => {
       return {
         name: {
-          required,
+          required: helpers.withMessage('Voornaam is verplicht', required),
         },
         surname: {
-          required,
+          required: helpers.withMessage('Achternaam is verplicht', required),
         },
         email: {
-          required,
-          email,
+          required: helpers.withMessage('Email is verplicht', required),
+          email: helpers.withMessage('Email is niet geldig', email),
         },
         password: {
           password: {
-            required,
-            minLength: minLength(6),
+            required: helpers.withMessage('Wachtwoord is verplicht', required),
+            minLength: helpers.withMessage('Wachtwoord moet minstens 6 karakters bevatten', minLength(6)),
           },
           passwordrepeat: {
-            required,
-            sameAs: sameAs(newUser.password.password),
+            required: helpers.withMessage('Wachtwoord is verplicht', required),
+            sameAs: helpers.withMessage('Wachtwoorden komen niet overeen', sameAs(newUser.password.password))
           },
         },
 
@@ -235,52 +240,50 @@ export default {
     })
     const v$ = useVuelidate(rules, newUser)
 
-    // const handleRegister = () => {
-    //   register(newUser.value.name, newUser.value.email, newUser.value.password.password)
-    //     .then(() => {
-    //       addUser({
-    //         createUserInput: {
-    //           locale: "nl",
-    //         },
-    //       }).then((result) => {
-    //         if (!result?.data)
-    //           throw new Error('Custom user creation failed.');
-    //         customUser.value = result.data;
-    //       });
-    //     })
-    //     .catch((err) => {
-    //       error.value = err;
-    //     });
-    // };
+    const handleRegister = () => {
+
+      if (v$.value.$invalid) {
+        console.log('Fouten gevonden, form niet submitten!')
+        v$.value.$touch()
+        return
+      } else {
+        console.log('Geen fouten, functie register uitvoeren!') // Nog dingen aan te passen in composable useFirebase.
+        console.log(newUser.name, newUser.password.password, newUser.email)
+
+        register(newUser.name, newUser.email, newUser.password.password)
+          .then(() => {
+            addUser({
+              createUserInput: {
+                name: newUser.name,
+                surname: newUser.surname,
+                email: newUser.email,
+                locale: "nl",
+                role: parseInt(newUser.job),
+              },
+            }).then((result) => {
+              if (!result?.data)
+                throw new Error('Custom user creation failed.');
+              customUser.value = result.data;
+            });
+          })
+          .catch((err) => {
+            error.value = err;
+          });
+
+      }
+
+    };
+
+
     return {
       newUser,
       error,
       addUserLoading,
-      // handleRegister,
+      handleRegister,
       v$,
+      // DropDown,
     };
   },
-
-
-  components: {
-    PrimaryButton,
-  },
-  methods: {
-    handleButtonClick() {
-      console.log('Button in AnotherComponent clicked!');
-    },
-    SubmitForm() {
-      this.v$.$validate()
-      // console.log(this.v$)
-      if (!this.v$.$error) {
-        console.log('Form submitted!');
-      } else {
-        console.log('We have a error here!!');
-      }
-
-    }
-  },
-
 
 }
 </script>

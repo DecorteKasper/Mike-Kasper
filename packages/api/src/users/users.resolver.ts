@@ -22,13 +22,11 @@ export class UsersResolver {
     //   // This is a security check. The uid of the user that is authenticated in Firebase must match the uid of the user that is being created.
     //   throw new Error('You can only create a user for yourself.')
     //   }
-
-
     return this.usersService.create(user.uid, createUserInput);
   }
 
   
-  @AllowedRoles(Role.ADMIN)
+  @AllowedRoles(Role.HOOFDREDDER)
   @UseGuards(FirebaseGuard, RolesGuard)
   @Query(() => [User], { name: 'users' })
   findAll() {

@@ -18,7 +18,7 @@ export class UsersService {
     const user = new User()
     user.uid = uid
     user.locale = createUserInput.locale ?? 'nl'
-    user.role = Role.USER //BUG
+    user.role = createUserInput.role ?? Role.REDDER 
     return this.userRepository.save(user)
   }
 
