@@ -1,7 +1,8 @@
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col mb-8">
 
-    <svg id="logo" class="mt-8" xmlns="http://www.w3.org/2000/svg" width="533.58" viewBox="0 0 533.58 120.489">
+    <svg id="logo" class="mt-8 max-w-xs m-auto" xmlns="http://www.w3.org/2000/svg" width="533.58"
+      viewBox="0 0 533.58 120.489">
       <text id="F" transform="translate(0 97.489)" font-size="90" font-family="SegoeUI-Bold, Segoe UI" font-weight="700">
         <tspan x="0" y="0">F</tspan>
       </text>
@@ -56,7 +57,7 @@
 
     <form @submit.prevent="handleRegister" class="w-full mt-10 shadow-cardShadow rounded-cardRadius px-28 py-12">
       <h1 class="text-xl font-lato font-bold">Maak een account aan</h1>
-      <p> {{ newUser }}</p>
+      <!-- <p> {{ newUser }}</p> -->
 
 
       <div v-if="error">
@@ -66,7 +67,7 @@
       <div class="mt-6 flex">
 
         <div class="mr-6">
-          <label for="name" class="text-sm mb-4 font-lato block">
+          <label for="name" class="text-sm block mb-4 text-dark_grey2 font-semibold">
             Voornaam
           </label>
           <input type="text" name="name" id="name" placeholder="Voornaam"
@@ -77,7 +78,7 @@
         </div>
         <!-- surname -->
         <div>
-          <label for="surname" class="text-sm mb-4 font-lato block text-gray-700">
+          <label for="surname" class="text-sm block mb-4 text-dark_grey2 font-semibold">
             Naam
           </label>
 
@@ -89,7 +90,7 @@
 
       <!-- email -->
       <div class="mt-6">
-        <label for="email" class="text-sm mb-4 font-lato block">
+        <label for="email" class="text-sm block mb-4 text-dark_grey2 font-semibold">
           Email
         </label>
         <input type="text" name="email" id="email" placeholder="test.test@gmail.com"
@@ -101,7 +102,7 @@
 
       <!-- Functie -->
       <div class="mt-6">
-        <label for="job" class="text-md block font-semibold tracking-wider text-gray-700 dark:text-gray-200">
+        <label for="job" class="text-sm block mb-4 text-dark_grey2 font-semibold">
           Selecteer uw jobfunctie
         </label>
 
@@ -122,15 +123,15 @@
 
       <!-- Dropdown -->
       <div class="mt-6">
-        <label for="job" class="text-md block font-semibold tracking-wider text-gray-700 dark:text-gray-200">
+        <label for="job" class="text-sm block mb-4 text-dark_grey2 font-semibold">
           Selecteer uw jobfunctie
         </label>
-        <!-- <DropDown :bottom="true" :label="Label" theme="auto">
-          <span>any tag item</span>
-          <a>any tag item</a>
-        </DropDown> -->
 
-
+        <div>
+          <VueMultiselect class="rounded-lg" :model-value="newUser.badplaats" :options="options"
+            @update:model-value="newUser.badplaats = $event" />
+        </div>
+        <span class="text-red" v-if="v$.badplaats.$error"> {{ v$.badplaats.$errors[0].$message }}</span>
       </div>
 
 
@@ -138,7 +139,7 @@
 
       <div class="mt-6 flex">
         <div class="mr-6">
-          <label for="password" class="text-sm mb-4 font-lato block">
+          <label for="password" class="text-sm block mb-4 text-dark_grey2 font-semibold">
             wachtwoord
           </label>
           <input type="password" name="password" id="password" placeholder="********"
@@ -147,7 +148,7 @@
           <span class="text-red" v-if="v$.password.password.$error"> {{ v$.password.password.$errors[0].$message }}</span>
         </div>
         <div>
-          <label for="passwordrepeat" class="text-sm mb-4 font-lato block">
+          <label for="passwordrepeat" class="text-sm block mb-4 text-dark_grey2 font-semibold">
             herhaal wachtwoord
           </label>
           <input type="password" name="passwordrepeat" id="passwordrepeat" placeholder="********"
@@ -173,7 +174,7 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, pushScopeId } from 'vue'
 import { type AuthError } from 'firebase/auth'
 import useFirebase from '@/composables/useFirebase'
 import { useMutation } from '@vue/apollo-composable'
@@ -184,16 +185,15 @@ import { ADD_USER } from '@/graphql/user.mutation'
 import PrimaryButton from '@/components/generic/PrimaryButton.vue'
 import { useVuelidate } from '@vuelidate/core'
 import { required, email, sameAs, minLength, helpers } from '@vuelidate/validators'
-
-// import { DropDown } from 'vue3-dropper';
-import 'vue3-dropper/dist/base.css';
-
+import VueMultiselect from 'vue-multiselect'
+import router from '@/router'
 
 
 export default {
 
   components: {
     PrimaryButton,
+    VueMultiselect
   },
 
   setup() {
@@ -201,6 +201,10 @@ export default {
     const { customUser } = useCustomUser();
     const error = ref<AuthError | null>(null);
     const { mutate: addUser, loading: addUserLoading, onDone: addUserCreated } = useMutation<CustomUser>(ADD_USER);
+
+    // data multiselect
+    // const selected = ref(null)
+    const options = ['Oostende', 'Duinbergen', 'Heist', 'Knokke', 'Blankenberge', 'De Haan', 'Bredene', 'Oostduinkerke', 'Koksijde', 'Nieuwpoort', 'Westende', 'Middelkerke', 'Oostende', 'De Panne', 'Zeebrugge', 'Wenduine']
 
     const newUser = reactive({
       name: '',
@@ -211,6 +215,7 @@ export default {
       },
       email: '',
       job: '200',
+      badplaats: '',
     });
 
     const rules = computed(() => {
@@ -235,6 +240,9 @@ export default {
             sameAs: helpers.withMessage('Wachtwoorden komen niet overeen', sameAs(newUser.password.password))
           },
         },
+        badplaats: {
+          required: helpers.withMessage('Badplaats is verplicht', required),
+        },
 
       }
     })
@@ -257,14 +265,21 @@ export default {
                 name: newUser.name,
                 surname: newUser.surname,
                 email: newUser.email,
+                phoneNumber: null,
+                zipCode: null,
+                street: null,
+                numberOfHouse: null,
+                birth: null,
                 locale: "nl",
                 role: parseInt(newUser.job),
+                bathingPlace: newUser.badplaats,
               },
             }).then((result) => {
               if (!result?.data)
                 throw new Error('Custom user creation failed.');
               customUser.value = result.data;
             });
+            router.push('/auth/login')
           })
           .catch((err) => {
             error.value = err;
@@ -281,9 +296,17 @@ export default {
       addUserLoading,
       handleRegister,
       v$,
-      // DropDown,
+      options,
     };
   },
 
 }
+
+
 </script>
+<style src="vue-multiselect/dist/vue-multiselect.css"></style>
+<style>
+.multiselect__tags {
+  border-radius: 10px;
+}
+</style>

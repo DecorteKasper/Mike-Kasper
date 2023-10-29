@@ -54,15 +54,20 @@ export class User {
   @Column()
   @Field()
   locale?: string
- 
-  @Column({type: Number, default: Role.REDDER})
+
+
+  @Column()
+  @Field()
+  bathingPlace?: string
+
+  @Column({ type: Number, default: Role.REDDER })
   @Field(() => Number)
   role: Role
-    
+
   @CreateDateColumn({ type: 'timestamp', nullable: true })
   @Field({ nullable: true })
   createdAt?: Date
-  
+
   @UpdateDateColumn({ type: 'timestamp', nullable: true })
   @Field({ nullable: true })
   updateAt?: Date

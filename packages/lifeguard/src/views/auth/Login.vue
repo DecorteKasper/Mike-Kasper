@@ -1,7 +1,8 @@
 <template>
   <div class="flex flex-col">
 
-    <svg id="logo" class="mt-8" xmlns="http://www.w3.org/2000/svg" width="533.58" viewBox="0 0 533.58 120.489">
+    <svg id="logo" class="mt-8 max-w-xs m-auto" xmlns="http://www.w3.org/2000/svg" width="533.58"
+      viewBox="0 0 533.58 120.489">
       <text id="F" transform="translate(0 97.489)" font-size="90" font-family="SegoeUI-Bold, Segoe UI" font-weight="700">
         <tspan x="0" y="0">F</tspan>
       </text>
@@ -53,11 +54,9 @@
         transform="translate(10 19.96)" />
     </svg>
 
-
-
     <form @submit.prevent="handleLogin" class="w-full mt-10 shadow-cardShadow rounded-cardRadius px-28 py-12">
       <h1 class="text-xl font-lato font-bold">Login </h1>
-      {{ firebaseUser }}
+      <!-- {{ firebaseUser }} -->
       <!-- <div v-if="error">
         <p class="text-red-600">{{ error.message }}</p>
       </div> -->
@@ -98,7 +97,6 @@
         </RouterLink>
       </div>
     </form>
-
   </div>
 </template>
   
@@ -108,6 +106,7 @@ import useFirebase from '@/composables/useFirebase'
 import PrimaryButton from '@/components/generic/PrimaryButton.vue'
 import { useVuelidate } from '@vuelidate/core'
 import { required, email, sameAs, minLength, helpers } from '@vuelidate/validators'
+import router from '@/router'
 
 export default {
 
@@ -149,6 +148,7 @@ export default {
         login(LoginCredentials.email, LoginCredentials.password).then(
           () => {
             console.log('logged in')
+            router.push('/')
           },
         )
       }
