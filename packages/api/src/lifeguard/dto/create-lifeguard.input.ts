@@ -12,18 +12,18 @@ export class CreateLifeguardInput {
   @Field()
   email: string
 
-  @Field()
+  @Field(() => Int, { nullable: true })
   phoneNumber: number
 
-  @Field()
+  @Field(() => Int, { nullable: true })
   zipCode: number
 
-  @Field()
+  @Field(() => String, { nullable: true })
   street: string
 
-  @Field()
+  @Field(() => Int, { nullable: true })
   numberOfHouse: number
 
-  @Field()
+  @Field(() => Date, { nullable: true })
   birth: Date
 }
