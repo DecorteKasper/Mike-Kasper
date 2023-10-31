@@ -16,30 +16,21 @@
         </div>
       </div> -->
 
-      <button @click="logoutUser"
+      <!-- <button @click="logoutUser"
         class="px-6 py-2 text-white bg-red rounded-md focus:outline-none focus-visible:ring-4 ring-red-300 hover:bg-red-800">
         Log out
-      </button>
+      </button> -->
     </form>
   </Container>
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
+
 
 import Container from '@/components/generic/Container.vue'
-import useFirebase from '@/composables/useFirebase'
-
-const { logout } = useFirebase()
-const { replace } = useRouter()
 
 // user.value?.getIdToken().then(token => {
 //   console.log(`{"Authorization": "Bearer ${token}"}`)
 // })
 
-const logoutUser = () => {
-  logout().then(() => {
-    replace({ path: '/auth/login' })
-  })
-}
 </script>

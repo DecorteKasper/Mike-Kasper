@@ -9,6 +9,7 @@ export default defineConfig({
             green: '#9AC1BC',
             dark_green: '#5CA4A9',
             black: '#000000',
+            white: '#FFFFFF',
             gray: '#F5F5F5',
             dark_grey: '#E9E9E9',
             dark_grey2: '##535353',
@@ -32,5 +33,5 @@ export default defineConfig({
         boxShadow: {
             cardShadow: '0px 0px 30px rgba(0, 0, 0, 0.08)',
         },
-      },
+    },
 })

@@ -12,7 +12,7 @@ import { RolesGuard } from './guards/roles.guard';
 
 @Resolver(() => User)
 export class UsersResolver {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @UseGuards(FirebaseGuard)
   @Mutation(() => User)
@@ -25,18 +25,19 @@ export class UsersResolver {
     return this.usersService.create(user.uid, createUserInput);
   }
 
-  
-  @AllowedRoles(Role.HOOFDREDDER)
-  @UseGuards(FirebaseGuard, RolesGuard)
+
+  // @AllowedRoles(Role.HOOFDREDDER)
+  @UseGuards(FirebaseGuard)
   @Query(() => [User], { name: 'users' })
   findAll() {
     return this.usersService.findAll();
   }
 
-  @Query(() => User, { name: 'user' })
-  findOne(@Args('string', { type: () => String }) id: string) {
-    return this.usersService.findOne(id);
+  @Query(() => User, { name: 'userByUid' })
+  findOneByUid(@Args('string', { type: () => String }) uid: string) {
+    return this.usersService.findOneByUid(uid);
   }
+
 
   @UseGuards(FirebaseGuard)
   @Mutation(() => User)

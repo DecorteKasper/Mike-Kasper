@@ -1,21 +1,25 @@
 <template>
   <Container>
-    <h1 class="text-4xl font-bold tracking-wide mb-6">Lifeguards</h1>
+    <h1 class="text-3xl font-bold font-lato tracking-wide mb-6">Welkom, <span class="font-medium">{{ activeUser?.name }}
+      </span>
+    </h1>
+    <!-- <p>{{ firebaseUser }}</p> -->
 
-    <div v-if="lifeguardsLoading">Loading...</div>
-    <div v-if="lifeguardsError">
-      {{ lifeguardsError }}
+    <div v-if="userLoading">Loading...</div>
+    <div v-if="userError">
+      {{ userError }}
     </div>
 
-    <div v-if="lifeguards" class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 grid-rows-auto gap-12">
-      <div v-for="lifeguard in lifeguards.lifeguards" class="flex items-center gap-6">
-        <div>
-          <h2 class="text-lg font-semibold tracking-wide">
-            {{ lifeguard.name }}
-          </h2>
 
-        </div>
+
+    <div v-if="user" class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 grid-rows-auto gap-12">
+
+      <div>
+        <h2 class="text-lg font-semibold tracking-wide">
+          {{ activeUser?.role }}
+        </h2>
       </div>
+
     </div>
   </Container>
 </template>
@@ -23,30 +27,56 @@
 <script lang="ts">
 import { useQuery } from '@vue/apollo-composable'
 import Container from '@/components/generic/Container.vue'
-import { ALL_LIFEGUARDS } from '@/graphql/lifeguard.query'
+import { GET_USER_BY_UID } from '@/graphql/user.query'
+import useFirebase from '@/composables/useFirebase'
+import { ref, watch } from 'vue'
 
 // TODO: refactor to interface
-interface Lifeguard {
+
+
+interface User {
   id: string
+  uid: string
   name: string
   surname: string
   email: string
+  phoneNumber: string
+  zipCode: number
+  street: string
+  role: string
 }
+
+
 
 export default {
   components: { Container },
 
   setup() {
+    const { firebaseUser } = useFirebase()
+
     const {
-      loading: lifeguardsLoading,
-      result: lifeguards,
-      error: lifeguardsError,
-    } = useQuery(ALL_LIFEGUARDS)
+      loading: userLoading,
+      result: user,
+      error: userError,
+    } = useQuery(GET_USER_BY_UID, {
+      uid: firebaseUser.value?.uid,
+    })
+
+
+    const activeUser = ref<User | null>()
+
+    watch(user, (Value) => {
+      if (Value && Value.userByUid) {
+        activeUser.value = Value.userByUid
+      }
+    })
 
     return {
-      lifeguardsLoading,
-      lifeguards: lifeguards,
-      lifeguardsError,
+      userLoading,
+      user: user,
+      userError,
+      firebaseUser,
+      activeUser,
     }
   },
 }

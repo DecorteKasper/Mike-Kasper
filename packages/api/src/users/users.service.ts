@@ -31,6 +31,11 @@ export class UsersService {
     return this.userRepository.save(user)
   }
 
+  findOneByUid(uid: string) {
+    const user = new User()
+    return this.userRepository.findOneByOrFail({ uid })
+  }
+
   findAll() {
     return this.userRepository.find()
   }
@@ -39,9 +44,7 @@ export class UsersService {
     return new Error(`This action returns a #${id} user`);
   }
 
-  findOneByUid(uid: string) {
-    return this.userRepository.findOneByOrFail({ uid })
-  }
+
 
   update(id: string, updateUserInput: UpdateUserInput) {
     return new Error(`This action updates a #${id} user`);

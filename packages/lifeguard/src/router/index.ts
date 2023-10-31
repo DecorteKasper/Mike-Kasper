@@ -13,21 +13,27 @@ const router = createRouter({
       meta: { shouldBeAuthenticated: true },
     },
 
-    // {
-    //   path: '/birds',
-    //   component: () => import('../views/birds/index.vue'),
-    // },
-    // {
-    //   path: '/birds/:slug',
-    //   component: () => import('../views/birds/_slug.vue'),
-    // },
+    {
+      path: '/jobs',
+      component: () => import('../views/admin/Jobs.vue'),
+      meta: { shouldBeAuthenticated: true },
+    },
 
-    // {
-    //   path: '/observations',
-    //   component: () => import('../views/observations/index.vue'),
-    //   meta: { shouldBeAuthenticated: true },
-    // },
-
+    {
+      path: '/reports',
+      component: () => import('../views/admin/Reports.vue'),
+      meta: { shouldBeAuthenticated: true },
+    },
+    {
+      path: '/schedule',
+      component: () => import('../views/admin/Schedule.vue'),
+      meta: { shouldBeAuthenticated: true },
+    },
+    {
+      path: '/sos',
+      component: () => import('../views/admin/Sos.vue'),
+      meta: { shouldBeAuthenticated: true },
+    },
     {
       path: '/account',
       component: () => import('../views/Account.vue'),
@@ -60,6 +66,21 @@ const router = createRouter({
       path: '/:pathMatch(.*)*',
       component: () => import('../views/NotFound.vue'),
     },
+
+    // {
+    //   path: '/birds',
+    //   component: () => import('../views/birds/index.vue'),
+    // },
+    // {
+    //   path: '/birds/:slug',
+    //   component: () => import('../views/birds/_slug.vue'),
+    // },
+
+    // {
+    //   path: '/observations',
+    //   component: () => import('../views/observations/index.vue'),
+    //   meta: { shouldBeAuthenticated: true },
+    // },
   ],
 })
 
