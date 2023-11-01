@@ -12,6 +12,17 @@ const router = createRouter({
       component: () => import('../views/Home.vue'),
       meta: { shouldBeAuthenticated: true },
     },
+    {
+      path: '/temp',
+      component: () => import('../views/Temp.vue'),
+      meta: { shouldBeAuthenticated: true },
+    },
+    {
+      path: '/redder',
+      component: () => import('../views/redder/Home.vue'),
+      meta: { shouldBeAuthenticated: true },
+    },
+
 
     {
       path: '/jobs',
