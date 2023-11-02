@@ -4,8 +4,10 @@
       </span>
     </h1>
 
-
-    <Schedule/>
+    <div class="flex gap-10">
+      <Schedule />
+      <Holidays />
+    </div>
 
 
     <!-- <p>{{ firebaseUser }}</p> -->
@@ -32,7 +34,8 @@ import Container from '@/components/generic/Container.vue'
 import { GET_USER_BY_UID } from '@/graphql/user.query'
 import useFirebase from '@/composables/useFirebase'
 import { ref, watch } from 'vue'
-import  Schedule from "@/components/generic/Schedule.vue"
+import Schedule from "@/components/generic/Schedule.vue"
+import Holidays from "@/components/generic/Holidays.vue"
 
 // TODO: refactor to interface
 
@@ -52,7 +55,7 @@ interface User {
 
 
 export default {
-  components: { Container, Schedule },
+  components: { Container, Schedule, Holidays },
 
   setup() {
     const { firebaseUser } = useFirebase()
