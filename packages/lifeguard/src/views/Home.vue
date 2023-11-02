@@ -3,24 +3,26 @@
     <h1 class="text-3xl font-bold font-lato tracking-wide mb-6">Welkom, <span class="font-medium">{{ activeUser?.name }}
       </span>
     </h1>
+
+
+    <Schedule/>
+
+
     <!-- <p>{{ firebaseUser }}</p> -->
 
-    <div v-if="userLoading">Loading...</div>
+    <!-- <div v-if="userLoading">Loading...</div>
     <div v-if="userError">
       {{ userError }}
-    </div>
+    </div> -->
 
-
-
-    <div v-if="user" class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 grid-rows-auto gap-12">
+    <!-- <div v-if="user" class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 grid-rows-auto gap-12">
 
       <div>
         <h2 class="text-lg font-semibold tracking-wide">
           {{ activeUser?.role }}
         </h2>
       </div>
-
-    </div>
+    </div> -->
   </Container>
 </template>
 
@@ -30,6 +32,7 @@ import Container from '@/components/generic/Container.vue'
 import { GET_USER_BY_UID } from '@/graphql/user.query'
 import useFirebase from '@/composables/useFirebase'
 import { ref, watch } from 'vue'
+import  Schedule from "@/components/generic/Schedule.vue"
 
 // TODO: refactor to interface
 
@@ -49,7 +52,7 @@ interface User {
 
 
 export default {
-  components: { Container },
+  components: { Container, Schedule },
 
   setup() {
     const { firebaseUser } = useFirebase()
@@ -76,7 +79,7 @@ export default {
       user: user,
       userError,
       firebaseUser,
-      activeUser,
+      activeUser
     }
   },
 }
