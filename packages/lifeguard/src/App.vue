@@ -45,7 +45,7 @@ export default {
 
     <RouterView class="flex-1" />
 
-    <AppFooter />
+    <!-- <AppFooter /> -->
   </div>
   <div v-else class="flex flex-col min-h-screen">
     <RouterView class="flex-1" />
