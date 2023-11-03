@@ -8,6 +8,9 @@
       <Schedule />
       <Holidays />
     </div>
+    <div class="my-10">
+      <Tasks />
+    </div>
 
 
     <!-- <p>{{ firebaseUser }}</p> -->
@@ -36,6 +39,7 @@ import useFirebase from '@/composables/useFirebase'
 import { ref, watch } from 'vue'
 import Schedule from "@/components/generic/Schedule.vue"
 import Holidays from "@/components/generic/Holidays.vue"
+import Tasks from "@/components/generic/Tasks.vue"
 
 // TODO: refactor to interface
 
@@ -55,7 +59,7 @@ interface User {
 
 
 export default {
-  components: { Container, Schedule, Holidays },
+  components: { Container, Schedule, Holidays, Tasks },
 
   setup() {
     const { firebaseUser } = useFirebase()
