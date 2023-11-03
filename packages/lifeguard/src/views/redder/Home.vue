@@ -1,19 +1,17 @@
 <template>
   <Container>
-    <h1 class="text-2xl text-center font-lato font-bold">Dag Kasper, jij moet vandaag <span
-        class="text-red">werken</span>!</h1>
+    <h1 class="text-2xl text-center font-lato font-bold">Dag Kasper, jij moet vandaag <span class="text-red">werken</span>!</h1>
 
-    <div
-      class="flex flex-col items-center justify-center bg-white font-lato rounded-cardRadius shadow-cardShadow mt-10 h-72 max-w-7xl m-auto">
-      <div class="flex flex-row justify-between h-full w-full px-8 py-8">
+    <div class="flex flex-col items-center justify-center bg-white font-lato rounded-cardRadius shadow-cardShadow mt-10 h-full md:h-72 max-w-7xl m-auto">
+      <div class="flex flex-col md:flex-row items-center justify-between h-full w-full px-8 py-8">
         <div class="flex flex-col items-center">
           <p class="font-bold">Weersverwachting <span class="text-red">{{ dayOfMonth }} {{ monthName }}</span></p>
-          <img class="w-26 mt-8" :src="weatherIcon" alt="My Image" />
+          <img class="w-26 mt-2 md:mt-8" :src="weatherIconUrl" alt="Icon van het weer" />
         </div>
 
-        <div class="flex flex-row justify-between w-full max-w-[15rem]">
+        <div class="flex flex-row justify-between w-full max-w-[15rem] mt-15 md:mt-0">
           <div class="flex flex-col">
-            <p class="flex flex-col items-center"><span class="font-bold text-red">{{ temperature }}°C</span><span
+            <p class="flex flex-col items-center"><span class="font-bold text-red">{{ temperature }} °C</span><span
                 class="text-xs">Temperatuur</span></p>
             <p class="flex flex-col items-center mt-8"><span class="font-bold text-red">{{ windSpeed }} km/h</span><span
                 class="text-xs">Windsnelheid</span></p>
@@ -30,8 +28,8 @@
           </div>
         </div>
 
-        <div class="flex flex-row">
-          <div class="w-[2px] bg-dark_green rounded-md mr-14"></div>
+        <div class="flex flex-col md:flex-row mt-15 md:mt-0">
+          <div class="w-20 h-[2px] md:w-[2px] md:h-28 m-auto bg-dark_green rounded-md mb-3 md:mb-0 md:mr-14"></div>
 
           <div class="flex flex-col items-center justify-center">
             <p>{{ dayOfWeek }} {{ dayOfMonth }} {{ monthName }}</p>
@@ -42,7 +40,7 @@
       </div>
     </div>
 
-    <div class="flex flex-row justify-between mt-18 max-w-7xl m-auto">
+    <div class="flex flex-col md:flex-row items-center md:items-baseline justify-between mt-10 md:mt-18 max-w-7xl m-auto">
       <div class="bg-white w-full max-w-80 min-h-[20rem] h-auto rounded-cardRadius shadow-cardShadow px-6 py-5">
         <p class="text-center mb-8 font-bold text-base mt-2">Aanwezigen {{ dayOfMonth }} {{ monthName }}</p>
         <div class="flex flex-col">
@@ -60,7 +58,7 @@
         </div>
       </div>
 
-      <div class="bg-white w-full max-w-80 min-h-[20rem] h-auto rounded-cardRadius shadow-cardShadow px-6 py-5">
+      <div class="bg-white w-full max-w-80 min-h-[20rem] h-auto mt-10 md:mt-0 rounded-cardRadius shadow-cardShadow px-6 py-5">
         <p class="text-center mb-8 font-bold text-base mt-2">Verlofdagen</p>
         <div class="overflow-scroll max-h-96">
           <div class="flex flex-col">
@@ -80,7 +78,7 @@
         </div>
       </div>
 
-      <div class="bg-white w-full max-w-80 min-h-[20rem] h-auto rounded-cardRadius shadow-cardShadow px-6 py-5">
+      <div class="bg-white w-full max-w-80 min-h-[20rem] mt-10 md:mt-0 h-auto rounded-cardRadius shadow-cardShadow px-6 py-5">
         <p class="text-center mb-8 font-bold text-base mt-2">Verslag {{ dayOfMonth }} {{ monthName }}</p>
         <p class="text-center">Verslag nog niet ingediend</p>
       </div>
@@ -93,7 +91,6 @@
 import Container from '@/components/generic/Container.vue'
 import weatherIcon from '@/assets/photos/weather.svg'
 import UserShown from '@/components/generic/UserShown.vue'
-import { ref } from 'vue';
 
 export default {
   components: {
@@ -109,12 +106,13 @@ export default {
 
   data() {
     return {
-      temperature: null,
-      windSpeed: null,
-      uvIndex: null,
-      rainChance: null,
-      highTide: "",
-      lowTide: "",
+      temperature: "--",
+      windSpeed: "--",
+      uvIndex: "-",
+      rainChance: "--",
+      highTide: "--:--",
+      lowTide: "--:--",
+      weatherIconUrl: "",
     };
   },
 
@@ -128,6 +126,7 @@ export default {
       try {
         const response = await fetch(apiUrl);
         const marineRespoinse = await fetch(marineUrl);
+
         if (response.ok) {
           const data = await response.json();
           const marineData = await marineRespoinse.json();
@@ -161,7 +160,9 @@ export default {
           //Sla value op in hoog of laagwater en pak alleen de tijd
           filteredTideInfo.forEach((tide: any) => {
             const tideTime = new Date(tide.tide_time);
-            const formattedTime = `${tideTime.getHours()}:${tideTime.getMinutes()}`
+            const hours = String(tideTime.getHours()).padStart(2, '0');
+            const minutes = String(tideTime.getMinutes()).padStart(2, '0');
+            const formattedTime = `${hours}:${minutes}`;
             if (tide.tide_type === "HIGH") {
               this.highTide = formattedTime;
             } else if (tide.tide_type === "LOW") {
@@ -169,6 +170,10 @@ export default {
             }
           });
 
+
+          //Icon for weather
+          const weatherIconUrl = marineData.forecast.forecastday[0].day.condition.icon;
+          this.weatherIconUrl = `https:${weatherIconUrl}`;
 
           //Set the data
           this.temperature = data.current.temp_c;

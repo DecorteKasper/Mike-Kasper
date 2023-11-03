@@ -59,21 +59,21 @@
       </RouterLink>
       <nav>
         <ul class="lg:flex items-center space-x-12 hidden">
-          <li>
+          <li v-if="userData?.role === 300">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/">Home</RouterLink>
           </li>
+          <li v-if="userData?.role === 200">
+              <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
+                active-class="text-dark_green font-semibold" to="/redder">Home</RouterLink>
+            </li>
           <li v-if="userData?.role === 300">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/schedule">Planning</RouterLink>
           </li>
           <li v-if="userData?.role === 200">
-            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/reports">Test redder</RouterLink>
-          </li>
-          <li v-if="userData?.role === 100">
-            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/reports">Test ehbo</RouterLink>
+              <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
+                active-class="text-dark_green font-semibold" to="/redder/schedule">Planning</RouterLink>
           </li>
           <li v-if="userData?.role === 300">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
@@ -81,18 +81,19 @@
           </li>
           <li v-if="userData?.role === 200">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/reports">Test redder</RouterLink>
+              active-class="text-dark_green font-semibold" to="/redder/report">Dagverslag</RouterLink>
           </li>
 
           <li v-if="userData?.role === 100">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/reports">Test ehbo</RouterLink>
           </li>
+          
           <li>
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/sos">SOS</RouterLink>
           </li>
-          <li>
+          <li v-if="userData?.role === 100">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/jobs">Jobs</RouterLink>
           </li>
@@ -141,17 +142,21 @@
         <XIcon class="absolute top-13 right-8 text-black" :size="32" />
       </button>
       <ul class="flex flex-col gap-4">
-        <li @click="isMenuOpen = false">
+        <li @click="isMenuOpen = false" v-if="userData?.role === 300">
           <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
             active-class="text-dark_green font-semibold" to="/">Home</RouterLink>
+        </li>
+        <li @click="isMenuOpen = false" v-if="userData?.role === 200">
+            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
+              active-class="text-dark_green font-semibold" to="/redder">Home</RouterLink>
         </li>
         <li @click="isMenuOpen = false" v-if="userData?.role === 300">
           <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
             active-class="text-dark_green font-semibold" to="/schedule">Planning</RouterLink>
         </li>
         <li @click="isMenuOpen = false" v-if="userData?.role === 200">
-          <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-            active-class="text-dark_green font-semibold" to="/reports">Test redder</RouterLink>
+            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
+              active-class="text-dark_green font-semibold" to="/redder/schedule">Planning</RouterLink>
         </li>
         <li @click="isMenuOpen = false" v-if="userData?.role === 100">
           <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
@@ -162,8 +167,8 @@
             active-class="text-dark_green font-semibold" to="/reports">Verslagen</RouterLink>
         </li>
         <li @click="isMenuOpen = false" v-if="userData?.role === 200">
-          <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-            active-class="text-dark_green font-semibold" to="/reports">Test redder</RouterLink>
+            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
+              active-class="text-dark_green font-semibold" to="/redder/report">Dagverslag</RouterLink>
         </li>
 
         <li @click="isMenuOpen = false" v-if="userData?.role === 100">
@@ -174,7 +179,7 @@
           <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
             active-class="text-dark_green font-semibold" to="/sos">SOS</RouterLink>
         </li>
-        <li @click="isMenuOpen = false">
+        <li @click="isMenuOpen = false"  v-if="userData?.role === 300">
           <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
             active-class="text-dark_green font-semibold" to="/jobs">Jobs</RouterLink>
         </li>
@@ -265,6 +270,8 @@ export default {
         replace({ path: '/auth/login' })
       })
     }
+
+    console.log("Userdata: ", userData)
 
     const { loading: userLoading, result: user, error: userError } = useQuery(GET_USER_BY_UID, {
       uid: firebaseUser.value?.uid,
