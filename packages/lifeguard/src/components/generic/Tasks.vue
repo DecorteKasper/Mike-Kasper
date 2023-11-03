@@ -39,10 +39,11 @@
                         <input type="checkbox" name="status" class="hidden" v-model="task.status"
                             @change="toggleTaskStatus(task.status)">
                         <div :class="{
-                            'border-2 p-1 border-dark_green w-fit rounded-full focus:outline-none cursor-pointer': task.status === true,
-                            'border-2 p-1 border-black w-fit rounded-full focus:outline-none cursor-pointer': task.status !== true
+                            'group border-2 p-1 border-dark_green w-fit rounded-full focus:outline-none cursor-pointer': task.status === true,
+                            'group border-2 p-1 border-black w-fit rounded-full focus:outline-none cursor-pointer': task.status !== true
                         }">
-                            <Check :class="{ 'text-dark_green': task.status === true, 'opacity-0': task.status !== true }"
+                            <Check
+                                :class="{ 'text-dark_green': task.status === true, 'opacity-0 group-hover:opacity-100': task.status !== true }"
                                 :stroke-width="4" :size="14" />
                         </div>
                     </label>
