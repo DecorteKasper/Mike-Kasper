@@ -271,8 +271,6 @@ export default {
       })
     }
 
-    console.log("Userdata: ", userData)
-
     const { loading: userLoading, result: user, error: userError } = useQuery(GET_USER_BY_UID, {
       uid: firebaseUser.value?.uid,
     })

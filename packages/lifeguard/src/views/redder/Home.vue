@@ -1,7 +1,6 @@
 <template>
   <Container>
-    <h1 class="text-2xl text-center font-lato font-bold">Dag Kasper, jij moet vandaag <span class="text-red">werken</span>!</h1>
-
+    <h1 class="text-2xl text-center font-lato font-bold">Dag {{ userData?.name }}, jij moet vandaag <span class="text-red">werken</span>!</h1>
     <div class="flex flex-col items-center justify-center bg-white font-lato rounded-cardRadius shadow-cardShadow mt-10 h-full md:h-72 max-w-7xl m-auto">
       <div class="flex flex-col md:flex-row items-center justify-between h-full w-full px-8 py-8">
         <div class="flex flex-col items-center">
@@ -91,6 +90,14 @@
 import Container from '@/components/generic/Container.vue'
 import weatherIcon from '@/assets/photos/weather.svg'
 import UserShown from '@/components/generic/UserShown.vue'
+import { ref, watch } from 'vue'
+import { GET_USER_BY_UID } from '@/graphql/user.query'
+import useFirebase from '@/composables/useFirebase'
+import { useQuery } from '@vue/apollo-composable'
+
+interface User {
+  name: string
+}
 
 export default {
   components: {
@@ -195,7 +202,21 @@ export default {
     const dayOfWeek = currentDate.toLocaleDateString('nl-NL', { weekday: 'long' }); // Get the day of the week
     const dayOfMonth = currentDate.getDate(); // Get day of the month
     const monthName = currentDate.toLocaleDateString('nl-NL', { month: 'long' }); // Get month name
+    const userData = ref<User | null>()
+    const { firebaseUser } = useFirebase()
 
+    
+    const { loading: userLoading, result: user, error: userError } = useQuery(GET_USER_BY_UID, {
+      uid: firebaseUser.value?.uid,
+    })
+
+    console.log("userData: ", userData);
+    // Watch the user result and set userRole when it's available
+    watch(user, (newValue) => {
+      if (newValue && newValue.userByUid) {
+        userData.value = newValue.userByUid
+      }
+    })
 
 
     return {
@@ -204,6 +225,7 @@ export default {
       dayOfMonth,
       monthName,
       dayOfWeek,
+      userData,
     }
   },
 
