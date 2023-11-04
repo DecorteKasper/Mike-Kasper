@@ -66,7 +66,7 @@ const router = createRouter({
       component: () => import('../components/wrappers/AuthWrap.vue'),
       children: [
         {
-          path: 'login',
+          path: 'log in',
           component: () => import('../views/auth/Login.vue'),
           meta: { preventLoggedIn: true },
         },
