@@ -64,16 +64,16 @@
               active-class="text-dark_green font-semibold" to="/">Home</RouterLink>
           </li>
           <li v-if="userData?.role === 200">
-              <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-                active-class="text-dark_green font-semibold" to="/redder">Home</RouterLink>
-            </li>
+            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
+              active-class="text-dark_green font-semibold" to="/redder">Home</RouterLink>
+          </li>
           <li v-if="userData?.role === 300">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/schedule">Planning</RouterLink>
           </li>
           <li v-if="userData?.role === 200">
-              <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-                active-class="text-dark_green font-semibold" to="/redder/schedule">Planning</RouterLink>
+            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
+              active-class="text-dark_green font-semibold" to="/redder/schedule">Planning</RouterLink>
           </li>
           <li v-if="userData?.role === 300">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
@@ -88,16 +88,15 @@
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/reports">Test ehbo</RouterLink>
           </li>
-          
+
           <li>
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/sos">SOS</RouterLink>
           </li>
-          <li v-if="userData?.role === 100">
+          <li v-if="userData?.role === 300">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/jobs">Jobs</RouterLink>
           </li>
-
           <!-- Menu 1 -->
           <li class="relative">
             <button @click="toggleSubmenu">
@@ -147,16 +146,16 @@
             active-class="text-dark_green font-semibold" to="/">Home</RouterLink>
         </li>
         <li @click="isMenuOpen = false" v-if="userData?.role === 200">
-            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/redder">Home</RouterLink>
+          <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
+            active-class="text-dark_green font-semibold" to="/redder">Home</RouterLink>
         </li>
         <li @click="isMenuOpen = false" v-if="userData?.role === 300">
           <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
             active-class="text-dark_green font-semibold" to="/schedule">Planning</RouterLink>
         </li>
         <li @click="isMenuOpen = false" v-if="userData?.role === 200">
-            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/redder/schedule">Planning</RouterLink>
+          <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
+            active-class="text-dark_green font-semibold" to="/redder/schedule">Planning</RouterLink>
         </li>
         <li @click="isMenuOpen = false" v-if="userData?.role === 100">
           <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
@@ -167,8 +166,8 @@
             active-class="text-dark_green font-semibold" to="/reports">Verslagen</RouterLink>
         </li>
         <li @click="isMenuOpen = false" v-if="userData?.role === 200">
-            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/redder/report">Dagverslag</RouterLink>
+          <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
+            active-class="text-dark_green font-semibold" to="/redder/report">Dagverslag</RouterLink>
         </li>
 
         <li @click="isMenuOpen = false" v-if="userData?.role === 100">
@@ -179,7 +178,7 @@
           <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
             active-class="text-dark_green font-semibold" to="/sos">SOS</RouterLink>
         </li>
-        <li @click="isMenuOpen = false"  v-if="userData?.role === 300">
+        <li @click="isMenuOpen = false" v-if="userData?.role === 300">
           <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
             active-class="text-dark_green font-semibold" to="/jobs">Jobs</RouterLink>
         </li>

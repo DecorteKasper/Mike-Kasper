@@ -1,6 +1,6 @@
 <template>
   <button
-    class="px-8 py-2 rounded-buttonRadius bg-green font-bold text-white hover:bg-dark_green focus:outline-none focus-visible:bg-dark_green"
+    class="px-4 py-3 rounded-buttonRadius bg-green text-sm font-lato text-white hover:bg-dark_green focus:outline-none focus-visible:bg-dark_green"
     @click="handleClick">
     {{ label }}
   </button>
