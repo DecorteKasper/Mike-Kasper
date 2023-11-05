@@ -5,8 +5,10 @@ export default defineConfig({
     theme: {
         colors: {
             red: '#ED6A5A',
+            redx: '#ED6A5A',
             yellow: '#F4F1BB',
             light_green: '#E6EBE0',
+            green: '#9AC1BC',
             greenx: '#9AC1BC',
             dark_green: '#5CA4A9',
             black: '#000000',
