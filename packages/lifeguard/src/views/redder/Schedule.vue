@@ -2,7 +2,7 @@
     <Container>
         <div class="flex flex-col mt-2 mb-12 lg:mt-8 lg:mb-20">
             <h1 class="text-lato font-bold text-lg text-center lg:text-xl">Verlofplanning</h1>
-            <div class="h-[2px] lg:h-[3px] w-20 bg-green m-auto mt-1 lg:mt-2 rounded-full"></div>
+            <div class="h-[2px] lg:h-[3px] w-20 bg-greenx m-auto mt-1 lg:mt-2 rounded-full"></div>
         </div>
 
         <div class="flex flex-col lg:flex-row lg:justify-around lg:mt-14 lg:items-baseline items-center font-lato ">
@@ -18,7 +18,7 @@
                         <img class="w-4 mr-7" :src="uncheck_icon" alt="check">
                         <div class="font-normal"><p><span class="font-bold mr-3">A</span><span>Laura Middelton</span></p></div>
                     </div>
-                    <div class="bg-green rounded-full px-4 py-2 text-sm flex flex-row mt-4">
+                    <div class="bg-greenx rounded-full px-4 py-2 text-sm flex flex-row mt-4">
                         <img class="w-4 mr-7" :src="check_icon" alt="check">
                         <div class="font-normal"><p><span class="font-bold mr-3">B</span><span>Amelie Walton</span></p></div>
                     </div>
@@ -26,11 +26,11 @@
                         <img class="w-4 mr-7" :src="uncheck_icon" alt="check">
                         <div class="font-normal"><p><span class="font-bold mr-3">C</span><span>Dean Woodward</span></p></div>
                     </div> 
-                    <div class="bg-green rounded-full px-4 py-2 text-sm flex flex-row mt-4">
+                    <div class="bg-greenx rounded-full px-4 py-2 text-sm flex flex-row mt-4">
                         <img class="w-4 mr-7" :src="check_icon" alt="check">
                         <div class="font-normal"><p><span class="font-bold mr-3">D</span><span>Kasper Decorte</span></p></div>
                     </div>
-                    <div class="bg-green rounded-full px-4 py-2 text-sm flex flex-row mt-4">
+                    <div class="bg-greenx rounded-full px-4 py-2 text-sm flex flex-row mt-4">
                         <img class="w-4 mr-7" :src="check_icon" alt="check">
                         <div class="font-normal"><p><span class="font-bold mr-3">E</span><span>Sonia Nelson</span></p></div>
                     </div>
@@ -38,7 +38,7 @@
                         <img class="w-4 mr-7" :src="uncheck_icon" alt="check">
                         <div class="font-normal"><p><span class="font-bold mr-3">F</span><span>Logan Norris</span></p></div>
                     </div> 
-                    <div class="bg-green rounded-full px-4 py-2 text-sm flex flex-row mt-4">
+                    <div class="bg-greenx rounded-full px-4 py-2 text-sm flex flex-row mt-4">
                         <img class="w-4 mr-7" :src="check_icon" alt="check">
                         <div class="font-normal"><p><span class="font-bold mr-3">G</span><span>Henri Sheppard</span></p></div>
                     </div>
@@ -52,42 +52,42 @@
                 <div class="mt-7 m-auto max-w-lg">
                     <div class="flex flex-row">
                         <div class="w-40"></div>
-                        <div class="w-6 m-auto"><p class="text-green text-[10px]">Verlofdagen</p></div>
+                        <div class="w-6 m-auto"><p class="text-greenx text-[10px]">Verlofdagen</p></div>
                         <div class="w-6 m-auto"><p class="text-red text-[10px]">Werkdagen</p></div>
                     </div>
                     <div class="bg-gray rounded-full px-4 py-2 text-sm flex flex-row mt-2">
                         <div class="font-normal w-44"><p><span class="font-bold mr-6">A</span><span>Laura Middelton</span></p></div>
-                        <div class="w-6 m-auto"><p class="text-green">11</p></div>
+                        <div class="w-6 m-auto"><p class="text-greenx">11</p></div>
                         <div class="w-6 pl-3 m-auto"><p class="text-red">19</p></div>
                     </div>
                     <div class="bg-gray rounded-full px-4 py-2 text-sm flex flex-row mt-4">
                         <div class="font-normal w-44"><p><span class="font-bold mr-6">B</span><span>Amelie Walton</span></p></div>
-                        <div class="w-6 m-auto"><p class="text-green">11</p></div>
+                        <div class="w-6 m-auto"><p class="text-greenx">11</p></div>
                         <div class="w-6 pl-3 m-auto"><p class="text-red">19</p></div>
                     </div>
                     <div class="bg-gray rounded-full px-4 py-2 text-sm flex flex-row mt-4">
                         <div class="font-normal w-44"><p><span class="font-bold mr-6">C</span><span>Dean Woodward</span></p></div>
-                        <div class="w-6 m-auto"><p class="text-green">11</p></div>
+                        <div class="w-6 m-auto"><p class="text-greenx">11</p></div>
                         <div class="w-6 pl-3 m-auto"><p class="text-red">19</p></div>
                     </div>
                     <div class="bg-gray rounded-full px-4 py-2 text-sm flex flex-row mt-4">
                         <div class="font-normal w-44"><p><span class="font-bold mr-6">D</span><span>Kasper Decorte</span></p></div>
-                        <div class="w-6 m-auto"><p class="text-green">10</p></div>
+                        <div class="w-6 m-auto"><p class="text-greenx">10</p></div>
                         <div class="w-6 pl-3 m-auto"><p class="text-red">20</p></div>
                     </div>
                     <div class="bg-gray rounded-full px-4 py-2 text-sm flex flex-row mt-4">
                         <div class="font-normal w-44"><p><span class="font-bold mr-6">E</span><span>Sonia Nelson</span></p></div>
-                        <div class="w-6 m-auto"><p class="text-green">10</p></div>
+                        <div class="w-6 m-auto"><p class="text-greenx">10</p></div>
                         <div class="w-6 pl-3 m-auto"><p class="text-red">20</p></div>
                     </div>
                     <div class="bg-gray rounded-full px-4 py-2 text-sm flex flex-row mt-4">
                         <div class="font-normal w-44"><p><span class="font-bold mr-6">F</span><span>Logan Norris</span></p></div>
-                        <div class="w-6 m-auto"><p class="text-green">9</p></div>
+                        <div class="w-6 m-auto"><p class="text-greenx">9</p></div>
                         <div class="w-6 pl-3 m-auto"><p class="text-red">21</p></div>
                     </div>
                     <div class="bg-gray rounded-full px-4 py-2 text-sm flex flex-row mt-4">
                         <div class="font-normal w-44"><p><span class="font-bold mr-6">G</span><span>Henri Sheppard</span></p></div>
-                        <div class="w-6 m-auto"><p class="text-green">9</p></div>
+                        <div class="w-6 m-auto"><p class="text-greenx">9</p></div>
                         <div class="w-6 pl-3 m-auto"><p class="text-red">21</p></div>
                     </div>
                 </div>

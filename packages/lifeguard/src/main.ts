@@ -9,6 +9,19 @@ import router from './router'
 
 import useFirebase from './composables/useFirebase'
 
+// Vuetify
+import 'vuetify/styles'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+
+const vuetify = createVuetify({
+  components,
+  directives,
+})
+
+
+// Create Vue app
 const app = createApp(App)
 const { restoreUser } = useFirebase()
 
@@ -16,5 +29,6 @@ const { restoreUser } = useFirebase()
     await restoreUser()
 
     app.use(router)
+    app.use(vuetify)
     app.mount('#app')
   })()
