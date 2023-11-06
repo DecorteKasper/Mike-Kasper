@@ -4,6 +4,8 @@
             <h1 class="text-center font-lato font-bold text-lg">Dagelijks verslag</h1>
             <p class="text-redx text-center mt-2">{{ currentDateString }}</p>
 
+<!-- Form -->
+            <v-form @submit.prevent="submitForm" lazy-validation>
                 <div class="mt-8">
                     <div class="mb-5 mt-10">
                         <h2 class="font-bold">Aanwezigen:</h2>
@@ -11,7 +13,7 @@
                     </div>
                     <label for="A">
                         <v-checkbox
-                            v-model="selected"
+                            v-model="formData.aanwezigen"
                             label="Laura Middleton"
                             value="A"
                             id="A"
@@ -21,7 +23,7 @@
                     </label>
                     <label for="B">
                         <v-checkbox
-                            v-model="selected"
+                            v-model="formData.aanwezigen"
                             label="Dean Woodward"
                             value="B"
                             id="B"
@@ -31,7 +33,7 @@
                     </label>
                     <label for="C">
                         <v-checkbox
-                            v-model="selected"
+                            v-model="formData.aanwezigen"
                             label="Kasper Decorte"
                             value="C"
                             id="C"
@@ -41,7 +43,7 @@
                     </label>
                     <label for="D">
                         <v-checkbox
-                            v-model="selected"
+                            v-model="formData.aanwezigen"
                             label="John"
                             value="D"
                             id="D"
@@ -51,7 +53,7 @@
                     </label>
                     <label for="E">
                         <v-checkbox
-                            v-model="selected"
+                            v-model="formData.aanwezigen"
                             label="Henri Sheppard"
                             value="E"
                             id="E"
@@ -61,7 +63,7 @@
                     </label>
                     <label for="redderF">
                         <v-checkbox
-                            v-model="selected"
+                            v-model="formData.aanwezigen"
                             label="Logan Norris"
                             value="F"
                             id="redderF"
@@ -71,7 +73,7 @@
                     </label>
                     <label for="G">
                         <v-checkbox
-                            v-model="selected"
+                            v-model="formData.aanwezigen"
                             label="Sonia Nelson"
                             value="G"
                             id="G"
@@ -87,13 +89,13 @@
                             <h2 class="font-bold">Verloren gelopen kinderen?</h2>
                             <div class="w-16 h-[2px] bg-redx rounded-full"></div>
                         </div>
-                        <V-radio-group v-model="selectedValueKind">
+                        <V-radio-group v-model="formData.valueKind" :rules="formData.radioRules" required>
                             <label for="kind_1">
                                 <v-radio 
                                     label="Ja" 
                                     value="kind_1" 
                                     id="kind_1"
-                                    :class="{ 'bg-greenx': selectedValueKind === 'kind_1' }"
+                                    :class="{ 'bg-greenx': formData.valueKind === 'kind_1' }"
                                     class="rounded-full h-13 text-black pl-3 bg-gray cursor-pointer max-w-[12rem] lg:max-w-xs">
                                 </v-radio>
                             </label>
@@ -102,7 +104,7 @@
                                     label="neen" 
                                     value="kind_0" 
                                     id="kind_0"
-                                    :class="{ 'bg-greenx': selectedValueKind === 'kind_0' }"
+                                    :class="{ 'bg-greenx': formData.valueKind === 'kind_0' }"
                                     class="rounded-full h-13 text-black pl-3 mt-4 bg-gray cursor-pointer max-w-[12rem] lg:max-w-xs">
                                 </v-radio>
                             </label>
@@ -114,13 +116,13 @@
                         <h2 class="font-bold">Interventies?</h2>
                         <div class="w-16 h-[2px] bg-redx rounded-full"></div>
                     </div>
-                        <V-radio-group v-model="selectedValueInterventie">
+                        <V-radio-group v-model="formData.valueInterventie" :rules="formData.radioRules" required>
                             <label for="interventie_1">
                                 <v-radio 
                                     label="Ja" 
                                     value="interventie_1" 
                                     id="interventie_1"
-                                    :class="{ 'bg-greenx': selectedValueInterventie === 'interventie_1' }"
+                                    :class="{ 'bg-greenx': formData.valueInterventie === 'interventie_1' }"
                                     class="rounded-full h-13 text-black pl-3 bg-gray cursor-pointer max-w-[12rem] lg:max-w-xs">
                                 </v-radio>
                             </label>
@@ -129,7 +131,7 @@
                                     label="neen" 
                                     value="interventie_0" 
                                     id="interventie_0"
-                                    :class="{ 'bg-greenx': selectedValueInterventie === 'interventie_0' }"
+                                    :class="{ 'bg-greenx': formData.valueInterventie === 'interventie_0' }"
                                     class="rounded-full h-13 text-black pl-3 mt-4 bg-gray cursor-pointer max-w-[12rem] lg:max-w-xs">
                                 </v-radio>
                             </label>
@@ -141,12 +143,11 @@
                         <h2 class="font-bold">Andere info:</h2>
                         <div class="w-16 h-[2px] bg-redx rounded-full"></div>
                     </div>
-                    <v-textarea v-model="andereInfo" label="Andere info"></v-textarea>
+                    <v-textarea v-model="formData.valueInfo" label="Andere info"></v-textarea>
                 </div>
 
-                <v-btn @click="logFormData">Dagverslag verzenden</v-btn>
-
-
+                 <v-btn color="primary" type="submit">Verslag verzenden</v-btn>
+            </v-form>
 
         </section>
     </Container>
@@ -173,11 +174,20 @@ export default {
 
     data() {
         return {
-            selected: ['A', 'C', 'D', 'F'],
+            // aanwezigen: ['A', 'C', 'D', 'F'],
             currentDate: new Date(),
-            selectedValueKind: '',
-            selectedValueInterventie: '',
-            andereInfo: '',
+            // selectedValueKind: '',
+            // selectedValueInterventie: '',
+            // andereInfo: '',
+            formData: {
+                aanwezigen: ['A', 'C', 'D', 'F'],
+                valueKind: '',
+                valueInterventie: '',
+                valueInfo: '',
+                radioRules: [
+                    (v:any) => !!v || 'Selecteer een optie',
+                ],
+            }
         }
 
     },
@@ -191,19 +201,24 @@ export default {
 
     methods: {
         isSelected(item:any) {
-            return this.selected.includes(item as never);
+            return this.formData.aanwezigen.includes(item as never);
         },
 
-        logFormData() {
-            const formData = {
-                selected: this.selected,
-                selectedValueKind: this.selectedValueKind,
-                selectedValueInterventie: this.selectedValueInterventie,
-                andereInfo: this.andereInfo,
-            };
+        submitForm() {
+            console.log('Form data:', this.formData);
+        }
+        
 
-            console.log(JSON.stringify(formData, null, 2));
-        },
+        // logFormData() {
+        //     const formData = {
+        //         selected: this.selected,
+        //         selectedValueKind: this.selectedValueKind,
+        //         selectedValueInterventie: this.selectedValueInterventie,
+        //         andereInfo: this.andereInfo,
+        //     };
+
+        //     console.log(JSON.stringify(formData, null, 2));
+        // },
     },
 
     computed: {
