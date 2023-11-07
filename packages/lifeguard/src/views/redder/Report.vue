@@ -6,7 +6,7 @@
 
 <!-- Form -->
             <v-form @submit.prevent="submitForm" lazy-validation>
-                <div class="mt-8">
+                <div class="mt-8 font-lato">
                     <div class="mb-5 mt-10">
                         <h2 class="font-bold">Aanwezigen:</h2>
                         <div class="w-16 h-[2px] bg-redx rounded-full"></div>
@@ -88,6 +88,7 @@
                                 label="Naam vervanger"
                                 id="vervanging"
                                 class="mt-2"
+                                v-model="formData.valueVervanging"
                                 >
                             </v-text-field>
                     </div>
@@ -230,7 +231,7 @@
 
                          <v-textarea
                             v-if="showTextAreaMateriaal"
-                            label="Wat is te kort of kapot?"
+                            label="Wat is er te kort of kapot?"
                             v-model="formData.valueTextMateriaal"
                         ></v-textarea>
                 </div>
@@ -243,7 +244,7 @@
                     <v-textarea v-model="formData.valueExtraInfo" label="Andere info"></v-textarea>
                 </div>
 
-                 <v-btn color="primary" type="submit">Verslag verzenden</v-btn>
+                <v-btn class="bg-black text-white font-lato mt-2 mb-6 lg:mt-5 rounded-md" type="submit">Verzend verslag</v-btn>
             </v-form>
 
         </section>
@@ -275,7 +276,9 @@ export default {
         return {
             currentDate: new Date(),
             formData: {
+                timestamp: new Date(),
                 aanwezigen: ['A', 'C', 'D', 'F'],
+                valueVervanging: '',
                 valueRadioKind: '',
                 valueRadioInterventie: '',
                 valueTextInterventie: '',
@@ -295,22 +298,22 @@ export default {
 
     },
 
-    // watch: {
-    //     selected(newVal) {
-    //         // This watcher will trigger when the 'selected' array changes
-    //         console.log("Selected items:", newVal);
-    //     }
-    // },
-
     methods: {
         isSelected(item:any) {
             return this.formData.aanwezigen.includes(item as never);
         },
 
         submitForm() {
-            console.log('Form data:', this.formData);
+            // Log the form data to the console if required fields are not empty
+            if (this.formData.valueRadioKind === '' || this.formData.valueRadioInterventie === '' || this.formData.valueRadioOefenen === '' || this.formData.valueRadioMateriaal === '') {
+                console.log("Required values are empty")
+            } else
+            {
+                console.log('Form data:', this.formData);
+            }
         },
 
+        // Show or hide text area fields
         showAreaInterventie() {
             this.showTextAreaFieldInterventie = true;
         },
@@ -332,21 +335,10 @@ export default {
             this.showTextAreaMateriaal = false;
             this.formData.valueTextMateriaal = '';
         },
-
         
-
-        // logFormData() {
-        //     const formData = {
-        //         selected: this.selected,
-        //         selectedValueKind: this.selectedValueKind,
-        //         selectedValueInterventie: this.selectedValueInterventie,
-        //         andereInfo: this.andereInfo,
-        //     };
-
-        //     console.log(JSON.stringify(formData, null, 2));
-        // },
     },
 
+    
     computed: {
         currentDateString() {
             const months = [
