@@ -310,6 +310,7 @@ export default {
             } else
             {
                 console.log('Form data:', this.formData);
+                alert("Formulier verzonden")
             }
         },
 
@@ -338,7 +339,7 @@ export default {
         
     },
 
-    
+
     computed: {
         currentDateString() {
             const months = [
