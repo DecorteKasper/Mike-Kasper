@@ -278,6 +278,8 @@ export default {
     watch(user, (newValue) => {
       if (newValue && newValue.userByUid) {
         userData.value = newValue.userByUid
+        // console.log("userData")
+        // console.log(userData.value)
       }
     })
 

@@ -3,9 +3,9 @@ import { ref } from 'vue'
 import useFirebase from './useFirebase'
 import { GET_USER_BY_UID } from '@/graphql/user.query'
 import useGraphql from './useGraphql'
-import type { CustomUser } from '@/interfaces/user.interface'
+import type { Iuser } from '@/interfaces/user.interface'
 
-const customUser = ref<CustomUser>()
+const customUser = ref<Iuser>()
 
 const { firebaseUser } = useFirebase()
 const { apolloClient } = useGraphql()

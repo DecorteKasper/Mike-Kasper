@@ -13,14 +13,12 @@ query userByUid($uid: String!) {
     street
     numberOfHouse
     birth
-    locale
     role
     createdAt
     updateAt
   }
 }
 `
-
 export const GET_USERS = gql` 
 query {
   users {
