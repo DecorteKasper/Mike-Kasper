@@ -14,8 +14,27 @@ mutation createUser ($createUserInput: CreateUserInput!){
       street
       numberOfHouse
       birth
-      locale
       createdAt
     }
   }
+`
+
+export const UPDATE_USER = gql`
+mutation UpdateUser($updateUserInput: UpdateUserInput!) {
+  updateUser(updateUserInput: $updateUserInput) {
+    name
+    surname
+    photoURL
+    phoneNumber
+    email
+    birth
+    birthPlace
+    city
+    zipCode
+    street
+    numberOfHouse
+  }
+}
+
+
 `

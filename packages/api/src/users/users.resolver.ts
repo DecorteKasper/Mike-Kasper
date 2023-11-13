@@ -25,6 +25,13 @@ export class UsersResolver {
     return this.usersService.create(user.uid, createUserInput);
   }
 
+  @UseGuards(FirebaseGuard)
+  @Mutation(() => User)
+  async updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput, @FirebaseUser() user: UserRecord,) {
+    const updatedUser = await this.usersService.update(user.uid, updateUserInput);
+    return updatedUser;
+  }
+
 
   // @AllowedRoles(Role.HOOFDREDDER)
   @UseGuards(FirebaseGuard)
@@ -37,14 +44,6 @@ export class UsersResolver {
   findOneByUid(@Args('string', { type: () => String }) uid: string) {
     return this.usersService.findOneByUid(uid);
   }
-
-
-  @UseGuards(FirebaseGuard)
-  @Mutation(() => User)
-  updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput, @FirebaseUser() user: UserRecord,) {
-    return this.usersService.update(user.uid, updateUserInput);
-  }
-
 
   @Mutation(() => User)
   removeUser(@Args('string', { type: () => String }) id: string) {
