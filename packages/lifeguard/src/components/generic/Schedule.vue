@@ -61,7 +61,7 @@
                 <input type="radio" value="6" name="post" class="hidden" v-model="Post">
                 <span
                     :class="{ 'bg-dark_green text-xs text-white px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post === '6', 'bg-dark_grey text-xs text-black px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post !== '6', }">Post
-                    5</span>
+                    6</span>
             </label>
         </div>
         <div class="mt-8">
@@ -110,6 +110,7 @@
 
 <script lang="ts">
 import { ref } from 'vue'
+
 import margotRobbie from "../../img/MargotRobbie.jpg"
 import { LifeBuoyIcon, UserCircle2, Cross } from 'lucide-vue-next'
 
@@ -204,7 +205,7 @@ export default {
                 birth: new Date("1985-11-20T12:30:00.000Z"),
                 createdAt: new Date("2023-10-27T09:15:45.987+00:00"),
                 updateAt: new Date("2023-10-27T09:15:45.987+00:00"),
-                post: "1",
+                post: "2",
             },
             // Voeg meer gebruikers toe zoals nodig
             {
@@ -224,7 +225,7 @@ export default {
                 birth: new Date("1988-07-05T14:45:00.000Z"),
                 createdAt: new Date("2023-10-26T15:30:20.456+00:00"),
                 updateAt: new Date("2023-10-26T15:30:20.456+00:00"),
-                post: "1",
+                post: "2",
             },
             {
                 id: "657e40a340a50bedb1c53929",
@@ -243,7 +244,7 @@ export default {
                 birth: new Date("1992-02-10T10:00:00.000Z"),
                 createdAt: new Date("2023-10-25T12:15:10.789+00:00"),
                 updateAt: new Date("2023-10-25T12:15:10.789+00:00"),
-                post: "1",
+                post: "4",
             },
             {
                 id: "658e40a340a50bedb1c53930",
@@ -262,7 +263,7 @@ export default {
                 birth: new Date("1987-03-18T09:30:00.000Z"),
                 createdAt: new Date("2023-10-24T16:50:40.234+00:00"),
                 updateAt: new Date("2023-10-24T16:50:40.234+00:00"),
-                post: "1",
+                post: "4",
             },
 
             {
@@ -282,7 +283,7 @@ export default {
                 birth: new Date("1995-09-22T11:15:00.000Z"),
                 createdAt: new Date("2023-10-23T13:40:50.678+00:00"),
                 updateAt: new Date("2023-10-23T13:40:50.678+00:00"),
-                post: "1",
+                post: "4",
             },
             {
                 id: "660e40a340a50bedb1c53932",
@@ -301,7 +302,7 @@ export default {
                 birth: new Date("1991-12-03T17:20:00.000Z"),
                 createdAt: new Date("2023-10-22T10:25:35.543+00:00"),
                 updateAt: new Date("2023-10-22T10:25:35.543+00:00"),
-                post: "1",
+                post: "3",
             },
             {
                 id: "661e40a340a50bedb1c53933",
@@ -320,7 +321,7 @@ export default {
                 birth: new Date("1993-06-25T10:10:00.000Z"),
                 createdAt: new Date("2023-10-21T11:35:25.456+00:00"),
                 updateAt: new Date("2023-10-21T11:35:25.456+00:00"),
-                post: "1",
+                post: "3",
             },
         ]);
 
