@@ -159,7 +159,7 @@
         </div>
       </div>
 
-      <div class="flex justify-center">
+      <div class="flex justify-center mt-5">
         <PrimaryButton label="Registreer" />
       </div>
       <div class="flex justify-center">
