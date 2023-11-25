@@ -11,6 +11,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { PostenModule } from './posten/posten.module';
 import { HolidaysModule } from './holidays/holidays.module';
+import { ReportsModule } from './reports/reports.module';
 
 
 @Module({
@@ -33,6 +34,7 @@ import { HolidaysModule } from './holidays/holidays.module';
      UsersModule,
      PostenModule,
      HolidaysModule,
+     ReportsModule,
   ],
   
   controllers: [AppController],
