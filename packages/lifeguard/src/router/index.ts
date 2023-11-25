@@ -32,7 +32,11 @@ const router = createRouter({
       component: () => import('../views/redder/Report.vue'),
       meta: { shouldBeAuthenticated: true },
     },
-
+    {
+      path: '/redder/chooseschedule',
+      component: () => import('../views/redder/ChooseSchedule.vue'),
+      meta: { shouldBeAuthenticated: true },
+    },
 
     {
       path: '/jobs',
