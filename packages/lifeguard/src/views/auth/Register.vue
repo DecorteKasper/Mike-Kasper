@@ -180,7 +180,7 @@ import useFirebase from '@/composables/useFirebase'
 import { useMutation } from '@vue/apollo-composable'
 import { useI18n } from 'vue-i18n'
 import useCustomUser from '@/composables/useCustomUser'
-import type { CustomUser } from '@/interfaces/user.interface'
+import type { Iuser } from '@/interfaces/user.interface'
 import { ADD_USER } from '@/graphql/user.mutation'
 import PrimaryButton from '@/components/generic/PrimaryButton.vue'
 import { useVuelidate } from '@vuelidate/core'
@@ -200,7 +200,7 @@ export default {
     const { register } = useFirebase();
     const { customUser } = useCustomUser();
     const error = ref<AuthError | null>(null);
-    const { mutate: addUser, loading: addUserLoading, onDone: addUserCreated } = useMutation<CustomUser>(ADD_USER);
+    const { mutate: addUser, loading: addUserLoading, onDone: addUserCreated } = useMutation<Iuser>(ADD_USER);
 
     // data multiselect
     // const selected = ref(null)
@@ -270,7 +270,7 @@ export default {
                 street: null,
                 numberOfHouse: null,
                 birth: null,
-                locale: "nl",
+                // locale: "nl",
                 role: parseInt(newUser.job),
                 bathingPlace: newUser.badplaats,
               },

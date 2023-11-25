@@ -29,6 +29,10 @@ export class User {
 
   @Column() // Database link - Typeorm
   @Field({ nullable: true })
+  photoURL: string
+
+  @Column() // Database link - Typeorm
+  @Field({ nullable: true })
   email: string
 
   @Column() // Database link - Typeorm
@@ -38,6 +42,10 @@ export class User {
   @Column() // Database link - Typeorm
   @Field({ nullable: true })
   zipCode: number
+
+  @Column() // Database link - Typeorm
+  @Field({ nullable: true })
+  city: string
 
   @Column() // Database link - Typeorm
   @Field({ nullable: true })
@@ -51,17 +59,20 @@ export class User {
   @Field({ nullable: true })
   birth: Date
 
-  @Column()
-  @Field()
-  locale?: string
+  @Column() // Database link - Typeorm
+  @Field({ nullable: true })
+  birthPlace: string
 
+  // @Column()
+  // @Field()
+  // locale?: string
 
   @Column()
-  @Field()
+  @Field({ nullable: true })
   bathingPlace?: string
 
   @Column({ type: Number, default: Role.REDDER })
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   role: Role
 
   @CreateDateColumn({ type: 'timestamp', nullable: true })
