@@ -1,21 +1,30 @@
 <template>
     <Container>
-        <div class="flex flex-col">
-            <h1 class="text-center font-lato font-bold text-lg">Keuze verlofdagen</h1>
+        <div class="flex flex-col md:mb-12">
+            <h1 class="text-center font-lato font-bold text-lg md:text-xl">Keuze verlofdagen</h1>
             <div class="bg-greenx mt-1 w-[70px] h-[2px] rounded-full m-auto"></div>
         </div>
-        <p class="mt-10">U heeft nog <span class="text-redx font-semibold">{{ overigeVerlofDagen }}</span> te verdelen</p>
-        <div class="bg-white w-full h-auto rounded-cardRadius shadow-cardShadow px-6 py-7 mt-3 lg:max-w-5xl m-auto">
-            <Calendar 
-                borderless
-                expanded
-                :attributes="attributes" 
-                @dayclick="onDayClick" />
-        </div>
 
-         <ul>
-              <li v-for="selectedDate in days" :key="selectedDate.id">{{ formatDate(selectedDate.date) }}</li>
-          </ul>
+        <p class="mt-12 mb-2 md:mb-8 text-center"><span class="text-redx text-lg font-semibold">{{ overigeVerlofDagen }}</span>  {{ dayText }} beschikbaar</p>
+
+        <div class="flex flex-col md:flex-row justify-around">
+            <div class="bg-white w-full md:w-xl h-auto rounded-cardRadius shadow-cardShadow px-4 py-6 mt-3">
+                <Calendar 
+                    borderless
+                    expanded
+                    :attributes="(attributes as any)"
+                    @dayclick="onDayClick" />
+            </div>
+    
+            <div class="mt-10 lg:min-w-[20rem]">
+                <h2 class="font-bold text-redx mb-1">Gekozen verlofdagen:</h2>
+                <ul>
+                    <li v-for="selectedDate in days" :key="selectedDate.id"><span class="text-redx text-lg">• </span><span class="mb-5">{{ formatDate(selectedDate.date) }}</span></li>
+                </ul>
+
+                <PrimaryButton label="Verstuur verlofdagen" @click="logSelectedDates" class="mt-10 mb-10 flex m-auto md:mb-0 md:ml-0" v-if="overigeVerlofDagen === 0"/>
+            </div>
+        </div>
     </Container>
 </template>
 
@@ -25,20 +34,30 @@ import Container from '@/components/generic/Container.vue';
 import { ref, computed } from 'vue';
 import { Calendar, DatePicker } from 'v-calendar';
 import 'v-calendar/style.css';
+import PrimaryButton from '@/components/generic/PrimaryButton.vue';
 
 
 export default {
     components: {
         Container,
-        Calendar
+        Calendar,
+        PrimaryButton,
+    },
+
+     methods: {
+        logSelectedDates() {
+            // Log selected dates in JSON format
+            console.log(this.days);
+        },
     },
 
     
 
     setup() {
+        const maxSelectedDates = 5;
         // Define a type for the 'days' array
         const days = ref<Array<{ id: number; date: string }>>([]);
-        const overigeVerlofDagen = ref<number>(0);
+        const overigeVerlofDagen = ref<number>(maxSelectedDates);
 
         // Define computed properties using computed()
         const dates = computed(() => days.value.map(day => day.date));
@@ -49,17 +68,11 @@ export default {
 
         // Define methods
         const onDayClick = (day: { id: number; date: string }) => {
-            const maxSelectedDates = 5;
             const selectedDatesCount = days.value.length;
-            // const overigeVerlofDagen = (maxSelectedDates-1) - selectedDatesCount;
-            // console.log("Overige dates:", overigeVerlofDagen);
 
             if (selectedDatesCount < maxSelectedDates || isSelected(day)) {
                 const dayDate = new Date(day.date);
                 const dayDateString = dayDate.toLocaleDateString();
-
-                overigeVerlofDagen.value = (maxSelectedDates - 1) - selectedDatesCount;
-                console.log("Overige dates:", overigeVerlofDagen.value);
 
                 const idx = days.value.findIndex(d => {
                     const currentDate = new Date(d.date);
@@ -71,19 +84,30 @@ export default {
                 if (idx >= 0) {
                     // If the date is already selected, remove it
                     days.value.splice(idx, 1);
+                    overigeVerlofDagen.value = (maxSelectedDates + 1) - selectedDatesCount;
+                    console.log("dag terug");
                 } else {
                     // If the limit is not reached, add the selected date
                     days.value.push({
                         id: day.id,
                         date: day.date,
                     });
+
+                    // Sort the array based on the date
+                    days.value.sort((a, b) => {
+                        const dateA = new Date(a.date);
+                        const dateB = new Date(b.date);
+                        return ((dateA as any) - (dateB as any));
+                    });
+
+                    overigeVerlofDagen.value = (maxSelectedDates - 1) - selectedDatesCount;
                 }
             } else {
                 // Remove the last selected date to allow unselecting
                 days.value.pop();
-                console.log('Maximum number of dates reached. Unselecting the latest date.');
+                overigeVerlofDagen.value = (maxSelectedDates + 1) - selectedDatesCount;
             }
-       };
+        };
         const isSelected = (day: { id: number; date: string }) => {
             return days.value.some(d => d.id === day.id && d.date === day.date);
         };
@@ -91,8 +115,13 @@ export default {
         const formatDate = (dateString:any) => {
             const date = new Date(dateString);
             const options = { weekday: 'short', day: 'numeric', month: 'numeric', year: 'numeric' };
-            return date.toLocaleDateString('nl-NL', options);
+            return date.toLocaleDateString('nl-NL', options as any);
         };
+
+        //woord dag veranderen naar dagen als het niet 1 is
+        const dayText = computed(() => {
+            return overigeVerlofDagen.value === 1 ? 'verlofdag' : 'verlofdagen';
+        });
 
         // Return the properties and methods
         return {
@@ -102,6 +131,7 @@ export default {
             formatDate,
             onDayClick,
             overigeVerlofDagen,
+            dayText,
         };
     },
 }
