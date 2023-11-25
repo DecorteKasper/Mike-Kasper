@@ -10,6 +10,7 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { PostenModule } from './posten/posten.module';
+import { HolidaysModule } from './holidays/holidays.module';
 
 
 @Module({
@@ -31,6 +32,7 @@ import { PostenModule } from './posten/posten.module';
      AuthenticationModule,
      UsersModule,
      PostenModule,
+     HolidaysModule,
   ],
   
   controllers: [AppController],
