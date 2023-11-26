@@ -10,9 +10,9 @@ export class Holiday {
   @Field(() => ID)
   id: ObjectId
 
-  // @Column()
-  // @Field()
-  // uid: string
+  @Column()
+  @Field()
+  uid: string
 
   @Column() // Database link - Typeorm
   @Field(() => [String])

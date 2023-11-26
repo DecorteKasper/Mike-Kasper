@@ -12,17 +12,10 @@ export class HolidaysService {
     @InjectRepository(Holiday)
     private readonly holidaysRepository: Repository<Holiday>,
   ) {}
-
-  // create(uid: string, createHolidayInput: CreateHolidayInput) {
-  //   const H = new Holiday()
-  //   H.uid = uid
-  //   H.dates = createHolidayInput.dates
-
-  //   return this.holidaysRepository.save(H)
-  // }
   
   create(createHolidayInput: CreateHolidayInput) : Promise<Holiday> {
     const H = new Holiday()
+    H.uid = createHolidayInput.uid
     H.dates = createHolidayInput.dates
 
     return this.holidaysRepository.save(H)
