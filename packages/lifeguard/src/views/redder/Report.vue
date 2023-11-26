@@ -4,6 +4,7 @@
             <h1 class="text-center font-lato font-bold text-lg">Dagelijks verslag</h1>
             <p class="text-redx text-center mt-2">{{ currentDateString() }}</p>
 
+            <p>{{ uidUser }}</p>
 <!-- Form -->
             <v-form @submit.prevent="submitForm" lazy-validation>
                 <div class="mt-8 font-lato">
@@ -253,12 +254,13 @@
 
 
 <script lang="ts">
-import { reactive, ref } from 'vue';
+import { ref } from 'vue';
 import Container from '@/components/generic/Container.vue';
 import '@mdi/font/css/materialdesignicons.css';
 import type { Ireport } from '@/interfaces/report.interface';
 import { ADD_REPORT } from '@/graphql/report.mutation';
 import { useMutation } from '@vue/apollo-composable';
+import useFirebase from '@/composables/useFirebase';
 
 export default {
     components: {
@@ -269,7 +271,10 @@ export default {
         // Reactive state
         const currentDate = ref(new Date());
         const {mutate: addReport, loading: addReportLoading, error: addReportError} = useMutation<Ireport>(ADD_REPORT);
+        const { firebaseUser } = useFirebase()
+        const uidUser = firebaseUser.value?.uid
 
+        
         const formData = ref({
             timestamp: new Date(),
             aanwezigen: ['A', 'C', 'D', 'F'],
@@ -300,7 +305,7 @@ export default {
             } else {
                 addReport({
                     createReportInput: {
-                        uid: "dsfdsfsfdsf234567890dfds",
+                        uid: uidUser,
                         aanwezigen: formData.value.aanwezigen,
                         vervanging: formData.value.valueVervanging,
                         radioKindVerloren: formData.value.valueRadioKind,
@@ -375,6 +380,7 @@ export default {
             showAreaMateriaal,
             hideAreaMateriaal,
             currentDateString,
+            uidUser,
         };
     },
 };
