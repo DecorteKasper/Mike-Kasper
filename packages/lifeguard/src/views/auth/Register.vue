@@ -204,7 +204,7 @@ export default {
 
     // data multiselect
     // const selected = ref(null)
-    const options = ['Oostende', 'Duinbergen', 'Heist', 'Knokke', 'Blankenberge', 'De Haan', 'Bredene', 'Oostduinkerke', 'Koksijde', 'Nieuwpoort', 'Westende', 'Middelkerke', 'Oostende', 'De Panne', 'Zeebrugge', 'Wenduine']
+    const options = ['Knokke-Heist', 'Zeebrugge', 'Blankenberge', 'De Haan', 'Bredene', 'Oostende', 'Middelkerke', 'Nieuwpoort', 'Koksijde', 'De Panne']
 
     const newUser = reactive({
       name: '',
@@ -249,7 +249,6 @@ export default {
     const v$ = useVuelidate(rules, newUser)
 
     const handleRegister = () => {
-
       if (v$.value.$invalid) {
         console.log('Fouten gevonden, form niet submitten!')
         v$.value.$touch()
