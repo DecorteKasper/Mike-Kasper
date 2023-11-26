@@ -11,6 +11,10 @@ export class Report {
   id: ObjectId
 
   @Column() // Database link - Typeorm
+  @Field(() => String)
+  uid: string  
+
+  @Column() // Database link - Typeorm
   @Field(() => [String])
   aanwezigen: string[]
 
@@ -50,8 +54,12 @@ export class Report {
   @Field(() => String, {nullable: true})
   extraInfo: string
 
+  @Column() // Database link - Typeorm
+  @Field(() => Number)
+  reddersPost: number  
+
   @CreateDateColumn({ type: 'timestamp', nullable: true })
   @Field({ nullable: true })
-  createdAt?: Date
+  createdAt: Date
 
 }

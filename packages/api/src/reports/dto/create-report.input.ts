@@ -3,6 +3,9 @@ import { InputType, Field } from '@nestjs/graphql';
 @InputType()
 export class CreateReportInput
 {
+  @Field(() => String)
+  uid: string  
+
   @Field(() => [String])
   aanwezigen: string[]
 
@@ -32,5 +35,8 @@ export class CreateReportInput
 
   @Field(() => String, { nullable: true })
   extraInfo: string
+
+  @Field(() => Number, { nullable: true })
+  reddersPost: number
 
 }

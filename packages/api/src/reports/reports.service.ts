@@ -14,6 +14,7 @@ export class ReportsService {
 
   create(createReportInput: CreateReportInput) : Promise<Report> {    
     const R = new Report()
+    R.uid = createReportInput.uid
     R.aanwezigen = createReportInput.aanwezigen
     R.vervanging = createReportInput.vervanging ?? null
     R.radioKindVerloren = createReportInput.radioKindVerloren
@@ -24,6 +25,7 @@ export class ReportsService {
     R.radioMateriaal = createReportInput.radioMateriaal
     R.textMateriaal = createReportInput.textMateriaal ?? null
     R.extraInfo = createReportInput.extraInfo ?? null
+    R.reddersPost = createReportInput.reddersPost
 
     return this.reportsRepository.save(R)
   }
