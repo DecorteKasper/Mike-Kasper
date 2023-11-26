@@ -4,7 +4,6 @@
             <h1 class="text-center font-lato font-bold text-lg">Dagelijks verslag</h1>
             <p class="text-redx text-center mt-2">{{ currentDateString() }}</p>
 
-            <p>{{ uidUser }}</p>
 <!-- Form -->
             <v-form @submit.prevent="submitForm" lazy-validation>
                 <div class="mt-8 font-lato">
