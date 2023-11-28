@@ -35,8 +35,8 @@ import { ref, computed } from 'vue';
 import { Calendar, DatePicker } from 'v-calendar';
 import 'v-calendar/style.css';
 import PrimaryButton from '@/components/generic/PrimaryButton.vue';
-import { useMutation } from '@apollo/client';
-import MutationFunctionOptions from '@apollo/client'
+import { useMutation } from '@vue/apollo-composable';
+
 import type { Iholiday } from '@/interfaces/holiday.interface';
 import { ADD_HOLIDAY } from '@/graphql/holiday.mutation';
 import useFirebase from '@/composables/useFirebase';
@@ -55,7 +55,8 @@ export default {
         const overigeVerlofDagen = ref<number>(maxSelectedDates);
 
         //const { mutate: addHoliday } = useMutation(ADD_HOLIDAY);
-        const { mutate: addHoliday } = useMutation<Iholiday, MutationFunctionOptions<Iholiday>>(ADD_HOLIDAY);
+        const { mutate: addHoliday } = useMutation<Iholiday>(ADD_HOLIDAY);
+
 
         const { firebaseUser } = useFirebase()
         const uidUser = firebaseUser.value?.uid
@@ -126,7 +127,7 @@ export default {
         const logSelectedDates = () => {
             addHoliday({
                 createHolidayInput: {
-                    userId: uidUser,
+                    uid: uidUser,
                     dates: dates.value,
                 },
             });
