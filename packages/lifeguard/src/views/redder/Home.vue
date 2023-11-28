@@ -1,6 +1,6 @@
 <template>
   <Container>
-    <h1 class="text-2xl text-center font-lato font-bold">Dag {{ userData?.name }}, jij moet vandaag <span class="text-red">werken</span>!</h1>
+    <h1 class="text-2xl text-center font-lato font-bold">Dag {{ nameUser }}, jij moet vandaag <span class="text-red">werken</span>!</h1>
     <div class="flex flex-col items-center justify-center bg-white font-lato rounded-cardRadius shadow-cardShadow mt-10 h-full md:h-72 max-w-7xl m-auto">
       <div class="flex flex-col md:flex-row items-center justify-between h-full w-full px-8 py-8">
         <div class="flex flex-col items-center">
@@ -113,10 +113,12 @@ export default defineComponent({
     const monthName = currentDate.toLocaleDateString('nl-NL', { month: 'long' });
     const userData = ref<User | null>();
     const { firebaseUser } = useFirebase();
-
+    
     const { loading: userLoading, result: user, error: userError } = useQuery(GET_USER_BY_UID, {
       uid: firebaseUser.value?.uid,
     });
+    
+    const nameUser = user.value?.userByUid.name;
 
     //const weatherIcon:any = weatherIcon;
     const temperature = ref("--");
@@ -204,6 +206,7 @@ export default defineComponent({
       highTide,
       lowTide,
       weatherIconUrl,
+      nameUser,
     };
   },
 });
