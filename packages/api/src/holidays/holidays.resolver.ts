@@ -10,10 +10,6 @@ import { UserRecord } from 'firebase-admin/auth';
 export class HolidaysResolver {
   constructor(private readonly holidaysService: HolidaysService) {}
 
-  // @Mutation(() => Holiday)
-  // createHoliday(@Args('createHolidayInput') createHolidayInput: CreateHolidayInput, @FirebaseUser() H: UserRecord){
-  //   return this.holidaysService.create(H.uid, createHolidayInput);
-  // }
   @Mutation(() => Holiday)
   createHoliday(@Args('createHolidayInput') createHolidayInput: CreateHolidayInput) : Promise<Holiday> {
     return this.holidaysService.create(createHolidayInput);

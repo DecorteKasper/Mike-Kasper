@@ -2,7 +2,9 @@ import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
 export class CreateHolidayInput {  
+  @Field(() => String)
+  uid: string
 
-  @Field(() => [String], { description: 'All the dates the user won\'t be working' })
+  @Field(() => [String])
   dates: string[]
 }

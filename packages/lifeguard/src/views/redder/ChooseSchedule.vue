@@ -35,6 +35,11 @@ import { ref, computed } from 'vue';
 import { Calendar, DatePicker } from 'v-calendar';
 import 'v-calendar/style.css';
 import PrimaryButton from '@/components/generic/PrimaryButton.vue';
+import { useMutation } from '@vue/apollo-composable';
+
+import type { Iholiday } from '@/interfaces/holiday.interface';
+import { ADD_HOLIDAY } from '@/graphql/holiday.mutation';
+import useFirebase from '@/composables/useFirebase';
 
 
 export default {
@@ -42,22 +47,19 @@ export default {
         Container,
         Calendar,
         PrimaryButton,
-    },
-
-     methods: {
-        logSelectedDates() {
-            // Log selected dates in JSON format
-            console.log(this.days);
-        },
-    },
-
-    
+    },    
 
     setup() {
         const maxSelectedDates = 5;
-        // Define a type for the 'days' array
         const days = ref<Array<{ id: number; date: string }>>([]);
         const overigeVerlofDagen = ref<number>(maxSelectedDates);
+
+        //const { mutate: addHoliday } = useMutation(ADD_HOLIDAY);
+        const { mutate: addHoliday } = useMutation<Iholiday>(ADD_HOLIDAY);
+
+
+        const { firebaseUser } = useFirebase()
+        const uidUser = firebaseUser.value?.uid
 
         // Define computed properties using computed()
         const dates = computed(() => days.value.map(day => day.date));
@@ -85,7 +87,6 @@ export default {
                     // If the date is already selected, remove it
                     days.value.splice(idx, 1);
                     overigeVerlofDagen.value = (maxSelectedDates + 1) - selectedDatesCount;
-                    console.log("dag terug");
                 } else {
                     // If the limit is not reached, add the selected date
                     days.value.push({
@@ -123,6 +124,18 @@ export default {
             return overigeVerlofDagen.value === 1 ? 'verlofdag' : 'verlofdagen';
         });
 
+        const logSelectedDates = () => {
+            addHoliday({
+                createHolidayInput: {
+                    uid: uidUser,
+                    dates: dates.value,
+                },
+            });
+
+            // Log selected dates in JSON format
+            console.log(days.value);
+        };
+
         // Return the properties and methods
         return {
             days,
@@ -132,6 +145,8 @@ export default {
             onDayClick,
             overigeVerlofDagen,
             dayText,
+            logSelectedDates,
+            addHoliday,
         };
     },
 }
