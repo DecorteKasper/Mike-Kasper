@@ -83,6 +83,16 @@
       </div>
     </div>
 
+    <div>
+    <p>Holidays:</p>
+    <ul>
+      <li v-for="holiday in holidays" :key="holiday.uid">
+        {{ holiday.dates }}
+      </li>
+    </ul>
+  </div>
+
+
   </Container>
 </template>
 
@@ -95,6 +105,8 @@ import UserShown from '@/components/generic/UserShown.vue';
 import { GET_USER_BY_UID } from '@/graphql/user.query';
 import useFirebase from '@/composables/useFirebase';
 import { useQuery } from '@vue/apollo-composable';
+import { ALL_HOLIDAYS } from '@/graphql/holiday.query';
+import type { Iholiday } from '@/interfaces/holiday.interface';
 
 interface User {
   name: string;
@@ -116,6 +128,16 @@ export default defineComponent({
     
     const { loading: userLoading, result: user, error: userError } = useQuery(GET_USER_BY_UID, {
       uid: firebaseUser.value?.uid,
+    });
+    const { loading: holidaysLoading, result: holidaysResult, error: holidaysError } = useQuery<{ holidays: Iholiday[] }>(ALL_HOLIDAYS);;
+
+ 
+    const holidays = ref<Iholiday[] | null>(null);
+    watch(() => holidaysResult.value, (newValue) => {
+      console.log('Holidays Result:', newValue);
+      if (newValue && newValue.holidays) {
+        holidays.value = newValue.holidays;
+      }
     });
     
     const nameUser = user.value?.userByUid.name;
@@ -207,6 +229,7 @@ export default defineComponent({
       lowTide,
       weatherIconUrl,
       nameUser,
+      holidays,
     };
   },
 });
