@@ -18,6 +18,10 @@ export class Holiday {
   @Field(() => [String])
   dates: string[]
 
+  @Column()
+  @Field(() => Number)
+  post: number
+
   @CreateDateColumn({ type: 'timestamp', nullable: true })
   @Field({ nullable: true })
   createdAt?: Date
