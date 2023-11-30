@@ -79,19 +79,12 @@
 
       <div class="bg-white w-full max-w-80 min-h-[20rem] mt-10 md:mt-0 h-auto rounded-cardRadius shadow-cardShadow px-6 py-5">
         <p class="text-center mb-8 font-bold text-base mt-2">Verslag {{ dayOfMonth }} {{ monthName }}</p>
-        <p class="text-center">Verslag nog niet ingediend</p>
+        <p class="text-center md:mt-12">{{ reportInfo }}</p>
+        <img class="max-w-[5rem] m-auto mt-4" v-if="reportInfo === 'Verslag is nog niet ingediend'" src="@/assets/icons/errorReport.svg" alt="Not Submitted Icon" />
+        <img class="max-w-[5rem] m-auto mt-4" v-else src="@/assets/icons/checkReport.svg" alt="Submitted Icon" />
+        <button @click="goToReport" class="bg-greenx mt-10 px-8 py-2 rounded-lg text-white font-bold block m-auto hover:bg-dark_green" v-if="reportInfo === 'Verslag is nog niet ingediend'">Verslag invullen</button>
       </div>
     </div>
-
-    <div>
-    <p>Holidays:</p>
-    <ul>
-      <li v-for="holiday in holidays" :key="holiday.uid">
-        {{ holiday.dates }}
-      </li>
-    </ul>
-  </div>
-
 
   </Container>
 </template>
@@ -107,6 +100,9 @@ import useFirebase from '@/composables/useFirebase';
 import { useQuery } from '@vue/apollo-composable';
 import { ALL_HOLIDAYS } from '@/graphql/holiday.query';
 import type { Iholiday } from '@/interfaces/holiday.interface';
+import { ALL_RECORDS } from '@/graphql/report.query';
+import type { Ireport } from '@/interfaces/report.interface';
+import { useRouter } from 'vue-router';
 
 interface User {
   name: string;
@@ -123,26 +119,13 @@ export default defineComponent({
     const dayOfWeek = currentDate.toLocaleDateString('nl-NL', { weekday: 'long' });
     const dayOfMonth = currentDate.getDate();
     const monthName = currentDate.toLocaleDateString('nl-NL', { month: 'long' });
-    const userData = ref<User | null>();
     const { firebaseUser } = useFirebase();
+    const router = useRouter();
     
-    const { loading: userLoading, result: user, error: userError } = useQuery(GET_USER_BY_UID, {
-      uid: firebaseUser.value?.uid,
-    });
-    const { loading: holidaysLoading, result: holidaysResult, error: holidaysError } = useQuery<{ holidays: Iholiday[] }>(ALL_HOLIDAYS);;
-
- 
+    const userData = ref<User | null>();
     const holidays = ref<Iholiday[] | null>(null);
-    watch(() => holidaysResult.value, (newValue) => {
-      console.log('Holidays Result:', newValue);
-      if (newValue && newValue.holidays) {
-        holidays.value = newValue.holidays;
-      }
-    });
-    
-    const nameUser = user.value?.userByUid.name;
-
-    //const weatherIcon:any = weatherIcon;
+    const reports = ref<Ireport[] | null>(null);
+    const todayReports = ref<Ireport[] | null>(null);
     const temperature = ref("--");
     const windSpeed = ref("--");
     const uvIndex = ref("-");
@@ -150,8 +133,49 @@ export default defineComponent({
     const highTide = ref("--:--");
     const lowTide = ref("--:--");
     const weatherIconUrl = ref("");
+    const reportInfo = ref("");
+    const nameUser = ref("redder");
+    //const weatherIcon:any = weatherIcon;
+    
+    const { loading: userLoading, result: user, error: userError } = useQuery(GET_USER_BY_UID, {uid: firebaseUser.value?.uid,});
+    const { loading: holidaysLoading, result: holidaysResult, error: holidaysError } = useQuery<{ holidays: Iholiday[] }>(ALL_HOLIDAYS);;
+    const { loading: reportsLoading, result: reportsResult, error: reportsError } = useQuery<{ reports: Ireport[] }>(ALL_RECORDS);
+    
+//----- WATCH FUNTIONS -----//
+    //Holiday
+    watch(() => holidaysResult.value, (newValue) => {
+      if (newValue && newValue.holidays) {
+        holidays.value = newValue.holidays;
+      }
+    });
+
+    //Reports
+    watch(() => reportsResult.value, (newValue) => {
+      if (newValue && newValue.reports) {
+        reports.value = newValue.reports;
+        // Filter reports that have createdAt date equal to today
+        const today = new Date().toISOString().split('T')[0];
+        todayReports.value = reports.value.filter((report) => report.createdAt.startsWith(today));
+
+        if (todayReports.value?.length === 0) {
+          reportInfo.value = "Verslag is nog niet ingediend";
+        } else {
+          reportInfo.value = "Verslag is ingediend";
+        }
+      }
+    });
+
+    //User
+    watch(user, (newValue) => {
+      if (newValue && newValue.userByUid) {
+        userData.value = newValue.userByUid;
+        nameUser.value = user.value?.userByUid.name;
+      }
+    });
 
 
+//----- OTHER FUNTIONS -----//  
+    //Get weather from API
     const fetchWeather = async (position: any) => {
       const { latitude, longitude } = position.coords;
       const apiKey = 'cc553388ef0a44f0a9f142826232811';
@@ -188,7 +212,7 @@ export default defineComponent({
           // });
 
           // console.log("Filtered tides: ", filteredTides);
-          console.log(marineData.forecast.forecastday[0].day)
+          //console.log(marineData.forecast.forecastday[0].day)
 
 
 
@@ -208,11 +232,12 @@ export default defineComponent({
       navigator.geolocation.getCurrentPosition(fetchWeather);
     }
 
-    watch(user, (newValue) => {
-      if (newValue && newValue.userByUid) {
-        userData.value = newValue.userByUid;
-      }
-    });
+    //Ga naar pagina
+    const goToReport = () => {
+      // Navigate to the specific page
+      router.push('/redder/report'); // Update this with your actual page path
+    };
+
 
     return {
       weatherIcon,
@@ -230,6 +255,9 @@ export default defineComponent({
       weatherIconUrl,
       nameUser,
       holidays,
+      reports,
+      reportInfo,
+      goToReport,
     };
   },
 });

@@ -14,6 +14,7 @@ query {
     textMateriaal
     extraInfo
     reddersPost
+    createdAt
   }
 }
 `
