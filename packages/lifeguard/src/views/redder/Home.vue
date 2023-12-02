@@ -45,34 +45,25 @@
         <div class="flex flex-col">
           <p>Redders</p>
           <div class="w-full h-[2px] rounded-lg bg-red mb-6 mt-1"></div>
+          <!-- <UserShown />
           <UserShown />
           <UserShown />
-          <UserShown />
-          <UserShown />
+          <UserShown /> -->
         </div>
         <div class="flex flex-col mt-9">
           <p>EHBO</p>
-          <div class="w-full h-[2px] rounded-lg bg-green mb-6 mt-1"></div>
-          <UserShown />
+          <div class="w-full h-[2px] rounded-lg bg-greenx mb-6 mt-1"></div>
+          <!-- <UserShown /> -->
         </div>
       </div>
 
       <div class="bg-white w-full max-w-80 min-h-[20rem] h-auto mt-10 md:mt-0 rounded-cardRadius shadow-cardShadow px-6 py-5">
-        <p class="text-center mb-8 font-bold text-base mt-2">Verlofdagen</p>
+        <p class="text-center mb-2 font-bold text-base mt-2">Verlofdagen</p>
         <div class="overflow-scroll max-h-96">
-          <div class="flex flex-col">
-            <p>01/07/2024</p>
-            <div class="w-full h-[2px] rounded-lg bg-dark_green mb-6 mt-1"></div>
-            <UserShown />
-            <UserShown />
-            <UserShown />
-          </div>
-          <div class="flex flex-col mt-9">
-            <p>02/07/2024</p>
-            <div class="w-full h-[2px] rounded-lg bg-dark_green mb-6 mt-1"></div>
-            <UserShown />
-            <UserShown />
-            <UserShown />
+          <div v-for="(date, index) in holidaysFormatted" :key="index" class="flex flex-col">
+            <p class="mt-6">{{ date }}</p>
+            <div class="w-full h-[2px] rounded-lg bg-dark_green mb-4 mt-1"></div>
+            <UserShown v-for="user in getUsersForDate(date)" :key="user.id" :name="user.name" />
           </div>
         </div>
       </div>
@@ -91,18 +82,18 @@
 
 
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent, ref, watch, computed } from 'vue';
 import Container from '@/components/generic/Container.vue';
 import weatherIcon from '@/assets/photos/weather.svg';
 import UserShown from '@/components/generic/UserShown.vue';
 import { GET_USER_BY_UID } from '@/graphql/user.query';
 import useFirebase from '@/composables/useFirebase';
 import { useQuery } from '@vue/apollo-composable';
-import { ALL_HOLIDAYS } from '@/graphql/holiday.query';
-import type { Iholiday } from '@/interfaces/holiday.interface';
-import { ALL_RECORDS } from '@/graphql/report.query';
-import type { Ireport } from '@/interfaces/report.interface';
 import { useRouter } from 'vue-router';
+import { ALL_HOLIDAYS } from '@/graphql/holiday.query';
+import { ALL_RECORDS } from '@/graphql/report.query';
+import type { Iholiday } from '@/interfaces/holiday.interface';
+import type { Ireport } from '@/interfaces/report.interface';
 
 interface User {
   name: string;
@@ -111,7 +102,7 @@ interface User {
 export default defineComponent({
   components: {
     Container,
-    UserShown,
+    UserShown, 
   },
 
   setup() {
@@ -119,11 +110,14 @@ export default defineComponent({
     const dayOfWeek = currentDate.toLocaleDateString('nl-NL', { weekday: 'long' });
     const dayOfMonth = currentDate.getDate();
     const monthName = currentDate.toLocaleDateString('nl-NL', { month: 'long' });
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
     const { firebaseUser } = useFirebase();
     const router = useRouter();
     
     const userData = ref<User | null>();
     const holidays = ref<Iholiday[] | null>(null);
+    const holidaysFormatted = ref<string[] | null>(null);
     const reports = ref<Ireport[] | null>(null);
     const todayReports = ref<Ireport[] | null>(null);
     const temperature = ref("--");
@@ -142,10 +136,22 @@ export default defineComponent({
     const { loading: reportsLoading, result: reportsResult, error: reportsError } = useQuery<{ reports: Ireport[] }>(ALL_RECORDS);
     
 //----- WATCH FUNTIONS -----//
-    //Holiday
-    watch(() => holidaysResult.value, (newValue) => {
+    //Holidays of current user
+     watch(() => holidaysResult.value, (newValue) => {
       if (newValue && newValue.holidays) {
-        holidays.value = newValue.holidays;
+        const currentUserUid = user.value?.userByUid.uid;
+        if (currentUserUid) {
+          holidays.value = newValue.holidays
+            .filter((holiday) => holiday.uid === currentUserUid)
+            .map((holiday) => ({
+              ...holiday,
+              dates: holiday.dates.map((date) => formatHolidayDates(date)),
+            }));
+           holidaysFormatted.value = holidays.value.flatMap((holiday) => holiday.dates);
+        } else {
+          holidays.value = null;
+          holidaysFormatted.value = [];
+        }
       }
     });
 
@@ -172,6 +178,7 @@ export default defineComponent({
         nameUser.value = user.value?.userByUid.name;
       }
     });
+
 
 
 //----- OTHER FUNTIONS -----//  
@@ -234,8 +241,21 @@ export default defineComponent({
 
     //Ga naar pagina
     const goToReport = () => {
-      // Navigate to the specific page
-      router.push('/redder/report'); // Update this with your actual page path
+      router.push('/redder/report');
+    };
+
+    //Format holiday dates
+    function formatHolidayDates(dateString:any) {
+      const date = new Date(dateString);
+      const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+      return formattedDate;
+    }
+
+    // Function to get users for a specific date (replace with your actual logic)
+    const getUsersForDate = (date:any) => {
+      // Replace this with your logic to fetch users for the given date
+      // You may need to use the date in your GraphQL query or other data fetching mechanism
+      return [{ id: 1, name: 'Kasper Decorte' }]
     };
 
 
@@ -258,6 +278,8 @@ export default defineComponent({
       reports,
       reportInfo,
       goToReport,
+      getUsersForDate,
+      holidaysFormatted,
     };
   },
 });
