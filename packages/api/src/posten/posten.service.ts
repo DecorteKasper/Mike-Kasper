@@ -16,16 +16,16 @@ export class PostenService {
 
   create(createPostenInput: CreatePostenInput): Promise<Posten> {
     const P = new Posten()
-    P.namePost = createPostenInput.namePost
-    P.nameRedderA = createPostenInput.nameRedderA
-    P.nameRedderB = createPostenInput.nameRedderB
-    P.nameRedderC = createPostenInput.nameRedderC
-    P.nameRedderD = createPostenInput.nameRedderD
-    P.nameRedderE = createPostenInput.nameRedderE
-    P.nameRedderF = createPostenInput.nameRedderF
-    P.nameRedderG = createPostenInput.nameRedderG
-    P.nameEhbo1 = createPostenInput.nameEhbo1
-    P.nameEhbo2 = createPostenInput.nameEhbo2
+    P.numberPost = createPostenInput.numberPost
+    P.uidRedderA = createPostenInput.uidRedderA
+    P.uidRedderB = createPostenInput.uidRedderB
+    P.uidRedderC = createPostenInput.uidRedderC
+    P.uidRedderD = createPostenInput.uidRedderD
+    P.uidRedderE = createPostenInput.uidRedderE
+    P.uidRedderF = createPostenInput.uidRedderF
+    P.uidRedderG = createPostenInput.uidRedderG
+    P.uidEhbo1 = createPostenInput.uidEhbo1 ?? null
+    P.uidEhbo2 = createPostenInput.uidEhbo2 ?? null
 
     return this.postenRepository.save(P)
   }

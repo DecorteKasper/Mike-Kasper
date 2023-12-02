@@ -1,51 +1,52 @@
-import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { ObjectId } from 'mongodb';
-import { Column, ObjectIdColumn } from 'typeorm';
+import { Column, Entity, ObjectIdColumn } from 'typeorm';
 
+@Entity()
 @ObjectType()
 export class Posten {
   
-  @Field(() => ID)
   @ObjectIdColumn()
+  @Field(() => ID)
   id: ObjectId
 
   @Column()
-  @Field({ nullable: false })
-  namePost: string
+  @Field(() => Number)
+  numberPost: number
+
+  @Column(() => String)
+  @Field()
+  uidRedderA: string
 
   @Column()
-  @Field({ nullable: false })
-  nameRedderA: string
+  @Field(() => String)
+  uidRedderB: string
 
   @Column()
-  @Field({ nullable: false })
-  nameRedderB: string
+  @Field(() => String)
+  uidRedderC: string
 
   @Column()
-  @Field({ nullable: false })
-  nameRedderC: string
+  @Field(() => String)
+  uidRedderD: string
 
   @Column()
-  @Field({ nullable: false })
-  nameRedderD: string
+  @Field(() => String)
+  uidRedderE: string
 
   @Column()
-  @Field({ nullable: false })
-  nameRedderE: string
+  @Field(() => String)
+  uidRedderF: string
 
   @Column()
-  @Field({ nullable: false })
-  nameRedderF: string
+  @Field(() => String)
+  uidRedderG: string
 
-  @Column()
-  @Field({ nullable: false })
-  nameRedderG: string
+  @Column({nullable: true})
+  @Field(() => String, { nullable: true })
+  uidEhbo1?: string
 
-  @Column()
-  @Field({ nullable: true })
-  nameEhbo1: string
-
-  @Column()
-  @Field({ nullable: true })
-  nameEhbo2: string
+  @Column({nullable: true})
+  @Field(() => String, { nullable: true })
+  uidEhbo2?: string
 }
