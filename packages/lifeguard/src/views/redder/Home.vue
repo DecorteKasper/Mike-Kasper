@@ -60,13 +60,14 @@
       <div class="bg-white w-full max-w-80 min-h-[20rem] h-auto mt-10 md:mt-0 rounded-cardRadius shadow-cardShadow px-6 py-5">
         <p class="text-center mb-2 font-bold text-base mt-2">Verlofdagen</p>
         <div class="overflow-scroll max-h-96">
-          <div v-for="(date, index) in holidaysFormatted" :key="index" class="flex flex-col">
-            <p class="mt-6">{{ date }}</p>
+          <div v-for="(group, index) in holidaysFormatted" :key="index" class="flex flex-col">
+            <p class="mt-6">{{ group.date }}</p>
             <div class="w-full h-[2px] rounded-lg bg-dark_green mb-4 mt-1"></div>
-            <UserShown v-for="user in getUsersForDate(date)" :key="user.id" :name="user.name" />
+            <UserShown v-for="user in group.users" :key="user.uid" :name="user.name" />
           </div>
         </div>
       </div>
+
 
       <div class="bg-white w-full max-w-80 min-h-[20rem] mt-10 md:mt-0 h-auto rounded-cardRadius shadow-cardShadow px-6 py-5">
         <p class="text-center mb-8 font-bold text-base mt-2">Verslag {{ dayOfMonth }} {{ monthName }}</p>
@@ -82,7 +83,7 @@
 
 
 <script lang="ts">
-import { defineComponent, ref, watch, computed } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import Container from '@/components/generic/Container.vue';
 import weatherIcon from '@/assets/photos/weather.svg';
 import UserShown from '@/components/generic/UserShown.vue';
@@ -92,11 +93,16 @@ import { useQuery } from '@vue/apollo-composable';
 import { useRouter } from 'vue-router';
 import { ALL_HOLIDAYS } from '@/graphql/holiday.query';
 import { ALL_RECORDS } from '@/graphql/report.query';
+import { ALL_POSTEN } from '@/graphql/post.query';
+import { GET_USERS } from '@/graphql/user.query';
+import { GET_POST_BY_NUMBER } from '@/graphql/post.query';
+import type { Ipost } from '@/interfaces/post.interface';
 import type { Iholiday } from '@/interfaces/holiday.interface';
 import type { Ireport } from '@/interfaces/report.interface';
 
 interface User {
   name: string;
+  uid: string;
 }
 
 export default defineComponent({
@@ -116,8 +122,14 @@ export default defineComponent({
     const router = useRouter();
     
     const userData = ref<User | null>();
+    const currentUserUid = firebaseUser.value?.uid;
+    const currentUserPost = ref<number | null>(null);
     const holidays = ref<Iholiday[] | null>(null);
-    const holidaysFormatted = ref<string[] | null>(null);
+    //    const holidaysFormatted = ref<string[] | null>(null);
+    //const holidaysFormatted = ref<{ dates: { date: string; users: User[] }[] }[] | null>(null);
+    const holidaysFormatted = ref<{ date: string; users: { name: string; uid: string }[] }[] | null>(null);
+
+
     const reports = ref<Ireport[] | null>(null);
     const todayReports = ref<Ireport[] | null>(null);
     const temperature = ref("--");
@@ -134,26 +146,86 @@ export default defineComponent({
     const { loading: userLoading, result: user, error: userError } = useQuery(GET_USER_BY_UID, {uid: firebaseUser.value?.uid,});
     const { loading: holidaysLoading, result: holidaysResult, error: holidaysError } = useQuery<{ holidays: Iholiday[] }>(ALL_HOLIDAYS);;
     const { loading: reportsLoading, result: reportsResult, error: reportsError } = useQuery<{ reports: Ireport[] }>(ALL_RECORDS);
+    const { loading: postLoading, result: postResult, error: postError } = useQuery(GET_POST_BY_NUMBER, { numberPost: 4});
+    const { loading: postenLoading, result: postenResult, error: postenError } = useQuery<{ posten: Ipost[] }>(ALL_POSTEN);
+    const { loading: usersLoading, result: usersResult, error: usersError } = useQuery<{ users: User[] }>(GET_USERS);
+
     
 //----- WATCH FUNTIONS -----//
     //Holidays of current user
-     watch(() => holidaysResult.value, (newValue) => {
-      if (newValue && newValue.holidays) {
-        const currentUserUid = user.value?.userByUid.uid;
-        if (currentUserUid) {
-          holidays.value = newValue.holidays
-            .filter((holiday) => holiday.uid === currentUserUid)
-            .map((holiday) => ({
-              ...holiday,
-              dates: holiday.dates.map((date) => formatHolidayDates(date)),
-            }));
-           holidaysFormatted.value = holidays.value.flatMap((holiday) => holiday.dates);
-        } else {
-          holidays.value = null;
-          holidaysFormatted.value = [];
-        }
-      }
-    });
+    //  watch(() => holidaysResult.value, (newValue) => {
+    //   if (newValue && newValue.holidays) {
+    //     if (currentUserUid) {
+    //       holidays.value = newValue.holidays
+    //         .filter((holiday) => holiday.uid === currentUserUid)
+    //         .map((holiday) => ({
+    //           ...holiday,
+    //           dates: holiday.dates.map((date) => formatHolidayDates(date)),
+    //         }));
+    //        holidaysFormatted.value = holidays.value.flatMap((holiday) => holiday.dates);
+    //     } else {
+    //       holidays.value = null;
+    //       holidaysFormatted.value = [];
+    //     }
+    //   }
+    // });
+
+    // Adjust the watch function to group holidays by date
+    watch([usersResult, postResult, holidaysResult], ([usersValue, postValue, holidaysResultValue]) => {
+  if (usersValue && usersValue.users && postValue && postValue.postByNumber && holidaysResultValue && holidaysResultValue.holidays) {
+    const users = usersValue.users as User[];
+    const post = postValue.postByNumber as Ipost;
+    const holidaysData = holidaysResultValue.holidays;
+
+    // Get UIDs from the post
+    const postUIDs = [post.uidRedderA, post.uidRedderB, post.uidRedderC, post.uidRedderD, post.uidRedderE, post.uidRedderF, post.uidRedderG];
+
+    // Filter holidays for users in the post
+    holidays.value = users
+      .filter(user => postUIDs.includes(user.uid)) // Filter users in the post
+      .flatMap(user =>
+        holidaysData.filter(holiday => holiday.uid === user.uid)
+          .map(holiday => ({
+            ...holiday,
+            dates: holiday.dates.map(date => formatHolidayDates(date)),
+            user: { name: user.name, uid: user.uid }, // Store user info in the holidays array
+          }))
+      );
+
+    holidaysFormatted.value = (holidays.value ?? []).flatMap(holiday => (
+      holiday.dates.map(date => ({
+        date,
+        users: (holidays.value ?? [])
+          .filter(h => h.dates.includes(date))
+          .flatMap(h => users.filter(user => user.uid === h.uid)
+            .map(user => ({ name: user.name || '', uid: user.uid || '' }))
+          ),
+      }))
+    ));
+
+    // Sort the holidaysFormatted array based on the custom comparison function for dates
+    holidaysFormatted.value = holidaysFormatted.value
+      .slice()
+      .sort((a, b) => {
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        return dateA - dateB;
+      });
+
+    console.log('Holidays:', holidays.value);
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
 
     //Reports
     watch(() => reportsResult.value, (newValue) => {
@@ -171,13 +243,72 @@ export default defineComponent({
       }
     });
 
-    //User
+    //Current User
     watch(user, (newValue) => {
       if (newValue && newValue.userByUid) {
         userData.value = newValue.userByUid;
         nameUser.value = user.value?.userByUid.name;
       }
     });
+
+    //All users
+    watch(usersResult, (newValue) => {
+      if (newValue && newValue.users) {
+        const users = newValue.users as User[];
+        console.log(users);
+      }
+    });
+
+    //Postnummer van current user
+    watch([() => currentUserUid, postenResult], ([newUid, newValue]) => {
+      if (newUid && newValue && newValue.posten) {
+        const posten = newValue.posten as Ipost[];
+
+        posten.forEach((post) => {
+          if (
+            post.uidRedderA === newUid ||
+            post.uidRedderB === newUid ||
+            post.uidRedderC === newUid ||
+            post.uidRedderD === newUid ||
+            post.uidRedderE === newUid ||
+            post.uidRedderF === newUid ||
+            post.uidRedderG === newUid
+          ) {
+            currentUserPost.value = post.numberPost;
+            console.log(`User zit in post`, currentUserPost.value);
+          }
+        });
+      }
+    });
+
+    //Post van het current user
+    watch(postResult, (newValue) => {
+      if (newValue && newValue.postByNumber) {
+        const post = newValue.postByNumber as Ipost;
+        console.log('post user', post);
+      }
+    });
+
+    //Users in de post
+    watch([usersResult, postResult], ([usersValue, postValue]) => {
+      if (usersValue && usersValue.users && postValue && postValue.postByNumber) {
+        const users = usersValue.users as User[];
+        const post = postValue.postByNumber as Ipost;
+
+        // Check if any of the UIDs in the post object are in the array of users
+        const usersInCurrenPost = users.filter(user =>
+          [post.uidRedderA, post.uidRedderB, post.uidRedderC, post.uidRedderD, post.uidRedderE, post.uidRedderF, post.uidRedderG].includes(user.uid)
+        );
+
+        console.log('Users in the post:', usersInCurrenPost);
+
+        //  foundUsers.forEach(foundUser => {
+        //   console.log('User in the post:', foundUser.name);
+        // });
+      }
+    });
+
+
 
 
 
@@ -280,6 +411,8 @@ export default defineComponent({
       goToReport,
       getUsersForDate,
       holidaysFormatted,
+      currentUserUid,
+      currentUserPost,
     };
   },
 });

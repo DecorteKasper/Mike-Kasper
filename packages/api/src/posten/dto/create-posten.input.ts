@@ -3,7 +3,7 @@ import { InputType, Int, Field } from '@nestjs/graphql';
 @InputType()
 export class CreatePostenInput {
   
-  @Field(() => Int)
+  @Field(() => Number)
   numberPost: number
 
   @Field(() => String)
