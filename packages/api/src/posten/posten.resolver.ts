@@ -20,10 +20,10 @@ export class PostenResolver {
     return this.postenService.findAll();
   }
 
-  // @Query(() => Posten, { name: 'posten' })
-  // findOne(@Args('id', { type: () => String }) id: string) {
-  //   return this.postenService.findOne(id);
-  // }
+  @Query(() => Posten, { name: 'postByNumber' })
+  findOneByNumber(@Args('number', { type: () => Number }) numberPost: number) {
+    return this.postenService.findOneByNumber(numberPost);
+  }
 
   // @Mutation(() => Posten)
   // updatePosten(@Args('updatePostenInput') updatePostenInput: UpdatePostenInput) {

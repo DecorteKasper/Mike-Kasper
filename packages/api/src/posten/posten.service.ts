@@ -38,6 +38,11 @@ export class PostenService {
     return `This action returns a #${id} posten`;
   }
 
+  findOneByNumber(numberPost: number) {
+    return this.postenRepository.findOneByOrFail({numberPost});
+   }
+  
+  
   update(id: string, updatePostenInput: UpdatePostenInput) {
     return `This action updates a #${id} posten`;
   }

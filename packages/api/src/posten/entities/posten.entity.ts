@@ -14,8 +14,8 @@ export class Posten {
   @Field(() => Number)
   numberPost: number
 
-  @Column(() => String)
-  @Field()
+  @Column()
+  @Field(() => String)
   uidRedderA: string
 
   @Column()
