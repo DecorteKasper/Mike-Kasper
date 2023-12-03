@@ -68,7 +68,6 @@
         </div>
       </div>
 
-
       <div class="bg-white w-full max-w-80 min-h-[20rem] mt-10 md:mt-0 h-auto rounded-cardRadius shadow-cardShadow px-6 py-5">
         <p class="text-center mb-8 font-bold text-base mt-2">Verslag {{ dayOfMonth }} {{ monthName }}</p>
         <p class="text-center md:mt-12">{{ reportInfo }}</p>
@@ -152,33 +151,15 @@ export default defineComponent({
 
     
 //----- WATCH FUNTIONS -----//
-    //Holidays of current user
-    //  watch(() => holidaysResult.value, (newValue) => {
-    //   if (newValue && newValue.holidays) {
-    //     if (currentUserUid) {
-    //       holidays.value = newValue.holidays
-    //         .filter((holiday) => holiday.uid === currentUserUid)
-    //         .map((holiday) => ({
-    //           ...holiday,
-    //           dates: holiday.dates.map((date) => formatHolidayDates(date)),
-    //         }));
-    //        holidaysFormatted.value = holidays.value.flatMap((holiday) => holiday.dates);
-    //     } else {
-    //       holidays.value = null;
-    //       holidaysFormatted.value = [];
-    //     }
-    //   }
-    // });
-
-    // Adjust the watch function to group holidays by date
+    //Holidays of the post
     watch([usersResult, postResult, holidaysResult], ([usersValue, postValue, holidaysResultValue]) => {
       if (usersValue && usersValue.users && postValue && postValue.postByNumber && holidaysResultValue && holidaysResultValue.holidays) {
         const users = usersValue.users as User[];
         const post = postValue.postByNumber as Ipost;
         const holidaysData = holidaysResultValue.holidays;
-
         const postUIDs = [post.uidRedderA, post.uidRedderB, post.uidRedderC, post.uidRedderD, post.uidRedderE, post.uidRedderF, post.uidRedderG];
 
+        //verzamelt alle gekozen verlofdagen door de redders in de post
         const holidaysFormattedArray = (holidaysData ?? [])
           .filter(holiday => postUIDs.includes(holiday.uid))
           .flatMap(holiday => holiday.dates.map(date => ({
@@ -186,21 +167,21 @@ export default defineComponent({
             user: users.find(user => user.uid === holiday.uid),
           })));
 
-        // Create a Map to group holidays by date
+        //voegt alle redders toe bij de datum waarop ze verlof hebben
         const groupedHolidays = holidaysFormattedArray.reduce((acc, holiday) => {
           const { date, user } = holiday;
           const existingHolidays = acc.get(date) || [];
-          acc.set(date, [...existingHolidays, user].filter(Boolean)); // Remove undefined values
+          acc.set(date, [...existingHolidays, user].filter(Boolean));
           return acc;
         }, new Map<string, (User | undefined)[]>());
 
-        // Convert the Map to the final holidaysFormatted array
+        //maakt er een array van
         holidaysFormatted.value = Array.from(groupedHolidays.entries()).map(([date, users]) => ({
           date,
-          users: users.filter(Boolean) as User[], // Remove undefined values
+          users: users.filter(Boolean) as User[],
         }));
 
-        // Sort the holidaysFormatted array based on the custom comparison function for dates
+        //sorteren van datums
         holidaysFormatted.value = holidaysFormatted.value
           .slice()
           .sort((a, b) => {
@@ -210,18 +191,6 @@ export default defineComponent({
           });
       }
     });
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     //Reports
@@ -240,6 +209,7 @@ export default defineComponent({
       }
     });
 
+
     //Current User
     watch(user, (newValue) => {
       if (newValue && newValue.userByUid) {
@@ -248,13 +218,14 @@ export default defineComponent({
       }
     });
 
+
     //All users
     watch(usersResult, (newValue) => {
       if (newValue && newValue.users) {
         const users = newValue.users as User[];
-        console.log(users);
       }
     });
+
 
     //Postnummer van current user
     watch([() => currentUserUid, postenResult], ([newUid, newValue]) => {
@@ -272,38 +243,32 @@ export default defineComponent({
             post.uidRedderG === newUid
           ) {
             currentUserPost.value = post.numberPost;
-            console.log(`User zit in post`, currentUserPost.value);
           }
         });
       }
     });
 
+
     //Post van het current user
     watch(postResult, (newValue) => {
       if (newValue && newValue.postByNumber) {
         const post = newValue.postByNumber as Ipost;
-        console.log('post user', post);
       }
     });
 
-    //Users in de post
-    watch([usersResult, postResult], ([usersValue, postValue]) => {
-      if (usersValue && usersValue.users && postValue && postValue.postByNumber) {
-        const users = usersValue.users as User[];
-        const post = postValue.postByNumber as Ipost;
 
-        // Check if any of the UIDs in the post object are in the array of users
-        const usersInCurrenPost = users.filter(user =>
-          [post.uidRedderA, post.uidRedderB, post.uidRedderC, post.uidRedderD, post.uidRedderE, post.uidRedderF, post.uidRedderG].includes(user.uid)
-        );
+    // //Users in de post
+    // watch([usersResult, postResult], ([usersValue, postValue]) => {
+    //   if (usersValue && usersValue.users && postValue && postValue.postByNumber) {
+    //     const users = usersValue.users as User[];
+    //     const post = postValue.postByNumber as Ipost;
 
-        console.log('Users in the post:', usersInCurrenPost);
-
-        //  foundUsers.forEach(foundUser => {
-        //   console.log('User in the post:', foundUser.name);
-        // });
-      }
-    });
+    //     // Check if any of the UIDs in the post object are in the array of users
+    //     const usersInCurrenPost = users.filter(user =>
+    //       [post.uidRedderA, post.uidRedderB, post.uidRedderC, post.uidRedderD, post.uidRedderE, post.uidRedderF, post.uidRedderG].includes(user.uid)
+    //     );
+    //   }
+    // });
 
 
 
@@ -372,21 +337,6 @@ export default defineComponent({
       router.push('/redder/report');
     };
 
-    //Format holiday dates
-    function formatHolidayDates(dateString:any) {
-      const date = new Date(dateString);
-      const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-      return formattedDate;
-    }
-
-    // Function to get users for a specific date (replace with your actual logic)
-    const getUsersForDate = (date:any) => {
-      // Replace this with your logic to fetch users for the given date
-      // You may need to use the date in your GraphQL query or other data fetching mechanism
-      return [{ id: 1, name: 'Kasper Decorte' }]
-    };
-
-
     return {
       weatherIcon,
       currentDate,
@@ -406,7 +356,6 @@ export default defineComponent({
       reports,
       reportInfo,
       goToReport,
-      getUsersForDate,
       holidaysFormatted,
       currentUserUid,
       currentUserPost,
