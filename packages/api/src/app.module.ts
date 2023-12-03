@@ -40,7 +40,7 @@ import { ReportsModule } from './reports/reports.module';
     UsersModule,
     PostenModule,
     TodoModule,
-    NotificationsModule
+    NotificationsModule,
     HolidaysModule,
     ReportsModule,
   ],
