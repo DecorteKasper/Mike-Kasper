@@ -56,18 +56,13 @@ export class UsersService {
 
     return this.userRepository.update(currentUser, updateUser)
   }
-
-
-
   findOneByUid(uid: string) {
     const user = new User()
     return this.userRepository.findOneByOrFail({ uid })
   }
-
   findAll() {
     return this.userRepository.find()
   }
-
   findOne(id: string) {
     return new Error(`This action returns a #${id} user`);
   }
