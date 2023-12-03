@@ -61,7 +61,7 @@
         <p class="text-center mb-2 font-bold text-base mt-2">Verlofdagen</p>
         <div class="overflow-scroll max-h-96">
           <div v-for="(group, index) in holidaysFormatted" :key="index" class="flex flex-col">
-            <p class="mt-6">{{ group.date }}</p>
+            <p class="mt-6">{{ new Date(group.date).toISOString().split('T')[0].split('-').reverse().join('/') }}</p>
             <div class="w-full h-[2px] rounded-lg bg-dark_green mb-4 mt-1"></div>
             <UserShown v-for="user in group.users" :key="user.uid" :name="user.name" />
           </div>
@@ -172,49 +172,46 @@ export default defineComponent({
 
     // Adjust the watch function to group holidays by date
     watch([usersResult, postResult, holidaysResult], ([usersValue, postValue, holidaysResultValue]) => {
-  if (usersValue && usersValue.users && postValue && postValue.postByNumber && holidaysResultValue && holidaysResultValue.holidays) {
-    const users = usersValue.users as User[];
-    const post = postValue.postByNumber as Ipost;
-    const holidaysData = holidaysResultValue.holidays;
+      if (usersValue && usersValue.users && postValue && postValue.postByNumber && holidaysResultValue && holidaysResultValue.holidays) {
+        const users = usersValue.users as User[];
+        const post = postValue.postByNumber as Ipost;
+        const holidaysData = holidaysResultValue.holidays;
 
-    // Get UIDs from the post
-    const postUIDs = [post.uidRedderA, post.uidRedderB, post.uidRedderC, post.uidRedderD, post.uidRedderE, post.uidRedderF, post.uidRedderG];
+        const postUIDs = [post.uidRedderA, post.uidRedderB, post.uidRedderC, post.uidRedderD, post.uidRedderE, post.uidRedderF, post.uidRedderG];
 
-    // Filter holidays for users in the post
-    holidays.value = users
-      .filter(user => postUIDs.includes(user.uid)) // Filter users in the post
-      .flatMap(user =>
-        holidaysData.filter(holiday => holiday.uid === user.uid)
-          .map(holiday => ({
-            ...holiday,
-            dates: holiday.dates.map(date => formatHolidayDates(date)),
-            user: { name: user.name, uid: user.uid }, // Store user info in the holidays array
-          }))
-      );
+        const holidaysFormattedArray = (holidaysData ?? [])
+          .filter(holiday => postUIDs.includes(holiday.uid))
+          .flatMap(holiday => holiday.dates.map(date => ({
+            date,
+            user: users.find(user => user.uid === holiday.uid),
+          })));
 
-    holidaysFormatted.value = (holidays.value ?? []).flatMap(holiday => (
-      holiday.dates.map(date => ({
-        date,
-        users: (holidays.value ?? [])
-          .filter(h => h.dates.includes(date))
-          .flatMap(h => users.filter(user => user.uid === h.uid)
-            .map(user => ({ name: user.name || '', uid: user.uid || '' }))
-          ),
-      }))
-    ));
+        // Create a Map to group holidays by date
+        const groupedHolidays = holidaysFormattedArray.reduce((acc, holiday) => {
+          const { date, user } = holiday;
+          const existingHolidays = acc.get(date) || [];
+          acc.set(date, [...existingHolidays, user].filter(Boolean)); // Remove undefined values
+          return acc;
+        }, new Map<string, (User | undefined)[]>());
 
-    // Sort the holidaysFormatted array based on the custom comparison function for dates
-    holidaysFormatted.value = holidaysFormatted.value
-      .slice()
-      .sort((a, b) => {
-        const dateA = new Date(a.date).getTime();
-        const dateB = new Date(b.date).getTime();
-        return dateA - dateB;
-      });
+        // Convert the Map to the final holidaysFormatted array
+        holidaysFormatted.value = Array.from(groupedHolidays.entries()).map(([date, users]) => ({
+          date,
+          users: users.filter(Boolean) as User[], // Remove undefined values
+        }));
 
-    console.log('Holidays:', holidays.value);
-  }
-});
+        // Sort the holidaysFormatted array based on the custom comparison function for dates
+        holidaysFormatted.value = holidaysFormatted.value
+          .slice()
+          .sort((a, b) => {
+            const dateA = new Date(a.date).getTime();
+            const dateB = new Date(b.date).getTime();
+            return dateA - dateB;
+          });
+      }
+    });
+
+
 
 
 
