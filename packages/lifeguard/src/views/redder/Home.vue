@@ -45,10 +45,10 @@
         <div class="flex flex-col">
           <p>Redders</p>
           <div class="w-full h-[2px] rounded-lg bg-red mb-6 mt-1"></div>
-          <!-- <UserShown />
-          <UserShown />
-          <UserShown />
-          <UserShown /> -->
+          <!-- Iterate over the array of names and create a UserShown component for each name -->
+          <template v-for="(name, index) in namesOfUsersWithoutHolidayToday" :key="index">
+            <UserShown :name="name" />
+          </template>
         </div>
         <div class="flex flex-col mt-9">
           <p>EHBO</p>
@@ -127,7 +127,7 @@ export default defineComponent({
     //    const holidaysFormatted = ref<string[] | null>(null);
     //const holidaysFormatted = ref<{ dates: { date: string; users: User[] }[] }[] | null>(null);
     const holidaysFormatted = ref<{ date: string; users: { name: string; uid: string }[] }[] | null>(null);
-
+    const namesOfUsersWithoutHolidayToday = ref<string[] | null>(null);
 
     const reports = ref<Ireport[] | null>(null);
     const todayReports = ref<Ireport[] | null>(null);
@@ -181,6 +181,8 @@ export default defineComponent({
           users: users.filter(Boolean) as User[],
         }));
 
+        console.log("Holidays formatted: ", holidaysFormatted.value);
+
         //sorteren van datums
         holidaysFormatted.value = holidaysFormatted.value
           .slice()
@@ -191,6 +193,71 @@ export default defineComponent({
           });
       }
     });
+
+
+
+
+    // watch([holidaysFormatted, usersResult, postResult], ([holidaysFormattedValue, usersValue, postValue]) => {
+    //   if (holidaysFormattedValue && usersValue && usersValue.users && postValue && postValue.postByNumber) {
+    //     const users = usersValue.users as User[];
+    //     const post = postValue.postByNumber as Ipost;
+
+    //     // Get users who don't have a holiday on the current day and belong to the post
+    //     const today = new Date().toISOString().split('T')[0];
+    //     const reddersWithNoHoliday = users.filter((user) => {
+    //       return (
+    //         !holidaysFormattedValue.some(
+    //           (holiday) =>
+    //             holiday.date === today && holiday.users.some((holidayUser) => holidayUser.uid === user.uid)
+    //         ) &&
+    //         [post.uidRedderA, post.uidRedderB, post.uidRedderC, post.uidRedderD, post.uidRedderE, post.uidRedderF, post.uidRedderG].includes(
+    //           user.uid
+    //         )
+    //       );
+    //     });
+
+    //     console.log("Redders with no holiday and in the correct post: ", reddersWithNoHoliday);
+    //   }
+    // });
+
+
+    watch([usersResult, postResult, holidaysResult], ([usersValue, postValue, holidaysResultValue]) => {
+      if (usersValue && usersValue.users && postValue && postValue.postByNumber && holidaysResultValue && holidaysResultValue.holidays) {
+        const users = usersValue.users as User[];
+        const post = postValue.postByNumber as Ipost;
+        const holidaysData = holidaysResultValue.holidays;
+
+        // Get the current date
+        const today = new Date().toISOString().split('T')[0];
+
+        // Get the UIDs of users in the current post
+        const postUIDs = [post.uidRedderA, post.uidRedderB, post.uidRedderC, post.uidRedderD, post.uidRedderE, post.uidRedderF, post.uidRedderG];
+
+        // Get the users who have a holiday today
+       const usersWithHolidayToday = users.filter((user) =>
+          holidaysData.some((holiday) =>
+            postUIDs.includes(holiday.uid) &&
+            holiday.dates.some((date) => date.split('T')[0] === today) &&
+            holiday.uid === user.uid
+         )
+       );
+
+        // Get the names of users who don't have a holiday today
+        const usersWithoutHolidayToday = users.filter((user) =>
+          !usersWithHolidayToday.some((userWithHoliday) => userWithHoliday.uid === user.uid) &&
+          postUIDs.includes(user.uid)
+        );
+
+        // Get an array of names of users without holiday today
+        namesOfUsersWithoutHolidayToday.value = usersWithoutHolidayToday.map((user) => user.name);
+
+        console.log("Names of users without holiday today: ", namesOfUsersWithoutHolidayToday);
+      }
+    });
+
+
+
+     
 
 
     //Reports
@@ -359,6 +426,7 @@ export default defineComponent({
       holidaysFormatted,
       currentUserUid,
       currentUserPost,
+      namesOfUsersWithoutHolidayToday,
     };
   },
 });
