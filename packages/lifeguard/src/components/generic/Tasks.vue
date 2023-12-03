@@ -37,7 +37,7 @@
                 <td class="pl-12">
                     <label class="checkbox-status">
                         <input type="checkbox" name="status" class="hidden" v-model="task.status"
-                            @change="toggleTaskStatus(task.status)">
+                            @click="toggleTaskStatus(task.status, task)">
                         <div :class="{
                             'group border-2 p-1 border-dark_green w-fit rounded-full focus:outline-none cursor-pointer': task.status === true,
                             'group border-2 p-1 border-black w-fit rounded-full focus:outline-none cursor-pointer': task.status !== true
@@ -48,8 +48,8 @@
                         </div>
                     </label>
                 </td>
-                <td class="">{{ task.title }}</td>
-                <td class="">{{ task.date }}</td>
+                <td class="">Post {{ task.post }}</td>
+                <td class="">{{ formatDate(task.createdAt) }}</td>
                 <td class="">{{ task.description }}</td>
                 <td class=""> {{ task.status === false ? 'Incompleted' : 'Completed' }}</td>
                 <td class="">
@@ -66,17 +66,21 @@
 </template>
 
 <script lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { Eye, Trash2, Check } from 'lucide-vue-next';
 import { computed } from 'vue';
 
+import { DELETE_TODO, UPDATE_TODO } from '@/graphql/todo.mutation'
+import { useMutation } from '@vue/apollo-composable'
+import useRealtime from '@/composables/useRealtime';
+
 
 interface Task {
-    id: number;
-    title: string;
-    date: string;
-    description: string;
+    id: string;
+    post: number;
+    createdAt: string;
     status: boolean;
+    description: string;
 }
 
 export default {
@@ -87,44 +91,79 @@ export default {
         Check
     },
 
-    setup() {
+    props: {
+        todoData: {
+            type: Array as () => Task[],
+            default: () => []
+        }
+    },
+
+
+    setup(props) {
 
         const completed = ref<string>("false")
-        const tasks = ref<Task[]>([
-            {
-                id: 1,
-                title: 'Post 1',
-                date: '02/03/2023',
-                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor..',
-                status: true,
-            },
-            {
-                id: 2,
-                title: 'Post 2',
-                date: '02/03/2023',
-                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor..',
-                status: true,
-            },
-            {
-                id: 3,
-                title: 'Post 1',
-                date: '02/03/2023',
-                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor..',
-                status: false,
-            },
-            {
-                id: 4,
-                title: 'Post 6',
-                date: '02/03/2023',
-                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor..',
-                status: false,
-            },
-        ])
+        // console.log("Dit is de tasks table")
+        // console.log("Dit zijn de props:", props.todoData)
+        const { mutate: deleteTodo } = useMutation(DELETE_TODO)
+        const { mutate: updateTodo } = useMutation(UPDATE_TODO)
+        const tasks = ref<Task[]>(props.todoData)
+        const { on } = useRealtime()
 
-        const toggleTaskStatus = (taskStatus: boolean) => {
+        // Realtime data voor delete werkt nog niet
+        on('todo:remove', (todo) => {
+
+        })
+        on('todo:update', (todo) => {
+        })
+
+        const deleteTask = (taskId: string) => {
+            // console.log("Dit is de task id:", taskId)
+            deleteTodo({
+                id: taskId,
+            }).then((result) => {
+                if (!result?.data) {
+                    throw new Error('Failed to delete todo')
+                }
+                console.log('todo deleted', result.data)
+            }).catch((error) => {
+                console.log(error)
+            })
+        };
+
+        const formatDate = (isoDateString: string) => {
+            const date = new Date(isoDateString);
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            const hour = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${month}-${day}    ${hour}:${minutes}`;
+        };
+
+        const toggleTaskStatus = (taskStatus: boolean, TaskObject: Task) => {
             console.log('Before: task.status =', taskStatus);
-            taskStatus = taskStatus; // Omschakelen tussen true en false
+            taskStatus = !taskStatus; // Omschakelen tussen true en false
             console.log('After: task.status =', taskStatus);
+
+            const updatedTask = {
+                id: TaskObject.id,
+                post: TaskObject.post,
+                createdAt: TaskObject.createdAt,
+                status: taskStatus,
+                description: TaskObject.description,
+            }
+
+            updateTodo({
+                updateTodoInput: updatedTask
+            }).then((result) => {
+                if (!result?.data) {
+                    throw new Error('Failed to update todo')
+                }
+                console.log('todo updated', result.data)
+            }).catch((error) => {
+                console.log(error)
+            })
+
+
         };
 
         const filterTasks = (filterStatus: string) => {
@@ -135,9 +174,13 @@ export default {
             return tasks.value.filter(task => (completed.value === 'true' ? task.status === true : task.status === false));
         });
 
-        const deleteTask = (taskId: number) => {
-            tasks.value = tasks.value.filter(task => task.id !== taskId);
-        };
+
+
+
+
+        watch(() => props.todoData, (newData) => {
+            tasks.value = newData;
+        });
 
 
         return {
@@ -146,7 +189,8 @@ export default {
             toggleTaskStatus,
             filteredTasks,
             filterTasks,
-            deleteTask
+            deleteTask,
+            formatDate
         }
     }
 }
