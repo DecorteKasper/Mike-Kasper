@@ -45,41 +45,34 @@
         <div class="flex flex-col">
           <p>Redders</p>
           <div class="w-full h-[2px] rounded-lg bg-red mb-6 mt-1"></div>
-          <UserShown />
-          <UserShown />
-          <UserShown />
-          <UserShown />
+          <template v-for="(name, index) in namesOfUsersWithoutHolidayToday" :key="index">
+            <UserShown :name="name" />
+          </template>
         </div>
         <div class="flex flex-col mt-9">
           <p>EHBO</p>
-          <div class="w-full h-[2px] rounded-lg bg-green mb-6 mt-1"></div>
-          <UserShown />
+          <div class="w-full h-[2px] rounded-lg bg-greenx mb-6 mt-1"></div>
+          <!-- <UserShown /> -->
         </div>
       </div>
 
       <div class="bg-white w-full max-w-80 min-h-[20rem] h-auto mt-10 md:mt-0 rounded-cardRadius shadow-cardShadow px-6 py-5">
-        <p class="text-center mb-8 font-bold text-base mt-2">Verlofdagen</p>
+        <p class="text-center mb-2 font-bold text-base mt-2">Verlofdagen</p>
         <div class="overflow-scroll max-h-96">
-          <div class="flex flex-col">
-            <p>01/07/2024</p>
-            <div class="w-full h-[2px] rounded-lg bg-dark_green mb-6 mt-1"></div>
-            <UserShown />
-            <UserShown />
-            <UserShown />
-          </div>
-          <div class="flex flex-col mt-9">
-            <p>02/07/2024</p>
-            <div class="w-full h-[2px] rounded-lg bg-dark_green mb-6 mt-1"></div>
-            <UserShown />
-            <UserShown />
-            <UserShown />
+          <div v-for="(group, index) in holidaysFormatted" :key="index" class="flex flex-col">
+            <p class="mt-6">{{ new Date(group.date).toISOString().split('T')[0].split('-').reverse().join('/') }}</p>
+            <div class="w-full h-[2px] rounded-lg bg-dark_green mb-4 mt-1"></div>
+            <UserShown v-for="user in group.users" :key="user.uid" :name = "`${user.name} ${user.surname}`"/>
           </div>
         </div>
       </div>
 
       <div class="bg-white w-full max-w-80 min-h-[20rem] mt-10 md:mt-0 h-auto rounded-cardRadius shadow-cardShadow px-6 py-5">
         <p class="text-center mb-8 font-bold text-base mt-2">Verslag {{ dayOfMonth }} {{ monthName }}</p>
-        <p class="text-center">Verslag nog niet ingediend</p>
+        <p class="text-center md:mt-12">{{ reportInfo }}</p>
+        <img class="max-w-[5rem] m-auto mt-4" v-if="reportInfo === 'Verslag is nog niet ingediend'" src="@/assets/icons/errorReport.svg" alt="Not Submitted Icon" />
+        <img class="max-w-[5rem] m-auto mt-4" v-else src="@/assets/icons/checkReport.svg" alt="Submitted Icon" />
+        <button @click="goToReport" class="bg-greenx mt-10 px-8 py-2 rounded-lg text-white font-bold block m-auto hover:bg-dark_green" v-if="reportInfo === 'Verslag is nog niet ingediend'">Verslag invullen</button>
       </div>
     </div>
 
@@ -95,15 +88,26 @@ import UserShown from '@/components/generic/UserShown.vue';
 import { GET_USER_BY_UID } from '@/graphql/user.query';
 import useFirebase from '@/composables/useFirebase';
 import { useQuery } from '@vue/apollo-composable';
+import { useRouter } from 'vue-router';
+import { ALL_HOLIDAYS } from '@/graphql/holiday.query';
+import { ALL_RECORDS } from '@/graphql/report.query';
+import { ALL_POSTEN } from '@/graphql/post.query';
+import { GET_USERS } from '@/graphql/user.query';
+import { GET_POST_BY_NUMBER } from '@/graphql/post.query';
+import type { Ipost } from '@/interfaces/post.interface';
+import type { Iholiday } from '@/interfaces/holiday.interface';
+import type { Ireport } from '@/interfaces/report.interface';
 
 interface User {
   name: string;
+  uid: string;
+  surname?: string;
 }
 
 export default defineComponent({
   components: {
     Container,
-    UserShown,
+    UserShown, 
   },
 
   setup() {
@@ -111,16 +115,22 @@ export default defineComponent({
     const dayOfWeek = currentDate.toLocaleDateString('nl-NL', { weekday: 'long' });
     const dayOfMonth = currentDate.getDate();
     const monthName = currentDate.toLocaleDateString('nl-NL', { month: 'long' });
-    const userData = ref<User | null>();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
     const { firebaseUser } = useFirebase();
+    const router = useRouter();
     
-    const { loading: userLoading, result: user, error: userError } = useQuery(GET_USER_BY_UID, {
-      uid: firebaseUser.value?.uid,
-    });
-    
-    const nameUser = user.value?.userByUid.name;
+    const userData = ref<User | null>();
+    const currentUserUid = firebaseUser.value?.uid;
+    const currentUserPost = ref<number | null>(null);
+    const holidays = ref<Iholiday[] | null>(null);
+    //    const holidaysFormatted = ref<string[] | null>(null);
+    //const holidaysFormatted = ref<{ dates: { date: string; users: User[] }[] }[] | null>(null);
+    const holidaysFormatted = ref<{ date: string; users: { name: string; uid: string }[] }[] | null>(null);
+    const namesOfUsersWithoutHolidayToday = ref<string[] | null>(null);
 
-    //const weatherIcon:any = weatherIcon;
+    const reports = ref<Ireport[] | null>(null);
+    const todayReports = ref<Ireport[] | null>(null);
     const temperature = ref("--");
     const windSpeed = ref("--");
     const uvIndex = ref("-");
@@ -128,8 +138,182 @@ export default defineComponent({
     const highTide = ref("--:--");
     const lowTide = ref("--:--");
     const weatherIconUrl = ref("");
+    const reportInfo = ref("");
+    const nameUser = ref("redder");
+    //const weatherIcon:any = weatherIcon;
+    
+    const { loading: userLoading, result: user, error: userError } = useQuery(GET_USER_BY_UID, {uid: firebaseUser.value?.uid,});
+    const { loading: holidaysLoading, result: holidaysResult, error: holidaysError } = useQuery<{ holidays: Iholiday[] }>(ALL_HOLIDAYS);;
+    const { loading: reportsLoading, result: reportsResult, error: reportsError } = useQuery<{ reports: Ireport[] }>(ALL_RECORDS);
+    const { loading: postLoading, result: postResult, error: postError } = useQuery(GET_POST_BY_NUMBER, { numberPost: 4});
+    const { loading: postenLoading, result: postenResult, error: postenError } = useQuery<{ posten: Ipost[] }>(ALL_POSTEN);
+    const { loading: usersLoading, result: usersResult, error: usersError } = useQuery<{ users: User[] }>(GET_USERS);
+
+    
+//----- WATCH FUNTIONS -----//
+    //Holidays of the post
+    watch([usersResult, postResult, holidaysResult], ([usersValue, postValue, holidaysResultValue]) => {
+      if (usersValue && usersValue.users && postValue && postValue.postByNumber && holidaysResultValue && holidaysResultValue.holidays) {
+        const users = usersValue.users as User[];
+        const post = postValue.postByNumber as Ipost;
+        const holidaysData = holidaysResultValue.holidays;
+        const postUIDs = [post.uidRedderA, post.uidRedderB, post.uidRedderC, post.uidRedderD, post.uidRedderE, post.uidRedderF, post.uidRedderG];
+
+        //verzamelt alle gekozen verlofdagen door de redders in de post
+        const holidaysFormattedArray = (holidaysData ?? [])
+          .filter(holiday => postUIDs.includes(holiday.uid))
+          .flatMap(holiday => holiday.dates.map(date => ({
+            date,
+            user: users.find(user => user.uid === holiday.uid),
+          })));
+
+        //voegt alle redders toe bij de datum waarop ze verlof hebben
+        const groupedHolidays = holidaysFormattedArray.reduce((acc, holiday) => {
+          const { date, user } = holiday;
+          const existingHolidays = acc.get(date) || [];
+          acc.set(date, [...existingHolidays, user].filter(Boolean));
+          return acc;
+        }, new Map<string, (User | undefined)[]>());
+
+        //maakt er een array van
+        holidaysFormatted.value = Array.from(groupedHolidays.entries()).map(([date, users]) => ({
+          date,
+          users: users.filter(Boolean) as User[],
+        }));
+
+        //sorteren van datums
+        holidaysFormatted.value = holidaysFormatted.value
+          .slice()
+          .sort((a, b) => {
+            const dateA = new Date(a.date).getTime();
+            const dateB = new Date(b.date).getTime();
+            return dateA - dateB;
+          });
+      }
+    });
 
 
+    //redders tonen die moeten werken
+    watch([usersResult, postResult, holidaysResult], ([usersValue, postValue, holidaysResultValue]) => {
+      if (usersValue && usersValue.users && postValue && postValue.postByNumber && holidaysResultValue && holidaysResultValue.holidays) {
+        const users = usersValue.users as User[];
+        const post = postValue.postByNumber as Ipost;
+        const holidaysData = holidaysResultValue.holidays;
+
+        // Get the current date
+        const today = new Date().toISOString().split('T')[0];
+
+        // Get the UIDs of users in the current post
+        const postUIDs = [post.uidRedderA, post.uidRedderB, post.uidRedderC, post.uidRedderD, post.uidRedderE, post.uidRedderF, post.uidRedderG];
+
+        // Get the users who have a holiday today
+       const usersWithHolidayToday = users.filter((user) =>
+          holidaysData.some((holiday) =>
+            postUIDs.includes(holiday.uid) &&
+            holiday.dates.some((date) => date.split('T')[0] === today) &&
+            holiday.uid === user.uid
+         )
+       );
+
+        // Get the names of users who don't have a holiday today
+        const usersWithoutHolidayToday = users.filter((user) =>
+          !usersWithHolidayToday.some((userWithHoliday) => userWithHoliday.uid === user.uid) &&
+          postUIDs.includes(user.uid)
+        );
+
+        // Get an array of names of users without holiday today
+        namesOfUsersWithoutHolidayToday.value = usersWithoutHolidayToday.map((user) => `${user.name} ${user.surname}`);
+      }
+    });
+
+
+
+     
+
+
+    //Reports
+    watch(() => reportsResult.value, (newValue) => {
+      if (newValue && newValue.reports) {
+        reports.value = newValue.reports;
+        // Filter reports that have createdAt date equal to today
+        const today = new Date().toISOString().split('T')[0];
+        todayReports.value = reports.value.filter((report) => report.createdAt.startsWith(today));
+
+        if (todayReports.value?.length === 0) {
+          reportInfo.value = "Verslag is nog niet ingediend";
+        } else {
+          reportInfo.value = "Verslag is ingediend";
+        }
+      }
+    });
+
+
+    //Current User
+    watch(user, (newValue) => {
+      if (newValue && newValue.userByUid) {
+        userData.value = newValue.userByUid;
+        nameUser.value = user.value?.userByUid.name;
+      }
+    });
+
+
+    //All users
+    watch(usersResult, (newValue) => {
+      if (newValue && newValue.users) {
+        const users = newValue.users as User[];
+      }
+    });
+
+
+    //Postnummer van current user
+    watch([() => currentUserUid, postenResult], ([newUid, newValue]) => {
+      if (newUid && newValue && newValue.posten) {
+        const posten = newValue.posten as Ipost[];
+
+        posten.forEach((post) => {
+          if (
+            post.uidRedderA === newUid ||
+            post.uidRedderB === newUid ||
+            post.uidRedderC === newUid ||
+            post.uidRedderD === newUid ||
+            post.uidRedderE === newUid ||
+            post.uidRedderF === newUid ||
+            post.uidRedderG === newUid
+          ) {
+            currentUserPost.value = post.numberPost;
+          }
+        });
+      }
+    });
+
+
+    //Post van het current user
+    watch(postResult, (newValue) => {
+      if (newValue && newValue.postByNumber) {
+        const post = newValue.postByNumber as Ipost;
+      }
+    });
+
+
+    // //Users in de post
+    // watch([usersResult, postResult], ([usersValue, postValue]) => {
+    //   if (usersValue && usersValue.users && postValue && postValue.postByNumber) {
+    //     const users = usersValue.users as User[];
+    //     const post = postValue.postByNumber as Ipost;
+
+    //     // Check if any of the UIDs in the post object are in the array of users
+    //     const usersInCurrenPost = users.filter(user =>
+    //       [post.uidRedderA, post.uidRedderB, post.uidRedderC, post.uidRedderD, post.uidRedderE, post.uidRedderF, post.uidRedderG].includes(user.uid)
+    //     );
+    //   }
+    // });
+
+
+
+
+
+//----- OTHER FUNTIONS -----//  
+    //Get weather from API
     const fetchWeather = async (position: any) => {
       const { latitude, longitude } = position.coords;
       const apiKey = 'cc553388ef0a44f0a9f142826232811';
@@ -166,7 +350,7 @@ export default defineComponent({
           // });
 
           // console.log("Filtered tides: ", filteredTides);
-          console.log(marineData.forecast.forecastday[0].day)
+          //console.log(marineData.forecast.forecastday[0].day)
 
 
 
@@ -186,11 +370,10 @@ export default defineComponent({
       navigator.geolocation.getCurrentPosition(fetchWeather);
     }
 
-    watch(user, (newValue) => {
-      if (newValue && newValue.userByUid) {
-        userData.value = newValue.userByUid;
-      }
-    });
+    //Ga naar pagina
+    const goToReport = () => {
+      router.push('/redder/report');
+    };
 
     return {
       weatherIcon,
@@ -207,6 +390,14 @@ export default defineComponent({
       lowTide,
       weatherIconUrl,
       nameUser,
+      holidays,
+      reports,
+      reportInfo,
+      goToReport,
+      holidaysFormatted,
+      currentUserUid,
+      currentUserPost,
+      namesOfUsersWithoutHolidayToday,
     };
   },
 });

@@ -7,4 +7,7 @@ export class CreateHolidayInput {
 
   @Field(() => [String])
   dates: string[]
+
+  @Field(() => Number)
+  post: number
 }

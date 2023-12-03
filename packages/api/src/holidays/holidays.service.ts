@@ -17,6 +17,7 @@ export class HolidaysService {
     const H = new Holiday()
     H.uid = createHolidayInput.uid
     H.dates = createHolidayInput.dates
+    H.post = createHolidayInput.post
 
     return this.holidaysRepository.save(H)
   }
