@@ -3,33 +3,33 @@ import { InputType, Int, Field } from '@nestjs/graphql';
 @InputType()
 export class CreatePostenInput {
   
-  @Field()
-  namePost: string
+  @Field(() => Number)
+  numberPost: number
 
-  @Field()
-  nameRedderA: string
+  @Field(() => String)
+  uidRedderA: string
 
-  @Field()
-  nameRedderB: string
+  @Field(() => String)
+  uidRedderB: string
 
-  @Field()
-  nameRedderC: string
+  @Field(() => String)
+  uidRedderC: string
 
-  @Field()
-  nameRedderD: string
+  @Field(() => String)
+  uidRedderD: string
 
-  @Field()
-  nameRedderE: string
+  @Field(() => String)
+  uidRedderE: string
 
-  @Field()
-  nameRedderF: string
+  @Field(() => String)
+  uidRedderF: string
 
-  @Field()
-  nameRedderG: string
+  @Field(() => String)
+  uidRedderG: string
 
-  @Field()
-  nameEhbo1: string
+  @Field(() => String, {nullable: true})
+  uidEhbo1?: string
 
-  @Field()
-  nameEhbo2: string
+  @Field(() => String, {nullable: true})
+  uidEhbo2?: string
 }

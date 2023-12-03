@@ -10,9 +10,14 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { PostenModule } from './posten/posten.module';
+
 import { NotificationsGateway } from './notifications/notifications.gateway';
 import { TodoModule } from './todo/todo.module';
 import { NotificationsModule } from './notifications/notifications.module';
+
+import { HolidaysModule } from './holidays/holidays.module';
+import { ReportsModule } from './reports/reports.module';
+
 
 
 @Module({
@@ -36,6 +41,8 @@ import { NotificationsModule } from './notifications/notifications.module';
     PostenModule,
     TodoModule,
     NotificationsModule
+    HolidaysModule,
+    ReportsModule,
   ],
 
   controllers: [AppController],

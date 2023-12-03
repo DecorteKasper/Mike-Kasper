@@ -10,25 +10,25 @@ import { UserRecord } from 'firebase-admin/auth';
 export class PostenResolver {
   constructor(private readonly postenService: PostenService) {}
 
-  @Mutation(() => Posten, {description: 'Create a posten using the DTO.'})
-  createPosten(@Args('createPostenInput') createPostenInput: CreatePostenInput) {
+  @Mutation(() => Posten)
+  createPosten(@Args('createPostenInput') createPostenInput: CreatePostenInput) : Promise<Posten> {
     return this.postenService.create(createPostenInput);
   }
 
   @Query(() => [Posten], { name: 'posten' })
-  findAll(@FirebaseUser() CurrentUser: UserRecord) {
+  findAll() {
     return this.postenService.findAll();
   }
 
-  @Query(() => Posten, { name: 'posten' })
-  findOne(@Args('id', { type: () => String }) id: string) {
-    return this.postenService.findOne(id);
+  @Query(() => Posten, { name: 'postByNumber' })
+  findOneByNumber(@Args('number', { type: () => Number }) numberPost: number) {
+    return this.postenService.findOneByNumber(numberPost);
   }
 
-  @Mutation(() => Posten)
-  updatePosten(@Args('updatePostenInput') updatePostenInput: UpdatePostenInput) {
-    return this.postenService.update(updatePostenInput.id, updatePostenInput);
-  }
+  // @Mutation(() => Posten)
+  // updatePosten(@Args('updatePostenInput') updatePostenInput: UpdatePostenInput) {
+  //   return this.postenService.update(updatePostenInput.id, updatePostenInput);
+  // }
 
   @Mutation(() => Posten)
   removePosten(@Args('id', { type: () => String }) id: string) {
