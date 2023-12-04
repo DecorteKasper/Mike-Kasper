@@ -26,11 +26,11 @@
 
         <table class="w-full">
             <tr class="border-b-2 border-dark_green py-4">
-                <td class=""></td>
-                <td class="">Post</td>
-                <td class="">Datum</td>
-                <td class="">Beschrijving</td>
-                <td class="">Status</td>
+                <td class="px-6"></td>
+                <td class="px-6">Post</td>
+                <td class="px-6">Datum</td>
+                <td class="px-6">Beschrijving</td>
+                <td class="px-6">Status</td>
             </tr>
             <tr v-for="(task, index) in filteredTasks"
                 :class="index % 2 === 0 ? 'border-l-4 border-dark_green h-12' : 'border-l-4 border-red h-12 bg-dark_grey'">
@@ -50,13 +50,13 @@
                 </td>
                 <td class="">Post {{ task.post }}</td>
                 <td class="">{{ formatDate(task.createdAt) }}</td>
-                <td class="">{{ task.description }}</td>
+                <td class="flex-col flex-wrap">{{ truncateDescription(task.description, 80) }}</td>
                 <td class=""> {{ task.status === false ? 'Incompleted' : 'Completed' }}</td>
                 <td class="">
                     <button class="mr-6" @click="deleteTask(task.id)">
                         <Trash2 class="w-7 h-7 text-red" />
                     </button>
-                    <button>
+                    <button @click="openModal(task)">
                         <Eye class="w-7 h-7 text-dark_green" />
                     </button>
                 </td>
@@ -73,15 +73,8 @@ import { computed } from 'vue';
 import { DELETE_TODO, UPDATE_TODO } from '@/graphql/todo.mutation'
 import { useMutation } from '@vue/apollo-composable'
 import useRealtime from '@/composables/useRealtime';
+import type { Itask } from '@/interfaces/task.interface'
 
-
-interface Task {
-    id: string;
-    post: number;
-    createdAt: string;
-    status: boolean;
-    description: string;
-}
 
 export default {
 
@@ -93,8 +86,14 @@ export default {
 
     props: {
         todoData: {
-            type: Array as () => Task[],
+            type: Array as () => Itask[],
             default: () => []
+        }
+    },
+
+    methods: {
+        openModal(task: Itask) {
+            this.$emit('show-modal', task); // Geeft een 'show-modal' event door naar de oudercomponent
         }
     },
 
@@ -106,7 +105,7 @@ export default {
         // console.log("Dit zijn de props:", props.todoData)
         const { mutate: deleteTodo } = useMutation(DELETE_TODO)
         const { mutate: updateTodo } = useMutation(UPDATE_TODO)
-        const tasks = ref<Task[]>(props.todoData)
+        const tasks = ref<Itask[]>(props.todoData)
         const { on } = useRealtime()
 
         // Realtime data voor delete werkt nog niet
@@ -115,6 +114,7 @@ export default {
         })
         on('todo:update', (todo) => {
         })
+
 
         const deleteTask = (taskId: string) => {
             // console.log("Dit is de task id:", taskId)
@@ -139,7 +139,7 @@ export default {
             return `${month}-${day}    ${hour}:${minutes}`;
         };
 
-        const toggleTaskStatus = (taskStatus: boolean, TaskObject: Task) => {
+        const toggleTaskStatus = (taskStatus: boolean, TaskObject: Itask) => {
             console.log('Before: task.status =', taskStatus);
             taskStatus = !taskStatus; // Omschakelen tussen true en false
             console.log('After: task.status =', taskStatus);
@@ -174,6 +174,13 @@ export default {
             return tasks.value.filter(task => (completed.value === 'true' ? task.status === true : task.status === false));
         });
 
+        const truncateDescription = (description: string, maxLength: number) => {
+            if (description.length > maxLength) {
+                return description.substring(0, maxLength) + '...';
+            }
+            return description;
+        }
+
 
 
 
@@ -190,9 +197,11 @@ export default {
             filteredTasks,
             filterTasks,
             deleteTask,
-            formatDate
+            formatDate,
+            truncateDescription
         }
     }
 }
+
 
 </script>
