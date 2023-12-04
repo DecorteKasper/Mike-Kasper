@@ -17,6 +17,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 
 import { HolidaysModule } from './holidays/holidays.module';
 import { ReportsModule } from './reports/reports.module';
+import { MonthsModule } from './months/months.module';
 
 
 
@@ -43,6 +44,7 @@ import { ReportsModule } from './reports/reports.module';
     NotificationsModule,
     HolidaysModule,
     ReportsModule,
+    MonthsModule,
   ],
 
   controllers: [AppController],
