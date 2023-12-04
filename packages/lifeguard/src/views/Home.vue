@@ -9,8 +9,13 @@
       <Holidays />
     </div>
     <div class="my-10">
-      <Tasks v-if="sortedTodos.length > 0" :todoData="sortedTodos" />
+      <Tasks @show-modal="showModal" v-if="sortedTodos.length > 0" :todoData="sortedTodos" />
     </div>
+    <div>
+      <ModalWindow @close-modal="closeModal" :isVisible="isModalVisible" :taskData="modalTaskData" />
+    </div>
+
+
     <!-- <div>
       <ul>
         <li v-for="todo in sortedTodos" :key="todo.id">
@@ -48,9 +53,10 @@ import Schedule from "@/components/generic/Schedule.vue"
 import Holidays from "@/components/generic/Holidays.vue"
 import Tasks from "@/components/generic/Tasks.vue"
 import UseRealtime from "@/composables/useRealtime"
+import ModalWindow from '@/components/generic/ModalWindow.vue'
+import type { Itask } from '@/interfaces/task.interface'
 
 // TODO: refactor to interface
-
 
 interface User {
   id: string
@@ -65,7 +71,7 @@ interface User {
 }
 
 export default {
-  components: { Container, Schedule, Holidays, Tasks },
+  components: { Container, Schedule, Holidays, Tasks, ModalWindow },
 
   setup() {
     const { firebaseUser } = useFirebase()
@@ -85,7 +91,7 @@ export default {
     on('todos', (todos) => {
       Todos.value = todos
     })
-    
+
 
     watch(user, (Value) => {
       if (Value && Value.userByUid) {
@@ -103,6 +109,17 @@ export default {
       })
     })
 
+    const modalTaskData = ref<Itask>()
+    const isModalVisible = ref(false)
+    const showModal = (task: any) => {
+      isModalVisible.value = true
+      modalTaskData.value = task;
+    }
+
+    const closeModal = () => {
+      isModalVisible.value = false
+    }
+
 
     return {
       userLoading,
@@ -110,8 +127,13 @@ export default {
       userError,
       firebaseUser,
       activeUser,
-      sortedTodos
+      sortedTodos,
+      showModal,
+      closeModal,
+      isModalVisible,
+      modalTaskData
     }
   },
 }
 </script>
+
