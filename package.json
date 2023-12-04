@@ -2,7 +2,12 @@
   "name": "mike-kasper",
   "version": "0.0.0",
   "scripts": {
-    "dev": "todo"
+    "dev": "npx lerna run --scope={lifeguard,api} dev",
+    "dev:api": "npx lerna run --scope=api dev",
+    "dev:pwa": "npx lerna run --scope=lifeguard dev",
+    "translate:pwa": "npm run generate:translations -w lifeguard",
+    "build:pwa": "npm lerna run --scope=lifeguard build",
+    "build:api": "npm lerna run --scope=api build"
   },
   "keywords": [],
   "author": "Mike & Kasper",
@@ -32,5 +37,8 @@
     "lucide-vue-next": "^0.279.0",
     "react": "^18.2.0",
     "vue-multiselect": "^3.0.0-beta.3"
+  },
+  "devDependencies": {
+    "lerna": "^8.0.0"
   }
 }
