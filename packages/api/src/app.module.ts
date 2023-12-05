@@ -30,7 +30,8 @@ import { MonthsModule } from './months/months.module';
     }), LifeguardModule,
     TypeOrmModule.forRoot({
       type: 'mongodb',
-      url: 'mongodb://localhost:27027/api',
+      // url: 'mongodb://localhost:27027/api',
+      url: `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`, // DOCKER
       entities: [__dirname + '/**/*.entity.{js,ts}'],
       synchronize: true, // Careful with this in production
       useNewUrlParser: true,

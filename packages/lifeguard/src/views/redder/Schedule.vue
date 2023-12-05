@@ -101,7 +101,7 @@
             </div>
 
             <div class="bg-white w-full h-auto rounded-cardRadius shadow-cardShadow px-6 py-7 mt-6 mb-6 lg:max-w-5xl m-auto">
-                <Calendar borderless expanded :attributes='attrs' :min-date="new Date()"/>
+                <Calendar borderless expanded :attributes='(attrs as any)' :min-date="new Date()"/>
             </div>
         </section>
     </Container>
@@ -115,7 +115,6 @@ import check_icon from '@/assets/icons/checked.svg'
 import uncheck_icon from '@/assets/icons/unchecked.svg'
 import { Calendar, DatePicker } from 'v-calendar';
 import 'v-calendar/style.css';
-import { Attribute } from 'v-calendar/dist/types/src/utils/attribute.js';
 import { ref } from 'vue';
 
 

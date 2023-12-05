@@ -62,7 +62,8 @@
           <div v-for="(group, index) in holidaysFormatted" :key="index" class="flex flex-col">
             <p class="mt-6">{{ new Date(group.date).toISOString().split('T')[0].split('-').reverse().join('/') }}</p>
             <div class="w-full h-[2px] rounded-lg bg-dark_green mb-4 mt-1"></div>
-            <UserShown v-for="user in group.users" :key="user.uid" :name = "`${user.name} ${user.surname}`"/>
+            <UserShown v-for="user in group.users" :key="user.uid" :name = "`${user.name}`"/>
+            <!-- <UserShown v-for="user in group.users" :key="user.uid" :name = "`${user.name} ${user.surname}`"/> -->
           </div>
         </div>
       </div>

@@ -40,7 +40,6 @@ import { useVuelidate } from '@vuelidate/core';
 import useFirebase from '@/composables/useFirebase';
 import { ADD_MONTH } from '@/graphql/month.mutation';
 import type { Imonth } from '@/interfaces/month.interface';
-import { addMonths } from 'v-calendar/dist/types/src/utils/date/helpers.js';
 import { useMutation } from '@vue/apollo-composable';
 
 export default {

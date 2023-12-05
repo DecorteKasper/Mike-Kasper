@@ -5,9 +5,9 @@
     "dev": "npx lerna run --scope={lifeguard,api} dev",
     "dev:api": "npx lerna run --scope=api dev",
     "dev:pwa": "npx lerna run --scope=lifeguard dev",
-    "translate:pwa": "npm run generate:translations -w lifeguard",
-    "build:pwa": "npm lerna run --scope=lifeguard build",
-    "build:api": "npm lerna run --scope=api build"
+    "translate:pwa": "npx run generate:translations -w lifeguard",
+    "build:pwa": "npx lerna run --scope=lifeguard build",
+    "build:api": "npx lerna run --scope=api build"
   },
   "keywords": [],
   "author": "Mike & Kasper",
