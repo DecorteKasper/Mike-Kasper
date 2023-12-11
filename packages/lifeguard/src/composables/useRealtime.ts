@@ -5,12 +5,17 @@ import useFirebase from './useFirebase'
 
 const { firebaseUser } = useFirebase()
 
+const getToken = async () => { 
+  return await firebaseUser.value?.getIdToken()
+}
+
 // const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
 const socket: Socket = io('http://localhost:3004', {
   extraHeaders: {
-    Authorization: `Bearer ${await firebaseUser.value?.getIdToken()}`,
+    Authorization: `Bearer ${getToken()}`,
   },
 })
+
 
 const emit = (event: string, data: any) => {
   socket.emit(event, data)

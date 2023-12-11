@@ -60,8 +60,13 @@ const router = createRouter({
       meta: { shouldBeAuthenticated: true },
     },
     {
-      path: '/sos',
+      path: '/admin/sos',
       component: () => import('../views/admin/Sos.vue'),
+      meta: { shouldBeAuthenticated: true },
+    },
+    {
+      path: '/sos',
+      component: () => import('../views/Sos.vue'),
       meta: { shouldBeAuthenticated: true },
     },
     {

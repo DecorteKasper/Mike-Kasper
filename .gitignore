@@ -1,3 +1,4 @@
 **/node_modules/
 **/.env
 packages/api/credentials.json
+.env.production.local
