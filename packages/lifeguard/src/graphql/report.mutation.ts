@@ -18,3 +18,19 @@ mutation createReport($createReportInput: CreateReportInput!) {
   }
 }
 `
+
+export const DELETE_REPORT = gql`
+mutation RemoveReport($id: String!) {
+  removeReport(remove: $id) {
+    uid
+  }
+}
+`
+
+export const DELETE_ALL_REPORTS = gql`
+mutation RemoveAllReports($ids: [String!]!) {
+  removeAllReports(removeAll: $ids) {
+    uid
+  }
+}
+`

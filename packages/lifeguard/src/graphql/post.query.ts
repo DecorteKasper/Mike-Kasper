@@ -13,8 +13,6 @@ query postByNumber($numberPost: Float!) {
   }
 }
 `
-
-
 export const ALL_POSTEN = gql`
 query {
   posten {

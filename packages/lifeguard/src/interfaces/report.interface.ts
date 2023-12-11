@@ -13,4 +13,5 @@ export interface Ireport {
     extraInfo: string
     reddersPost: number
     createdAt: string
+    status: boolean
 }

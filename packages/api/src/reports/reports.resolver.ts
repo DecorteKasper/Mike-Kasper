@@ -5,11 +5,11 @@ import { CreateReportInput } from './dto/create-report.input';
 
 @Resolver(() => Report)
 export class ReportsResolver {
-  constructor(private readonly reportsService: ReportsService) {}
+  constructor(private readonly reportsService: ReportsService) { }
 
 
   @Mutation(() => Report)
-  createReport(@Args('createReportInput') createReportInput: CreateReportInput) : Promise<Report> {
+  createReport(@Args('createReportInput') createReportInput: CreateReportInput): Promise<Report> {
     return this.reportsService.create(createReportInput);
   }
 
@@ -18,7 +18,7 @@ export class ReportsResolver {
     return this.reportsService.findAll();
   }
 
-  @Query(() => Report, { name: 'report' })
+  @Query(() => Report, { name: 'GetReportById' })
   findOne(@Args('id', { type: () => String }) id: string) {
     return this.reportsService.findOne(id);
   }
@@ -29,7 +29,13 @@ export class ReportsResolver {
   // }
 
   @Mutation(() => Report)
-  removeReport(@Args('id', { type: () => String }) id: string) {
+  removeReport(@Args('remove', { type: () => String }) id: string) {
     return this.reportsService.remove(id);
+  }
+
+  @Mutation(() => [Report], { nullable: true })
+  async removeAllReports(@Args('removeAll', { type: () => [String] }) id: string[]) {
+    const reports = await this.reportsService.removeAll(id);
+    return reports;
   }
 }
