@@ -6,6 +6,7 @@ import { SeedService } from './seed.service'
 export class DatabaseSeedCommand {
   constructor(private readonly seedService: SeedService) {}
 
+  //Lifeguards
   @Command({
     command: 'seed:database:lifeguards',
     describe: 'Seed the database with lifeguards',
@@ -24,5 +25,16 @@ export class DatabaseSeedCommand {
     console.info('🔪 Start deleting lifeguards')
     await this.seedService.deleteAllLifeguards()
     console.info('🪶 Removed lifeguards')
+  }
+
+  //Users
+  @Command({
+    command: 'seed:database:users',
+    describe: 'Seed the database with users',
+  })
+  async seedUsers() {
+    console.info('🪺 Start seeding of users')
+    const users = await this.seedService.addUsersFromJson()
+    console.info(`🐣 ${users.length} users are added.`)
   }
 }
