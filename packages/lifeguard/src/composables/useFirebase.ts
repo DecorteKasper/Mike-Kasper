@@ -9,6 +9,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
+  updatePassword,
   type User,
 } from 'firebase/auth'
 import firebase from 'firebase/compat/app'
@@ -24,13 +25,14 @@ const app = initializeApp({
   storageBucket: import.meta.env.VITE_storageBucket,
   messagingSenderId: import.meta.env.VITE_messagingSenderId,
   appId: import.meta.env.VITE_appId,
-  measurementId: import.meta.env.VITE_measurementId,  
+  measurementId: import.meta.env.VITE_measurementId,
 })
 
 const auth = getAuth(app)
 setPersistence(auth, browserLocalPersistence) // Keep track of logged in user in the browser
 
 const firebaseUser = ref<User | null>(auth.currentUser)
+
 
 const login = async (email: string, password: string): Promise<User> => {
   return new Promise((resolve, reject) => {
@@ -102,6 +104,33 @@ const logout = async (): Promise<void> => {
   })
 }
 
+// Update password
+
+const updatepassword = async (currentPassword: string, newPassword: string): Promise<void> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!firebaseUser.value || !firebaseUser.value.email) {
+        reject(new Error('User not authenticated or missing email'));
+        return;
+      }
+
+      const { email } = firebaseUser.value;
+
+      // Verifieer het huidige wachtwoord
+      await signInWithEmailAndPassword(auth, email, currentPassword);
+
+      // Als de verificatie slaagt, bijwerk het wachtwoord
+      await updatePassword(firebaseUser.value, newPassword);
+      console.log('Wachtwoord succesvol bijgewerkt');
+      resolve();
+    } catch (error: any) {
+      console.error('Fout bij het bijwerken van het wachtwoord', error);
+      reject(error);
+    }
+  });
+};
+
+
 export default () => {
   // State for each composable
   return {
@@ -112,5 +141,6 @@ export default () => {
     register,
     resetPassword,
     restoreUser,
+    updatepassword,
   }
 }

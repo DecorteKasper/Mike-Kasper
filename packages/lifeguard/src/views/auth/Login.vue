@@ -105,12 +105,11 @@ import { ref, reactive, computed } from 'vue'
 import useFirebase from '@/composables/useFirebase'
 import PrimaryButton from '@/components/generic/PrimaryButton.vue'
 import { useVuelidate } from '@vuelidate/core'
-import { required, email, sameAs, minLength, helpers } from '@vuelidate/validators'
+import { required, email, minLength, helpers } from '@vuelidate/validators'
 import router from '@/router'
 
 export default {
-
-
+  
   components: {
     PrimaryButton,
   },

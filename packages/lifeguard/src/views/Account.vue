@@ -4,20 +4,20 @@
       <ul class="shadow-cardShadow rounded-cardRadius p-10 h-fit flex flex-col gap-4">
         <h2 class="font-lato text-lg font-semibold mb-4">Instellingen</h2>
         <li @click="showForm(1)"
-          class="font-lato rounded-inputFieldRadius cursor-pointer hover:text-white hover-bg-green py-2 px-4 transition-all duration-75 ease-in flex"
-          :class="{ 'bg-green text-white': selectedForm === 1 }">
+          class="font-lato rounded-inputFieldRadius cursor-pointer hover:text-greenx hover:translate-x-2 py-2 px-4 transition-all duration-75 ease-in flex"
+          :class="{ 'bg-greenx text-white': selectedForm === 1 }">
           <UserCircle2 class="mr-2" :size="24" />
           Accountvoorkeuren
         </li>
         <li @click="showForm(2)"
-          class="font-lato rounded-inputFieldRadius cursor-pointer hover:text-white hover-bg-green py-2 px-4 transition-all duration-75 ease-in flex"
-          :class="{ 'bg-green text-white': selectedForm === 2 }">
+          class="font-lato rounded-inputFieldRadius cursor-pointer hover:text-greenx hover:translate-x-2 py-2 px-4 transition-all duration-75 ease-in flex"
+          :class="{ 'bg-greenx text-white': selectedForm === 2 }">
           <Lock class="mr-2" :size="24" />
           Wachtwoord
         </li>
         <li @click="showForm(3)"
-          class="font-lato rounded-inputFieldRadius cursor-pointer hover:text-white hover-bg-green py-2 px-4 transition-all duration-75 ease-in flex"
-          :class="{ 'bg-green text-white': selectedForm === 3 }">
+          class="font-lato rounded-inputFieldRadius cursor-pointer hover:text-greenx hover:translate-x-2 py-2 px-4 transition-all duration-75 ease-in flex"
+          :class="{ 'bg-greenx text-white': selectedForm === 3 }">
           <Trash2 class="mr-2" :size="24" />
           Account verwijderen
         </li>
@@ -36,7 +36,7 @@
             <img class="w-32 w-32 rounded-full bg-red mb-6" v-if="selectedFile" :src="imageUrl" alt="Uploaded Image" />
             <input id="fileInput" type="file" @change="handleFileUpload" class="hidden" />
             <label for="fileInput"
-              class="px-4 py-3 rounded-buttonRadius bg-green text-sm font-lato text-white hover:bg-dark_green focus:outline-none focus-visible:bg-dark_green"
+              class="px-4 py-3 rounded-buttonRadius bg-greenx text-sm font-lato text-white hover:bg-dark_green focus:outline-none focus-visible:bg-dark_green"
               id="fileInput">
               Upload foto
             </label>
@@ -47,7 +47,7 @@
           </div>
         </div>
         <!-- Blok 2 -->
-        <div class="border-green border-b-2 mb-12 ">
+        <div class="border-greenx border-b-2 mb-12 ">
           <h2 class="font-lato font-semibold text-lg mb-10">Persoonlijke gegevens</h2>
           <div class="flex">
             <div class="mr-6">
@@ -151,26 +151,44 @@
       </Form>
 
       <!-- Form 2 -->
-      <Form v-if="selectedForm === 2" class="py-10">
+      <Form v-if="selectedForm === 2" @submit.prevent="handleNewPassword" class="py-10">
         <div class="mb-10">
-          <h2 class="font-lato font-semibold text-lg mb-10">Wachtwoord instellen</h2>
+          <h2 class="font-lato font-semibold text-lg mb-5">Wachtwoord instellen</h2>
+          <!-- Feedback over opgeslagen wachtwoord -->
+          <div :class="{
+            'p-2 flex bg-dark_grey mb-5 rounded-inputFieldRadius w-fit transition-all ease-in duration-150': true,
+            'opacity-0 -translate-y-8': updateSuccess === false,
+            'opacity-100 translate-y-0': updateSuccess === true
+          }">
+            <p class="font-lato font-bold text-black">Nieuw wachtwoord opgeslagen</p>
+            <CheckCircle class="ml-2 text-dark_green" :size="24" />
+          </div>
+
           <div class="flex">
             <div class="mr-6">
-              <label for="name" class="text-sm font-lato block mb-4 text-dark_grey2">
-                Wachtwoord
+              <!-- Hier komt input voor current password currentPassword -->
+              <label for="surname" class="text-sm font-lato block mb-4 text-dark_grey2">
+                Huidige wachtwoord
               </label>
-              <input type="password" name="name" id="name" placeholder="Huidige wachtwoord"
-                class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-green" />
-              <!-- <span class="text-red font-lato text-xs" v-if="v$.name.$error"> {{ v$.name.$errors[0].$message }}</span> -->
+              <!-- Hier komt input voor current password currentPassword -->
+              <input type="password" name="surname" id="surname" placeholder="Nieuw wachtwoord" v-model="currentPassword"
+                class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx" />
+              <span class="text-red font-lato text-xs" v-if="ErrorsCurrentPassword"> {{ ErrorsCurrentPassword }}</span>
             </div>
+
+
             <div class="mr-6">
               <label for="surname" class="text-sm font-lato block mb-4 text-dark_grey2">
                 Nieuw wachtwoord
               </label>
-              <input type="password" name="surname" id="surname" placeholder="Nieuw wachtwoord"
-                class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-green" />
-              <!-- <span class="text-red font-lato text-xs" v-if="v$.name.$error"> {{ v$.name.$errors[0].$message }}</span> -->
+              <!-- Hier komt input voor current password currentPassword -->
+              <input type="password" name="surname" id="surname" placeholder="Nieuw wachtwoord" v-model="newPassword"
+                class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx" />
+              <span class="text-red font-lato text-xs" v-if="ErrorsNewPassword"> {{ ErrorsNewPassword }}</span>
+
             </div>
+
+
           </div>
         </div>
         <div>
@@ -204,16 +222,16 @@
 
 <script lang="ts">
 import Container from '@/components/generic/Container.vue'
-import { ref, onMounted, watch, reactive } from 'vue'
-import { UserCircle2, Lock, Trash2 } from 'lucide-vue-next'
+import { ref, onMounted, nextTick } from 'vue'
+import { UserCircle2, Lock, Trash2, CheckCircle } from 'lucide-vue-next'
 import PrimaryButton from '@/components/generic/PrimaryButton.vue'
 import useFirebase from '@/composables/useFirebase'
-import { GET_USER_BY_UID } from '@/graphql/user.query'
-import { useQuery } from '@vue/apollo-composable'
+// import { GET_USER_BY_UID } from '@/graphql/user.query'
+// import { useQuery } from '@vue/apollo-composable'
 import { useMutation } from '@vue/apollo-composable'
 import { UPDATE_USER } from '@/graphql/user.mutation'
 import type { Iuser } from '@/interfaces/user.interface'
-import useCustomUser from '@/composables/useCustomUser'
+// import useCustomUser from '@/composables/useCustomUser'
 
 export default {
 
@@ -222,7 +240,8 @@ export default {
     UserCircle2,
     Lock,
     Trash2,
-    PrimaryButton
+    PrimaryButton,
+    CheckCircle
   },
   computed: {
     imageUrl() {
@@ -256,7 +275,7 @@ export default {
       selectedForm.value = formNumber; // Wanneer erop een menu-item wordt geklikt, wordt het overeenkomstige formulier weergegeven
       localStorage.setItem('selectedForm', formNumber.toString()); // Het geselecteerde formulier wordt opgeslagen in de localstorage
     }
-    const { firebaseUser } = useFirebase()
+    const { firebaseUser, updatepassword } = useFirebase()
     const userData = ref<Iuser | null>()
 
     // User updaten
@@ -276,6 +295,9 @@ export default {
       zipCode: ''
     });
 
+
+    const newPassword = ref('')
+    const currentPassword = ref('')
 
     onMounted(() => {
       const savedform = localStorage.getItem('selectedForm'); // Wanneer de pagina wordt herladen, wordt het laatst geselecteerde formulier weergegeven
@@ -318,6 +340,52 @@ export default {
         });
     };
 
+    const ErrorsNewPassword = ref('')
+    const ErrorsCurrentPassword = ref('')
+    const updateSuccess = ref(false)
+
+    // const 
+    const handleNewPassword = () => {
+      // Console log van het huidige wachtwoord en het nieuwe wachtwoord
+      // console.log('currentPassword:', currentPassword.value, "newPassword:", newPassword.value);
+
+      updatepassword(currentPassword.value, newPassword.value)
+        .then(() => {
+          console.log('Wachtwoord succesvol bijgewerkt');
+          // Aanpassing aanbrengen
+          ErrorsNewPassword.value = ''
+          ErrorsCurrentPassword.value = ''
+
+          nextTick(() => {
+            updateSuccess.value = true
+          })
+
+          // Voer hier verdere acties uit, bijvoorbeeld een succesbericht weergeven
+        })
+        .catch((error) => {
+          console.error('Fout bij het bijwerken van het wachtwoord in Account.vue', error);
+
+          // Voer specifieke acties uit op basis van het type fout
+          if (error.code === 'auth/invalid-login-credentials') {
+            console.log('Fout: Ongeldige inloggegevens. Het huidige wachtwoord is onjuist.');
+            ErrorsCurrentPassword.value = 'Wachtwoord niet correct'
+            // Voer hier verdere acties uit voor onjuist huidig wachtwoord
+          } else if (error.code === 'auth/user-not-found') {
+            console.log('Fout: Gebruiker niet gevonden.');
+            ErrorsNewPassword.value = 'Gebruiker niet gevonden'
+            // Voer hier verdere acties uit voor gebruiker niet gevonden
+          } else if (error.code === 'auth/weak-password') {
+            console.log('Fout: Het nieuwe wachtwoord moet minstens 6 tekens lang zijn.');
+            ErrorsNewPassword.value = 'Minstens 6 tekens lang.'
+          }
+
+          else {
+            console.log('Er is een fout opgetreden bij het bijwerken van het wachtwoord.');
+            // Voer hier verdere generieke foutafhandeling uit
+          }
+        });
+    }
+
     return {
       selectedForm,
       showForm,
@@ -325,7 +393,13 @@ export default {
       firebaseUser,
       userData,
       changeUser,
-      handleAccount
+      handleAccount,
+      handleNewPassword,
+      newPassword,
+      currentPassword,
+      ErrorsNewPassword,
+      ErrorsCurrentPassword,
+      updateSuccess
     }
   }
 }
