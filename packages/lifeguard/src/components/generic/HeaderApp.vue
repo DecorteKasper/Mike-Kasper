@@ -59,26 +59,46 @@
       </RouterLink>
       <nav>
         <ul class="lg:flex items-center space-x-12 hidden">
+
+           <!-- HOME PAGINA HOOFDREDDER -->
           <li v-if="userData?.role === 300">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/">Home</RouterLink>
           </li>
+
+          <!-- HOME PAGINA REDDER -->
           <li v-if="userData?.role === 200">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/redder">Home</RouterLink>
           </li>
+
+          <!-- PLANNING PAGINA HOOFDREDDER -->
           <li v-if="userData?.role === 300">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/schedule">Planning</RouterLink>
+            active-class="text-dark_green font-semibold" to="/schedule">Planning</RouterLink>
           </li>
-          <li v-if="userData?.role === 200">
+          
+          <!-- PLANNING PAGINA REDDER + CHECKS -->
+          <li v-if="userData?.role === 200 && checkMonths && !checkHolidays">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/redder/schedule">Planning</RouterLink>
+              active-class="text-dark_green font-semibold" to="/redder/months">Keuze maanden</RouterLink>
           </li>
+          <li v-if="userData?.role === 200 && checkHolidays && !checkMonths">
+              <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
+                active-class="text-dark_green font-semibold" to="/redder/chooseschedule">Keuze verlofdagen</RouterLink>
+          </li>
+          <li v-if="userData?.role === 200 && checkHolidays && checkMonths">
+                <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
+                  active-class="text-dark_green font-semibold" to="/redder/schedule">Planning</RouterLink>
+          </li>
+
+
+          
           <li v-if="userData?.role === 300">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/reports">Verslagen</RouterLink>
           </li>
+          
           <li v-if="userData?.role === 200">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/redder/report">Dagverslag</RouterLink>
@@ -201,6 +221,11 @@ import { MenuIcon, XIcon } from 'lucide-vue-next';
 import { UserCircle2 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 
+//Checks
+import { ALL_CHECKS } from '@/graphql/check.query'
+import type { Icheck } from '@/interfaces/check.interface'
+
+
 interface User {
   id: string
   uid: string
@@ -263,6 +288,10 @@ export default {
     const isSubmenuOpen = ref(false)
     const { logout } = useFirebase()
     const { replace } = useRouter()
+    const accessPlatform = ref();
+    const checkHolidays = ref();
+    const checkMonths = ref();
+
 
     const logoutUser = () => {
       logout().then(() => {
@@ -270,18 +299,29 @@ export default {
       })
     }
 
-    const { loading: userLoading, result: user, error: userError } = useQuery(GET_USER_BY_UID, {
-      uid: firebaseUser.value?.uid,
-    })
+    const { loading: userLoading, result: user, error: userError } = useQuery(GET_USER_BY_UID, {uid: firebaseUser.value?.uid,})
+    //Checks from db
+    const { loading: checkLoading, result: checkResult, error: checkError } = useQuery<{ checks: Icheck[] }> (ALL_CHECKS);
 
     // Watch the user result and set userRole when it's available
     watch(user, (newValue) => {
       if (newValue && newValue.userByUid) {
         userData.value = newValue.userByUid
-        // console.log("userData")
-        // console.log(userData.value)
       }
     })
+
+    watch(checkResult, (newValue) => {
+      if (newValue && newValue.checks && newValue.checks.length > 0) {
+        const checkValues = newValue.checks[0]; // Assuming you want properties from the first element
+        accessPlatform.value = checkValues.accessPlatform;
+        checkHolidays.value = checkValues.checkHolidays;
+        checkMonths.value = checkValues.checkMonths;
+        console.log("accessPlatform", accessPlatform.value)
+        console.log("checkHolidays", checkHolidays.value)
+        console.log("checkMonths", checkMonths.value)
+      }
+    });
+
 
     return {
       userLoading,
@@ -289,7 +329,10 @@ export default {
       userData,
       isMenuOpen,
       isSubmenuOpen,
-      logoutUser
+      logoutUser,
+      accessPlatform,
+      checkHolidays,
+      checkMonths,
     }
   },
 }

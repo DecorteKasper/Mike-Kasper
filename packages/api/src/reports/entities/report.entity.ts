@@ -1,5 +1,4 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
-import { ObjectId } from 'mongodb';
 import { Column, CreateDateColumn, Entity, ObjectIdColumn } from 'typeorm';
 
 @Entity()
@@ -55,7 +54,7 @@ export class Report {
   extraInfo: string
 
   // Status
-  @Column({ default: false }) // Database link - Typeorm
+  @Column() // Database link - Typeorm
   @Field(() => Boolean)
   status: boolean
 
