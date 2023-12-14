@@ -201,6 +201,11 @@ import { MenuIcon, XIcon } from 'lucide-vue-next';
 import { UserCircle2 } from 'lucide-vue-next'
 import { useRouter } from 'vue-router'
 
+//Checks
+import { ALL_CHECKS } from '@/graphql/check.query'
+import type { Icheck } from '@/interfaces/check.interface'
+
+
 interface User {
   id: string
   uid: string
@@ -263,6 +268,10 @@ export default {
     const isSubmenuOpen = ref(false)
     const { logout } = useFirebase()
     const { replace } = useRouter()
+    const accessPlatform = ref();
+    const checkHolidays = ref();
+    const checkMonths = ref();
+
 
     const logoutUser = () => {
       logout().then(() => {
@@ -274,6 +283,9 @@ export default {
       uid: firebaseUser.value?.uid,
     })
 
+    //Checks from db
+    const { loading: checkLoading, result: checkResult, error: checkError } = useQuery<{ checks: Icheck[] }> (ALL_CHECKS);
+
     // Watch the user result and set userRole when it's available
     watch(user, (newValue) => {
       if (newValue && newValue.userByUid) {
@@ -283,13 +295,29 @@ export default {
       }
     })
 
+    watch(checkResult, (newValue) => {
+      if (newValue && newValue.checks && newValue.checks.length > 0) {
+        const checkValues = newValue.checks[0]; // Assuming you want properties from the first element
+        accessPlatform.value = checkValues.accessPlatform;
+        checkHolidays.value = checkValues.checkHolidays;
+        checkMonths.value = checkValues.checkMonths;
+        console.log("accessPlatform", accessPlatform.value)
+        console.log("checkHolidays", checkHolidays.value)
+        console.log("checkMonths", checkMonths.value)
+      }
+    });
+
+
     return {
       userLoading,
       userError,
       userData,
       isMenuOpen,
       isSubmenuOpen,
-      logoutUser
+      logoutUser,
+      accessPlatform,
+      checkHolidays,
+      checkMonths,
     }
   },
 }
