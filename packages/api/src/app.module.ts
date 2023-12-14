@@ -18,6 +18,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { HolidaysModule } from './holidays/holidays.module';
 import { ReportsModule } from './reports/reports.module';
 import { MonthsModule } from './months/months.module';
+import { ChecksModule } from './checks/checks.module';
 
 
 
@@ -51,6 +52,7 @@ import { MonthsModule } from './months/months.module';
     HolidaysModule,
     ReportsModule,
     MonthsModule,
+    ChecksModule,
   ],
 
   controllers: [AppController],
