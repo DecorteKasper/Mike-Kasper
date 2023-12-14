@@ -59,26 +59,46 @@
       </RouterLink>
       <nav>
         <ul class="lg:flex items-center space-x-12 hidden">
+
+           <!-- HOME PAGINA HOOFDREDDER -->
           <li v-if="userData?.role === 300">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/">Home</RouterLink>
           </li>
+
+          <!-- HOME PAGINA REDDER -->
           <li v-if="userData?.role === 200">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/redder">Home</RouterLink>
           </li>
+
+          <!-- PLANNING PAGINA HOOFDREDDER -->
           <li v-if="userData?.role === 300">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/schedule">Planning</RouterLink>
+            active-class="text-dark_green font-semibold" to="/schedule">Planning</RouterLink>
           </li>
-          <li v-if="userData?.role === 200">
+          
+          <!-- PLANNING PAGINA REDDER + CHECKS -->
+          <li v-if="userData?.role === 200 && checkMonths && !checkHolidays">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/redder/schedule">Planning</RouterLink>
+              active-class="text-dark_green font-semibold" to="/redder/months">Keuze maanden</RouterLink>
           </li>
+          <li v-if="userData?.role === 200 && checkHolidays && !checkMonths">
+              <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
+                active-class="text-dark_green font-semibold" to="/redder/chooseschedule">Keuze verlofdagen</RouterLink>
+          </li>
+          <li v-if="userData?.role === 200 && checkHolidays && checkMonths">
+                <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
+                  active-class="text-dark_green font-semibold" to="/redder/schedule">Planning</RouterLink>
+          </li>
+
+
+          
           <li v-if="userData?.role === 300">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/reports">Verslagen</RouterLink>
           </li>
+          
           <li v-if="userData?.role === 200">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/redder/report">Dagverslag</RouterLink>
@@ -279,10 +299,7 @@ export default {
       })
     }
 
-    const { loading: userLoading, result: user, error: userError } = useQuery(GET_USER_BY_UID, {
-      uid: firebaseUser.value?.uid,
-    })
-
+    const { loading: userLoading, result: user, error: userError } = useQuery(GET_USER_BY_UID, {uid: firebaseUser.value?.uid,})
     //Checks from db
     const { loading: checkLoading, result: checkResult, error: checkError } = useQuery<{ checks: Icheck[] }> (ALL_CHECKS);
 
@@ -290,8 +307,6 @@ export default {
     watch(user, (newValue) => {
       if (newValue && newValue.userByUid) {
         userData.value = newValue.userByUid
-        // console.log("userData")
-        // console.log(userData.value)
       }
     })
 
