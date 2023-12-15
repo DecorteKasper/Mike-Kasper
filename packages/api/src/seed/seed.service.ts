@@ -1,17 +1,22 @@
 import { Injectable } from '@nestjs/common'
 
 import { UsersService } from 'src/users/users.service'
+import { HolidaysService } from 'src/holidays/holidays.service'
 
 import { User } from 'src/users/entities/user.entity'
+import { Holiday } from 'src/holidays/entities/holiday.entity'
 
 import * as users from './data/users.json'
+import * as holidays from './data/holidays.json'
 
 @Injectable()
 export class SeedService {
   constructor(
-    private usersService: UsersService
+    private usersService: UsersService,
+    private holidaysService: HolidaysService
   ) { }
 
+  //Users
   async addUsersFromJson() { 
     let theUsers: User[] = []
 
@@ -42,6 +47,31 @@ export class SeedService {
 
   async deleteAllUsers(): Promise<void> {
     return this.usersService.truncate()
+  }
+
+
+  //Holidays
+  async addHolidaysFromJson() {
+    let theHolidays: Holiday[] = []
+
+    for (let holiday of holidays) {
+      const h = new Holiday()
+      h.uid = holiday.uid
+      h.dates = holiday.dates
+      h.post = holiday.post
+
+      theHolidays.push(h)
+    }
+
+    try {
+      return await this.holidaysService.saveAll(theHolidays)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async deleteAllHolidays(): Promise<void> {
+    return this.holidaysService.truncate()
   }
 
 
