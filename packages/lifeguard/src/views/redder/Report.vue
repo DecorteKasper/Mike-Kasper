@@ -28,7 +28,7 @@
                             <v-text-field 
                                 label="Naam vervanger"
                                 id="vervanging"
-                                class="mt-2"
+                                class="mt-2 rounded-lg"
                                 v-model="formData.valueVervanging"
                                 >
                             </v-text-field>
@@ -185,7 +185,8 @@
                     <v-textarea v-model="formData.valueExtraInfo" label="Andere info"></v-textarea>
                 </div>
 
-                <v-btn class="bg-black text-white font-lato mt-2 mb-6 lg:mt-5 rounded-md" type="submit">Verzend verslag</v-btn>
+                <button class="bg-greenx text-white font-lato font-bold px-9 py-2 mt-2 mb-6 lg:mt-5 rounded-md hover:bg-dark_green transition-all" type="submit">Verzend verslag</button>
+                <!-- <v-btn class="bg-teal text-white font-lato mt-2 mb-6 lg:mt-5 rounded-md" type="submit">Verzend verslag</v-btn> -->
             </v-form>
 
         </section>
@@ -246,6 +247,7 @@ export default {
             valueRadioMateriaal: '',
             valueTextMateriaal: '',
             valueExtraInfo: '',
+            status: false,
             radioRules: [(v:any) => !!v || 'Selecteer een optie'],
         });
 
@@ -275,6 +277,7 @@ export default {
                         radioMateriaal: formData.value.valueRadioMateriaal,
                         textMateriaal: formData.value.valueTextMateriaal,
                         extraInfo: formData.value.valueExtraInfo,
+                        status: false,
                         reddersPost: 3
                     }
                 }),
