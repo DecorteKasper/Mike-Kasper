@@ -3,14 +3,21 @@ import { Injectable } from '@nestjs/common'
 import { UsersService } from 'src/users/users.service'
 import { HolidaysService } from 'src/holidays/holidays.service'
 import { MonthsService } from 'src/months/months.service'
+import { ReportsService } from 'src/reports/reports.service'
+import { PostenService } from 'src/posten/posten.service'
 
 import { User } from 'src/users/entities/user.entity'
 import { Holiday } from 'src/holidays/entities/holiday.entity'
 import { Month } from 'src/months/entities/month.entity'
+import { Report } from 'src/reports/entities/report.entity'
+import { Posten } from 'src/posten/entities/posten.entity'
 
 import * as users from './data/users.json'
 import * as holidays from './data/holidays.json'
 import * as months from './data/months.json'
+import * as reports from './data/reports.json'
+import * as posten from './data/posten.json'
+
 
 @Injectable()
 export class SeedService {
@@ -18,6 +25,8 @@ export class SeedService {
     private usersService: UsersService,
     private holidaysService: HolidaysService,
     private monthsService: MonthsService,
+    private reportsService: ReportsService,
+    private postenService: PostenService,
   ) { }
 
   //Users
@@ -101,5 +110,38 @@ export class SeedService {
     return this.monthsService.truncate()
   }
 
+
+  //Reports
+  async addReportsFromJson() {
+    let theReports: Report[] = []
+
+    for (let report of reports) {
+      const r = new Report()
+      r.uid = report.uid
+      r.aanwezigen = report.aanwezigen
+      r.vervanging = report.vervanging ?? null
+      r.radioKindVerloren = report.radioKindVerloren
+      r.radioInterventie = report.radioInterventie
+      r.textInterventie = report.textInterventie ?? null
+      r.radioOefening = report.radioOefening
+      r.textOefening = report.textOefening ?? null
+      r.radioMateriaal = report.radioMateriaal
+      r.textMateriaal = report.textMateriaal ?? null
+      r.extraInfo = report.extraInfo ?? null
+      r.reddersPost = report.reddersPost
+
+      theReports.push(r)
+    }
+
+    try {
+      return await this.reportsService.saveAll(theReports)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async deleteAllReports(): Promise<void> {
+    return this.reportsService.truncate()
+  }
 
 }

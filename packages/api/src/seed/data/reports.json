@@ -1,0 +1,24 @@
+[
+    {
+        "uid": "vdd5KufR6NNbYUvHPb7f5li1hCC3",
+        "aanwezigen": [
+            "Kasper Decorte",
+            "Olivia Brown",
+            "William Jones",
+            "Sophia Davis",
+            "Emma Smith"
+        ],
+        "vervanging": "",
+        "radioKindVerloren": "kind_0",
+        "radioInterventie": "interventie_0",
+        "textInterventie": "",
+        "radioOefening": "oefeningOfSport_0",
+        "textOefening": "",
+        "radioMateriaal": "materiaal_0",
+        "textMateriaal": "",
+        "extraInfo": "",
+        "status": false,
+        "reddersPost": 3,
+        "createdAt": "2023-12-15T17:29:11.744+00:00"
+    }
+]

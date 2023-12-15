@@ -45,4 +45,13 @@ export class ReportsService {
   remove(id: string) {
     return `This action removes a #${id} report`;
   }
+
+  //seeding
+  saveAll(reports: Report[]): Promise<Report[]> {
+    return this.reportsRepository.save(reports)
+  }
+
+  truncate(): Promise<void> {
+    return this.reportsRepository.clear()
+  }
 }
