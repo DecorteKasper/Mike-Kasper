@@ -41,4 +41,13 @@ export class MonthsService {
   remove(id: string) {
     return `This action removes a #${id} month`;
   }
+
+  //seeding
+  saveAll(months: Month[]): Promise<Month[]> {
+    return this.monthsRepository.save(months)
+  }
+
+  truncate(): Promise<void> {
+    return this.monthsRepository.clear()
+  }
 }

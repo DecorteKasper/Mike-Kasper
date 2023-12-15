@@ -48,4 +48,26 @@ export class DatabaseSeedCommand {
     await this.seedService.deleteAllHolidays()
     console.log('holidays deleted')
   }
+
+
+  //Months
+  @Command({
+    command: 'seed:database:months',
+    describe: 'seed the database with months',
+  })
+  async seedMonths() {
+    console.log('seeding months...')
+    const months = await this.seedService.addMonthsFromJson()
+    console.log(`${months.length} months created`)
+  }
+
+  @Command({
+    command: 'seed:reset:months',
+    describe: 'delete all months from database',
+  })
+  async deleteMonths() {
+    console.log('deleting months...')
+    await this.seedService.deleteAllMonths()
+    console.log('months deleted')
+  }
 }
