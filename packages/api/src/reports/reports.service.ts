@@ -58,6 +58,16 @@ export class ReportsService {
   }
 
 
+  //seeding
+  saveAll(reports: Report[]): Promise<Report[]> {
+    return this.reportsRepository.save(reports)
+  }
+
+  truncate(): Promise<void> {
+    return this.reportsRepository.clear()
+  }
+}
+
   async removeAll(ids: string[]) {
     const reports = await this.reportsRepository.find({ where: { _id: { $in: ids.map(id => new ObjectId(id)) } } })
     if (reports) {

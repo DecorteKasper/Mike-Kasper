@@ -33,4 +33,13 @@ export class HolidaysService {
   remove(id: string) {
     return new Error(`This action removes a #${id} holiday`);
   }
+
+  //seeding
+  saveAll(holidays: Holiday[]): Promise<Holiday[]> {
+    return this.holidaysRepository.save(holidays)
+  }
+
+  truncate(): Promise<void> {
+    return this.holidaysRepository.clear()
+  }
 }
