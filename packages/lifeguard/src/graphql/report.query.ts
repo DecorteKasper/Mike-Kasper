@@ -5,6 +5,8 @@ query {
   reports {
     id
     uid
+    aanwezigen
+    vervanging
     radioKindVerloren
     radioInterventie
     textInterventie
@@ -13,6 +15,7 @@ query {
     radioMateriaal
     textMateriaal
     extraInfo
+    status
     reddersPost
     createdAt
   }

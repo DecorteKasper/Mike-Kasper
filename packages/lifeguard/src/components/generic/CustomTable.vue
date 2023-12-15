@@ -4,13 +4,17 @@
             <h2 class="font-lato font-semibold text-lg flex items-center">
                 {{ getTitle }}
             </h2>
-            <div class="flex gap-4">
+            <div class="flex gap-4 relative">
                 <input class="max-w-lg p-2 bg-gray rounded-inputFieldRadius outline-none " type="search"
                     placeholder="Zoeken..." v-model="searchTerm" @input="filterItems">
+                <span class="absolute right-3 top-2">
+                    <!-- Hier komt een icon -->
+                    <Search class="w-6 h-6 text-dark_green" />
+                </span>
             </div>
         </div>
 
-        <table class="w-full">
+        <table class=" w-full">
             <!-- Titles -->
             <tr class="border-b-2 border-dark_green">
                 <td class="pl-14 ">
@@ -27,9 +31,9 @@
                         </div>
                     </label>
                 </td>
-                <td v-if="tasksData.length > 0" class="font-lato font-semibold text-sm py-4">Post</td>
-                <td v-if="tasksData.length > 0" class="font-lato font-semibold text-sm py-4">Datum</td>
-                <td v-if="tasksData.length > 0" class="font-lato font-semibold text-sm py-4">Ingevuld</td>
+                <td v-if="ReportsData.length > 0" class="font-lato font-semibold text-sm py-4">Post</td>
+                <td v-if="ReportsData.length > 0" class="font-lato font-semibold text-sm py-4">Datum</td>
+                <td v-if="ReportsData.length > 0" class="font-lato font-semibold text-sm py-4">Ingevuld</td>
                 <td v-if="jobsData.length > 0 || sollisData.length > 0" class="font-lato font-semibold text-sm py-4">
                     Voornaam</td>
                 <td v-if="jobsData.length > 0 || sollisData.length > 0" class="font-lato font-semibold text-sm py-4">Naam
@@ -38,11 +42,13 @@
                 </td>
 
                 <td class="flex justify-end gap-4 pr-14">
-                    <PrimaryButton v-if="tasksData.length > 0" label="Downloaden" @click="" />
-                    <PrimaryButton v-if="tasksData.length > 0" label="Verwijderen" @click="deleteAll" />
+                    <!-- Reports -->
+                    <SecondaryButton v-if="ReportsData.length > 0" label="Verwijderen"
+                        @click="openModalDeleteAll(itemIds)" />
+                    <!-- Jobs -->
                     <PrimaryButton v-if="jobsData.length > 0 || sollisData.length > 0" label="Accepteer" @click="" />
-                    <PrimaryButton v-if="jobsData.length > 0 || sollisData.length > 0" label="Afwijzen"
-                        @click="deleteAll" />
+                    <!-- <PrimaryButton v-if="jobsData.length > 0 || sollisData.length > 0" label="Afwijzen"
+                        @click="deleteAll" /> -->
                 </td>
 
             </tr>
@@ -51,7 +57,8 @@
             <tr v-for="(item, index) in filteredItems" :class="index % 2 === 0 ? ' h-12' : ' h-12 bg-gray'">
                 <td class="pl-14">
                     <label class="checkbox-status">
-                        <input type="checkbox" name="status" class="hidden" v-model="item.status">
+                        <input type="checkbox" name="status" class="hidden" v-model="item.status"
+                            @click="getItemIds(item.id)">
                         <div :class="{
                             'group p-1 w-fit bg-light_green rounded-full focus:outline-none cursor-pointer': item.status === true,
                             'group  p-1 w-fit bg-light_green rounded-full focus:outline-none cursor-pointer': item.status !== true
@@ -62,11 +69,19 @@
                         </div>
                     </label>
                 </td>
-                <!-- Tasks -->
-                <td v-if="tasksData.length > 0 && 'title' in item" class="font-lato text-sm">{{ item.title }}</td>
-                <td v-if="tasksData.length > 0 && 'date' in item" class="font-lato text-sm">{{ item.date }}</td>
-                <td v-if="tasksData.length > 0 && 'description' in item" class="font-lato text-sm">{{ item.description }}
+                <!-- Reports -->
+                <!-- <td v-if="ReportsData.length > 0 && 'title' in item" class="font-lato text-sm">{{ item.title }}</td>
+                <td v-if="ReportsData.length > 0 && 'date' in item" class="font-lato text-sm">{{ item.date }}</td>
+                <td v-if="ReportsData.length > 0 && 'description' in item" class="font-lato text-sm">{{ item.description }} -->
+                <td v-if="ReportsData.length > 0 && 'reddersPost' in item" class="font-lato text-sm">Post {{
+                    item.reddersPost
+                }}
                 </td>
+                <td v-if="ReportsData.length > 0 && 'reddersPost' in item" class="font-lato text-sm">{{
+                    formatDate(item.createdAt) }}
+                </td>
+                <td v-if="ReportsData.length > 0" class="font-lato text-sm"></td>
+
                 <!-- Jobs -->
                 <td v-if="jobsData.length > 0 && 'name' in item || sollisData.length > 0 && 'name' in item"
                     class="font-lato text-sm">{{ item.name }}</td>
@@ -81,45 +96,46 @@
                 <td class="font-lato text-sm pr-14">
                     <div class="flex align-middle justify-end">
                         <!-- Jobs en sollicitaties -->
-                        <button v-if="jobsData.length > 0 || sollisData.length > 0" class="mr-6"
-                            @click="deleteItem(item.id)">
+                        <!-- <button v-if="jobsData.length > 0 || sollisData.length > 0" class="mr-6"
+                            @click="">
                             <X class="w-7 h-7 text-red" />
-                        </button>
+                        </button> -->
                         <button v-if="jobsData.length > 0 || sollisData.length > 0">
                             <CheckCircle class="w-7 h-7 text-dark_green" />
                         </button>
                         <!-- Reports -->
-                        <button v-if="tasksData.length > 0" class="mr-6" @click="deleteItem(item.id)">
+                        <!-- Button om te downloaden als pdf -->
+                        <button v-if="ReportsData.length > 0" class="mr-6" @click="downloadPdf(item)">
+                            <ArrowDownToLine class="w-7 h-7 text-greenx" />
+                        </button>
+
+                        <button v-if="ReportsData.length > 0" class="mr-6" @click="openModalDelete(item.id)">
                             <Trash2 class="w-7 h-7 text-red" />
                         </button>
-                        <button v-if="tasksData.length > 0">
+                        <button v-if="ReportsData.length > 0" @click="openModalReport(item)">
                             <Eye class="w-7 h-7 text-dark_green" />
                         </button>
                     </div>
                 </td>
             </tr>
-            <!-- </tr> -->
+
         </table>
     </div>
 </template>
 
 <script lang="ts">
-import { ref } from 'vue'
-import { Eye, Trash2, Check, CheckCircle, X } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { ref, watch, computed } from 'vue'
+import { Eye, Trash2, Check, CheckCircle, X, ArrowDownToLine, Search } from 'lucide-vue-next';
 import PrimaryButton from './PrimaryButton.vue';
+import SecondaryButton from './SecondaryButton.vue';
+import type { Ireport } from '@/interfaces/report.interface';
+import { DELETE_REPORT, DELETE_ALL_REPORTS } from '@/graphql/report.mutation'
+import { useMutation } from '@vue/apollo-composable'
+import jsPDF from 'jspdf';
 
-
-interface Task {
-    id: number;
-    title: string;
-    date: string;
-    description: string;
-    status: boolean;
-}
 
 interface Job {
-    id: number;
+    id: string;
     name: string;
     surname: string;
     function: string;
@@ -129,8 +145,9 @@ interface Job {
 export default {
 
     props: {
-        tasksData: {
-            type: Array as () => Task[],
+
+        ReportsData: {
+            type: Array as () => Ireport[],
             default: () => []
         },
         jobsData: {
@@ -140,23 +157,31 @@ export default {
         sollisData: {
             type: Array as () => Job[],
             default: () => []
+        },
+        deleteEvent: {
+            type: String,
+            default: null
+        },
+        deleteEvents: {
+            type: Array as () => string[],
+            default: () => []
         }
     },
-
     components: {
         Eye,
         Trash2,
         Check,
         PrimaryButton,
+        SecondaryButton,
         CheckCircle,
-        X
-
+        X,
+        ArrowDownToLine,
+        Search
     },
-
     computed: {
         getTitle() {
-            if (this.tasksData.length > 0) {
-                return 'Taken';
+            if (this.ReportsData.length > 0) {
+                return 'verslagen';
             } else if (this.jobsData.length > 0) {
                 return 'Werknemers';
             } else if (this.sollisData.length > 0) {
@@ -168,19 +193,86 @@ export default {
         }
     },
 
+    methods: {
+        openModalReport(item: any) {
+            this.$emit('show-modal', { report: item });
+        },
+
+        openModalDelete(id: string) {
+            this.$emit('show-modal', { id: id });
+        },
+
+        openModalDeleteAll(ids: string[]) {
+            this.$emit('show-modal', { ids: ids });
+        },
+
+        downloadPdf(item: any) {
+            console.log('download pdf', item);
+
+            // PDf Maken
+            const doc = new jsPDF();
+
+            // Bepaal de breedte en hoogte van het paginaformaat (standaard A4-formaat)
+            const pageWidth = doc.internal.pageSize.width;
+            const pageHeight = doc.internal.pageSize.height;
+
+            // Voeg padding toe aan alle zijden
+            const padding = 20;
+
+            // Titel
+            doc.setFontSize(30);
+            doc.setTextColor(92, 164, 169);
+            doc.text(`Verslag post ${item.reddersPost}`, padding, padding);
+            doc.setFontSize(14);
+            doc.setTextColor(0, 0, 0);
+
+            // Aanwezigheden
+            if (Array.isArray(item.aanwezigen) && item.aanwezigen.length > 0) {
+                const aanwezighedenText = `Aanwezigheden: ${item.aanwezigen.join(', ')}`;
+                doc.text(aanwezighedenText, padding, padding + 10);
+            } else {
+                doc.text('Geen aanwezigheden beschikbaar', padding, padding + 10);
+            }
+            // Vervangingen 
+            doc.text(`Vervanging: ${item.vervanging}`, padding, padding + 20);
+            doc.text(`${this.formatDate(item.createdAt)}`, padding, padding + 60);
+            // Sla het PDF-bestand op
+            doc.save(`verslagPost${item.reddersPost}.pdf`);
+        },
+    },
+
     setup(props) {
+
 
         const sollis = ref<Job[]>(props.sollisData);
         const jobs = ref<Job[]>(props.jobsData);
-        const tasks = ref<Task[]>(props.tasksData);
+        const reports = ref<Ireport[]>(props.ReportsData);
         // Select values
-        const selectAll = ref(false);
+        const selectAll = ref(false)
         const searchTerm = ref('')
+
+
+        // Select items en push them to itemIds array
+        const itemIds = ref<string[]>([]);
+
+        const getItemIds = (id: string) => {
+            const index = itemIds.value.indexOf(id);
+
+            if (index === -1) {
+                itemIds.value.push(id);
+            } else {
+                itemIds.value.splice(index, 1);
+            }
+        };
+
         // Select All
         const toggleSelectAll = () => {
             const selectAllStatus = selectAll.value;
-            tasks.value.forEach((task) => {
-                task.status = selectAllStatus;
+            console.log(selectAllStatus)
+
+            reports.value.forEach((report) => {
+                report.status = selectAllStatus;
+                itemIds.value.push(report.id);
             });
             // voor de jobs 
             jobs.value.forEach((job) => {
@@ -192,28 +284,20 @@ export default {
             });
         };
 
-        // Delete
-        const deleteItem = (taskId: number) => {
-            if (tasks.value.length > 0) {
-                tasks.value = tasks.value.filter(task => task.id !== taskId);
-            } else if (jobs.value.length > 0) {
-                jobs.value = jobs.value.filter(job => job.id !== taskId);
-            } else if (sollis.value.length > 0) {
-                sollis.value = sollis.value.filter(solli => solli.id !== taskId);
-            }
-        };
+        // Om de lijst onmiddelijk te updaten als er een delete is gebeurt
+        watch(() => props.deleteEvent, (newValue) => {
+            reports.value = reports.value.filter(report => report.id !== newValue);
+        });
 
-        // Delete all
-        const deleteAll = () => {
-            if (tasks.value.length > 0) {
-                tasks.value = tasks.value.filter(task => task.status !== true);
-                console.log('tasks after delete:', tasks.value)
-                console.log('jobs after delete:', jobs.value)
-            } else if (jobs.value.length > 0) {
-                jobs.value = jobs.value.filter(jobs => jobs.status !== true);
-            } else if (sollis.value.length > 0) {
-                sollis.value = sollis.value.filter(solli => solli.status !== true);
-            }
+        watch(() => props.deleteEvents, (newValue) => {
+            reports.value = reports.value.filter(report => !newValue.includes(report.id));
+        });
+
+        // Format date
+        const formatDate = (isoDateString: string) => {
+            const date = new Date(isoDateString);
+            const formattedDate = date.toISOString().split('T')[0];
+            return formattedDate;
         };
 
         // Search
@@ -221,11 +305,11 @@ export default {
             const searchTermValue = searchTerm.value.toLowerCase().trim();
 
             // Filter zowel tasks als jobs op basis van zoekterm
-            const filteredTasks = tasks.value.filter((task) => {
+            const filteredReports = reports.value.filter((report) => {
                 return (
-                    task.title.toLowerCase().includes(searchTermValue) ||
-                    task.date.toLowerCase().includes(searchTermValue) ||
-                    task.description.toLowerCase().includes(searchTermValue)
+                    // Deze werkt nog niet helemaal
+                    report.reddersPost.toString().includes(searchTermValue) ||
+                    report.createdAt.toLowerCase().includes(searchTermValue)
                 );
             });
 
@@ -249,25 +333,25 @@ export default {
 
 
             // Combineer de resultaten van de zoekopdrachten voor taken en banen
-            return [...filteredTasks, ...filteredJobs, ...filteredSollis];
+            return [...filteredReports, ...filteredJobs, ...filteredSollis];
         });
-
 
         const filterItems = () => {
             searchTerm.value = searchTerm.value.toLowerCase();
         };
 
         return {
-            tasks,
+            reports,
             jobs,
             sollis,
             filteredItems,
             filterItems,
-            deleteItem,
             searchTerm,
             selectAll,
             toggleSelectAll,
-            deleteAll
+            formatDate,
+            getItemIds,
+            itemIds
         }
     }
 }

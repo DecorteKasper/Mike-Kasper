@@ -93,7 +93,9 @@ export default {
 
     methods: {
         openModal(task: Itask) {
-            this.$emit('show-modal', task); // Geeft een 'show-modal' event door naar de oudercomponent
+            this.$emit('show-modal', task); 
+            // Geeft een 'show-modal' event door naar de oudercomponent
+            console.log(task)
         }
     },
 
@@ -180,10 +182,6 @@ export default {
             }
             return description;
         }
-
-
-
-
 
         watch(() => props.todoData, (newData) => {
             tasks.value = newData;

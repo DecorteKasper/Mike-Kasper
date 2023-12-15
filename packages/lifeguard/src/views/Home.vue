@@ -26,7 +26,6 @@
 
 
     <!-- <p>{{ firebaseUser }}</p> -->
-
     <!-- <div v-if="userLoading">Loading...</div>
     <div v-if="userError">
       {{ userError }}
@@ -109,6 +108,7 @@ export default {
       })
     })
 
+    // Modal
     const modalTaskData = ref<Itask>()
     const isModalVisible = ref(false)
     const showModal = (task: any) => {

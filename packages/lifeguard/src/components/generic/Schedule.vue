@@ -118,21 +118,23 @@ import { LifeBuoyIcon, UserCircle2, Cross } from 'lucide-vue-next'
 interface User {
     id: string;
     uid: string;
-    locale: string;
-    role: string;
     name: string;
     surname: string;
-    email: string;
-    bathingPlace: string;
     photoURL: string | null;
+    email: string;
     phoneNumber: string | null;
+    bathingPlace: string;
+    birth: Date | null;
+
     zipCode: number | null;
     street: string | null;
     numberOfHouse: number | null;
-    birth: Date | null;
+
+    post: string;
+    role: string;
     createdAt: Date;
     updateAt: Date;
-    post: string;
+
 }
 
 export default {
@@ -153,7 +155,6 @@ export default {
             {
                 id: "653e40a340a50bedb1c53925",
                 uid: "VqrsOpd6zqVQi7P8gOfLCv2ofCI3",
-                locale: "nl",
                 role: "200",
                 name: "Mike",
                 surname: "Vanoosthuyze",
@@ -172,7 +173,7 @@ export default {
             {
                 id: "654e40a340a50bedb1c53926",
                 uid: "AbcOpd6zqVQi7P8gOfLCv2ofCI3",
-                locale: "en",
+
                 role: "100",
                 name: "Sarah",
                 surname: "Smith",
@@ -191,7 +192,7 @@ export default {
             {
                 id: "655e40a340a50bedb1c53927",
                 uid: "XyzOpd6zqVQi7P8gOfLCv2ofCI3",
-                locale: "es",
+
                 role: "100",
                 name: "Carlos",
                 surname: "Rodriguez",
@@ -211,7 +212,7 @@ export default {
             {
                 id: "656e40a340a50bedb1c53928",
                 uid: "PqrOpd6zqVQi7P8gOfLCv2ofCI3",
-                locale: "fr",
+
                 role: "200",
                 name: "Marie",
                 surname: "Dupont",
@@ -230,7 +231,7 @@ export default {
             {
                 id: "657e40a340a50bedb1c53929",
                 uid: "LmnOpd6zqVQi7P8gOfLCv2ofCI3",
-                locale: "de",
+
                 role: "100",
                 name: "Hans",
                 surname: "Schmidt",
@@ -249,7 +250,7 @@ export default {
             {
                 id: "658e40a340a50bedb1c53930",
                 uid: "RstOpd6zqVQi7P8gOfLCv2ofCI3",
-                locale: "it",
+
                 role: "100",
                 name: "Giuseppe",
                 surname: "Bianchi",
@@ -269,7 +270,7 @@ export default {
             {
                 id: "659e40a340a50bedb1c53931",
                 uid: "FghOpd6zqVQi7P8gOfLCv2ofCI3",
-                locale: "pt",
+
                 role: "200",
                 name: "Maria",
                 surname: "Santos",
@@ -288,7 +289,7 @@ export default {
             {
                 id: "660e40a340a50bedb1c53932",
                 uid: "MnoOpd6zqVQi7P8gOfLCv2ofCI3",
-                locale: "ru",
+
                 role: "100",
                 name: "Elena",
                 surname: "Ivanova",
@@ -307,7 +308,7 @@ export default {
             {
                 id: "661e40a340a50bedb1c53933",
                 uid: "QweOpd6zqVQi7P8gOfLCv2ofCI3",
-                locale: "ja",
+
                 role: "200",
                 name: "Yuki",
                 surname: "Suzuki",

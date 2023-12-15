@@ -6,6 +6,7 @@ export default defineConfig({
         colors: {
             // red: '#ED6A5A',
             redx: '#ED6A5A',
+            dark_red: '#DA4C3A',
             yellow: '#F4F1BB',
             light_green: '#E6EBE0',
             // green: '#9AC1BC',

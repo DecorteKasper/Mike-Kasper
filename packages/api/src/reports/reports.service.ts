@@ -1,18 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { CreateReportInput } from './dto/create-report.input';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Report } from './entities/report.entity';
+import { ObjectId } from 'mongodb';
+import { MongoRepository } from 'typeorm';
 
 @Injectable()
 export class ReportsService {
 
   constructor(
     @InjectRepository(Report)
-    private readonly reportsRepository: Repository<Report>,
-  ) {}
+    private readonly reportsRepository: MongoRepository<Report>,
+  ) { }
 
-  create(createReportInput: CreateReportInput) : Promise<Report> {    
+  create(createReportInput: CreateReportInput): Promise<Report> {
     const R = new Report()
     R.uid = createReportInput.uid
     R.aanwezigen = createReportInput.aanwezigen
@@ -25,6 +27,7 @@ export class ReportsService {
     R.radioMateriaal = createReportInput.radioMateriaal
     R.textMateriaal = createReportInput.textMateriaal ?? null
     R.extraInfo = createReportInput.extraInfo ?? null
+    R.status = false
     R.reddersPost = createReportInput.reddersPost
 
     return this.reportsRepository.save(R)
@@ -35,16 +38,25 @@ export class ReportsService {
   }
 
   findOne(id: string) {
-    return `This action returns a #${id} report`;
+    if (!ObjectId.isValid(id)) throw new Error('Invalid ObjectId')
+    const obj = new ObjectId(id)
+    // @ts-ignore
+    return this.reportsRepository.findOne({ _id: new ObjectId(id) })
   }
 
   // update(id: string, updateReportInput: UpdateReportInput) {
   //   return `This action updates a #${id} report`;
   // }
 
-  remove(id: string) {
-    return `This action removes a #${id} report`;
+  async remove(id: string) {
+    const report = await this.reportsRepository.findOne({ _id: new ObjectId(id) } as any)
+    if (report) {
+      await this.reportsRepository.remove(report)
+      return report
+    }
+    return null
   }
+
 
   //seeding
   saveAll(reports: Report[]): Promise<Report[]> {
@@ -54,4 +66,17 @@ export class ReportsService {
   truncate(): Promise<void> {
     return this.reportsRepository.clear()
   }
+}
+
+  async removeAll(ids: string[]) {
+    const reports = await this.reportsRepository.find({ where: { _id: { $in: ids.map(id => new ObjectId(id)) } } })
+    if (reports) {
+      const result = reports.length
+      await this.reportsRepository.remove(reports)
+      console.log("Deleted:", result)
+      return reports
+    }
+    return null;
+  }
+
 }

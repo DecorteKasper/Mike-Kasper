@@ -36,6 +36,9 @@ export class CreateReportInput
   @Field(() => String, { nullable: true })
   extraInfo: string
 
+  @Field(() => Boolean)
+  status: boolean  
+
   @Field(() => Number, { nullable: true })
   reddersPost: number
 

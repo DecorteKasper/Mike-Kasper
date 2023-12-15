@@ -11,74 +11,15 @@
                         <h2 class="font-bold">Aanwezigen:</h2>
                         <div class="w-16 h-[2px] bg-redx rounded-full"></div>
                     </div>
-                    <label for="A">
+                    
+                    <label v-for="(user, index) in workersInPost" :for="`${index}`" :key="index">
                         <v-checkbox
                             v-model="formData.aanwezigen"
-                            label="Laura Middleton"
-                            value="A"
-                            id="A"
-                            class="rounded-full h-13 text-black pl-3 cursor-pointer"
-                            :class="{'bg-greenx': isSelected('A'), 'bg-gray': !isSelected('A') }">
-                        </v-checkbox>
-                    </label>
-                    <label for="B">
-                        <v-checkbox
-                            v-model="formData.aanwezigen"
-                            label="Dean Woodward"
-                            value="B"
-                            id="B"
+                            :label="user"
+                            :value="user"
+                            :id="`${index}`"
                             class="rounded-full h-13 text-black pl-3 mt-4 cursor-pointer"
-                            :class="{'bg-greenx': isSelected('B'), 'bg-gray': !isSelected('B') }">
-                        </v-checkbox>
-                    </label>
-                    <label for="C">
-                        <v-checkbox
-                            v-model="formData.aanwezigen"
-                            label="Kasper Decorte"
-                            value="C"
-                            id="C"
-                            class="rounded-full h-13 text-black pl-3 mt-4 cursor-pointer"
-                            :class="{'bg-greenx': isSelected('C'), 'bg-gray': !isSelected('C') }">
-                        </v-checkbox>
-                    </label>
-                    <label for="D">
-                        <v-checkbox
-                            v-model="formData.aanwezigen"
-                            label="John"
-                            value="D"
-                            id="D"
-                            class="rounded-full h-13 text-black pl-3 mt-4 cursor-pointer"
-                            :class="{'bg-greenx': isSelected('D'), 'bg-gray': !isSelected('D') }">
-                        </v-checkbox>
-                    </label>
-                    <label for="E">
-                        <v-checkbox
-                            v-model="formData.aanwezigen"
-                            label="Henri Sheppard"
-                            value="E"
-                            id="E"
-                            class="rounded-full h-13 text-black pl-3 mt-4 cursor-pointer"
-                            :class="{'bg-greenx': isSelected('E'), 'bg-gray': !isSelected('E') }">
-                        </v-checkbox>
-                    </label>
-                    <label for="redderF">
-                        <v-checkbox
-                            v-model="formData.aanwezigen"
-                            label="Logan Norris"
-                            value="F"
-                            id="redderF"
-                            class="rounded-full h-13 text-black pl-3 mt-4 cursor-pointer"
-                            :class="{'bg-greenx': isSelected('F'), 'bg-gray': !isSelected('F') }">
-                        </v-checkbox>
-                    </label>
-                    <label for="G">
-                        <v-checkbox
-                            v-model="formData.aanwezigen"
-                            label="Sonia Nelson"
-                            value="G"
-                            id="G"
-                            class="rounded-full h-13 text-black pl-3 mt-4 cursor-pointer"
-                            :class="{'bg-greenx': isSelected('G'), 'bg-gray': !isSelected('G') }">
+                            :class="{ 'bg-greenx': isSelected(user), 'bg-gray': !isSelected(user) }">
                         </v-checkbox>
                     </label>
 
@@ -87,7 +28,7 @@
                             <v-text-field 
                                 label="Naam vervanger"
                                 id="vervanging"
-                                class="mt-2"
+                                class="mt-2 rounded-lg"
                                 v-model="formData.valueVervanging"
                                 >
                             </v-text-field>
@@ -244,7 +185,8 @@
                     <v-textarea v-model="formData.valueExtraInfo" label="Andere info"></v-textarea>
                 </div>
 
-                <v-btn class="bg-black text-white font-lato mt-2 mb-6 lg:mt-5 rounded-md" type="submit">Verzend verslag</v-btn>
+                <button class="bg-greenx text-white font-lato font-bold px-9 py-2 mt-2 mb-6 lg:mt-5 rounded-md hover:bg-dark_green transition-all" type="submit">Verzend verslag</button>
+                <!-- <v-btn class="bg-teal text-white font-lato mt-2 mb-6 lg:mt-5 rounded-md" type="submit">Verzend verslag</v-btn> -->
             </v-form>
 
         </section>
@@ -253,18 +195,32 @@
 
 
 <script lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import Container from '@/components/generic/Container.vue';
 import '@mdi/font/css/materialdesignicons.css';
 import type { Ireport } from '@/interfaces/report.interface';
 import { ADD_REPORT } from '@/graphql/report.mutation';
-import { useMutation } from '@vue/apollo-composable';
+import { useMutation, useQuery } from '@vue/apollo-composable';
 import useFirebase from '@/composables/useFirebase';
+import { ALL_HOLIDAYS } from '@/graphql/holiday.query';
+import { GET_POST_BY_NUMBER } from '@/graphql/post.query';
+import { GET_USERS } from '@/graphql/user.query';
+import type { Iholiday } from '@/interfaces/holiday.interface';
+import type { Ipost } from '@/interfaces/post.interface';
+
+
+interface User {
+    name: string;
+    uid: string;
+    surname?: string;
+}
 
 export default {
     components: {
         Container,
     },
+
+    
 
     setup() {
         // Reactive state
@@ -272,11 +228,16 @@ export default {
         const {mutate: addReport, loading: addReportLoading, error: addReportError} = useMutation<Ireport>(ADD_REPORT);
         const { firebaseUser } = useFirebase()
         const uidUser = firebaseUser.value?.uid
+        const namesOfUsersWithoutHolidayToday = ref<string[] | null>(null);
+        const workersInPost = ref<string[] | null>();
 
+        const { loading: usersLoading, result: usersResult, error: usersError } = useQuery<{ users: User[] }>(GET_USERS);
+        const { loading: postLoading, result: postResult, error: postError } = useQuery(GET_POST_BY_NUMBER, { numberPost: 4 });
+        const { loading: holidaysLoading, result: holidaysResult, error: holidaysError } = useQuery<{ holidays: Iholiday[] }>(ALL_HOLIDAYS);;
         
         const formData = ref({
             timestamp: new Date(),
-            aanwezigen: ['A', 'C', 'D', 'F'],
+            aanwezigen: [] as string[],
             valueVervanging: '',
             valueRadioKind: '',
             valueRadioInterventie: '',
@@ -286,6 +247,7 @@ export default {
             valueRadioMateriaal: '',
             valueTextMateriaal: '',
             valueExtraInfo: '',
+            status: false,
             radioRules: [(v:any) => !!v || 'Selecteer een optie'],
         });
 
@@ -315,6 +277,7 @@ export default {
                         radioMateriaal: formData.value.valueRadioMateriaal,
                         textMateriaal: formData.value.valueTextMateriaal,
                         extraInfo: formData.value.valueExtraInfo,
+                        status: false,
                         reddersPost: 3
                     }
                 }),
@@ -363,6 +326,64 @@ export default {
             return `${day} ${month}`;
         };
 
+
+        //redders tonen die moeten werken
+        watch([usersResult, postResult, holidaysResult], ([usersValue, postValue, holidaysResultValue]) => {
+            if (usersValue && usersValue.users && postValue && postValue.postByNumber && holidaysResultValue && holidaysResultValue.holidays) {
+                const users = usersValue.users as User[];
+                const post = postValue.postByNumber as Ipost;
+                const holidaysData = holidaysResultValue.holidays;
+
+                // Get the current date
+                const today = new Date().toISOString().split('T')[0];
+
+                // Get the UIDs of users in the current post
+                const postUIDs = [post.uidRedderA, post.uidRedderB, post.uidRedderC, post.uidRedderD, post.uidRedderE, post.uidRedderF, post.uidRedderG];
+
+                // Get the users who have a holiday today
+                const usersWithHolidayToday = users.filter((user) =>
+                    holidaysData.some((holiday) =>
+                        postUIDs.includes(holiday.uid) &&
+                        holiday.dates.some((date) => date.split('T')[0] === today) &&
+                        holiday.uid === user.uid
+                    )
+                );
+                 // Get the names of users who work in the specific post
+                const namesOfUsersInSpecificPost = users
+                    .filter((user) => postUIDs.includes(user.uid))
+                    .map((user) => `${user.name} ${user.surname}`);
+
+                workersInPost.value = namesOfUsersInSpecificPost;
+
+                console.log('namesOfUsersInSpecificPost', workersInPost);
+
+                // Get the names of users who don't have a holiday today
+                const usersWithoutHolidayToday = users.filter((user) =>
+                    !usersWithHolidayToday.some((userWithHoliday) => userWithHoliday.uid === user.uid) &&
+                    postUIDs.includes(user.uid)
+                );
+
+                // Get an array of names of users without holiday today
+                namesOfUsersWithoutHolidayToday.value = usersWithoutHolidayToday.map((user) => `${user.name} ${user.surname}`);
+
+
+                // Automatically select checkboxes for users in namesOfUsersWithoutHolidayToday
+               if (workersInPost.value !== null) {
+                    const indicesToSelect = namesOfUsersWithoutHolidayToday.value
+                        .map((name) => workersInPost.value?.indexOf(name))
+                        .filter((index) => index !== -1 && index !== null)
+                        .map((index) => index!)
+                        .map((index) => workersInPost.value![index]);
+
+                    // Update aanwezigen array in formData
+                    formData.value.aanwezigen = indicesToSelect;
+                }
+            }
+        });
+
+
+
+
         // Return the values/methods you want to expose to the template
         return {
             currentDate,
@@ -380,6 +401,7 @@ export default {
             hideAreaMateriaal,
             currentDateString,
             uidUser,
+            workersInPost,
         };
     },
 };
