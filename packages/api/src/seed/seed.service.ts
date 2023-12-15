@@ -1,56 +1,48 @@
 import { Injectable } from '@nestjs/common'
-import { LifeguardService } from 'src/lifeguard/lifeguard.service'
-import { Lifeguard } from 'src/lifeguard/entities/lifeguard.entity'
+
+import { UsersService } from 'src/users/users.service'
 
 import { User } from 'src/users/entities/user.entity'
 
-
-import * as lifeguards from './data/lifeguards.json'
 import * as users from './data/users.json'
 
 @Injectable()
 export class SeedService {
-  constructor(private readonly seedService: SeedService) {}
+  constructor(
+    private usersService: UsersService
+  ) { }
 
-  async addLifeguardFromJson(): Promise<Lifeguard[]> {
-    let theLifeguards: Lifeguard[] = []
-    for (let lifeguard of lifeguards) {
-      const L = new Lifeguard()
-        L.name = lifeguard.name
-        L.surname = lifeguard.surname
-        L.email = lifeguard.email
-        L.phoneNumber = lifeguard.phoneNumber
-        L.zipCode = lifeguard.zipCode
-        L.street = lifeguard.street
-        L.numberOfHouse = lifeguard.numberOfHouse
-        L.birth = new Date(lifeguard.birth)
-        theLifeguards.push(L)
-    }
-
-    return this.lifeguardsService.save(theLifeguards)
-  }
-
-  async deleteAllLifeguards(): Promise<void> {
-    return this.lifeguardsService.truncate()
-  }
-
-  async addUsersFromJson(): Promise<User[]> 
-  {
+  async addUsersFromJson() { 
     let theUsers: User[] = []
+
     for (let user of users) {
-      const U = new User()
-        U.name = user.name
-        U.surname = user.surname
-        U.email = user.email
-        U.phoneNumber = user.phoneNumber
-        U.zipCode = user.zipCode
-        U.street = user.street
-        U.numberOfHouse = user.numberOfHouse
-        U.birth = new Date(user.birth)
-        theUsers.push(U)
+      const u = new User()
+      u.name = user.name
+      u.surname = user.surname
+      u.email = user.email
+      u.phoneNumber = user.phoneNumber
+      u.zipCode = user.zipCode
+      u.street = user.street
+      u.numberOfHouse = user.numberOfHouse
+      u.birth = user.birth
+      u.role = user.role
+      u.bathingPlace = user.bathingPlace
+      u.photoURL = user.photoURL
+      u.city = user.city
+
+      theUsers.push(u)
     }
 
-    return this.lifeguardsService.save(theUsers)
+    try {
+      return await this.usersService.saveAll(theUsers)
+    } catch (error) {
+      console.log(error)
+    }
   }
+
+  async deleteAllUsers(): Promise<void> {
+    return this.usersService.truncate()
+  }
+
 
 }
