@@ -5,18 +5,21 @@ import { HolidaysService } from 'src/holidays/holidays.service'
 import { MonthsService } from 'src/months/months.service'
 import { ReportsService } from 'src/reports/reports.service'
 import { PostenService } from 'src/posten/posten.service'
+import { ChecksService } from 'src/checks/checks.service'
 
 import { User } from 'src/users/entities/user.entity'
 import { Holiday } from 'src/holidays/entities/holiday.entity'
 import { Month } from 'src/months/entities/month.entity'
 import { Report } from 'src/reports/entities/report.entity'
 import { Posten } from 'src/posten/entities/posten.entity'
+import { Check } from 'src/checks/entities/check.entity'
 
 import * as users from './data/users.json'
 import * as holidays from './data/holidays.json'
 import * as months from './data/months.json'
 import * as reports from './data/reports.json'
 import * as posten from './data/posten.json'
+import * as checks from './data/checks.json'
 
 
 @Injectable()
@@ -27,6 +30,7 @@ export class SeedService {
     private monthsService: MonthsService,
     private reportsService: ReportsService,
     private postenService: PostenService,
+    private checksService: ChecksService,
   ) { }
 
   //Users
@@ -174,6 +178,31 @@ export class SeedService {
 
   async deleteAllPosten(): Promise<void> {
     return this.postenService.truncate()
+  }
+
+
+  //Checks
+  async addChecksFromJson() {
+    let theChecks: Check[] = []
+
+    for (let check of checks) {
+      const c = new Check()
+      c.checkMonths = check.checkMonths
+      c.checkHolidays = check.checkHolidays
+      c.accessPlatform = check.accessPlatform
+
+      theChecks.push(c)
+    }
+
+    try {
+      return await this.checksService.saveAll(theChecks)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async deleteAllChecks(): Promise<void> {
+    return this.checksService.truncate()
   }
 
 }

@@ -114,4 +114,58 @@ export class DatabaseSeedCommand {
     await this.seedService.deleteAllPosten()
     console.log('posten deleted')
   }
+
+
+  //Checks
+  @Command({
+    command: 'seed:database:checks',
+    describe: 'seed the database with checks',
+  })
+  async seedChecks() {
+    console.log('seeding checks...')
+    const checks = await this.seedService.addChecksFromJson()
+    console.log(`${checks.length} checks created`)
+  }
+
+  @Command({
+    command: 'seed:reset:checks',
+    describe: 'delete all checks from database',
+  })
+  async deleteChecks() {
+    console.log('deleting checks...')
+    await this.seedService.deleteAllChecks()
+    console.log('checks deleted')
+  }
+
+
+  //All
+  @Command({
+    command: 'seed:database:all',
+    describe: 'seed the database with all tables',
+  })
+  async seedAll() {
+    console.log('seeding all...')
+    await this.seedService.addUsersFromJson()
+    await this.seedService.addHolidaysFromJson()
+    await this.seedService.addMonthsFromJson()
+    await this.seedService.addReportsFromJson()
+    await this.seedService.addPostenFromJson()
+    await this.seedService.addChecksFromJson()
+    console.log('all seeded')
+  }
+
+  @Command({
+    command: 'seed:reset:all',
+    describe: 'delete all tables from database',
+  })
+  async deleteAll() {
+    console.log('deleting all...')
+    await this.seedService.deleteAllUsers()
+    await this.seedService.deleteAllHolidays()
+    await this.seedService.deleteAllMonths()
+    await this.seedService.deleteAllReports()
+    await this.seedService.deleteAllPosten()
+    await this.seedService.deleteAllChecks()
+    console.log('all deleted')
+  }
 }

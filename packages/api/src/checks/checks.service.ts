@@ -53,4 +53,13 @@ export class ChecksService {
   remove(id: string) {
     return `This action removes a #${id} check`;
   }
+
+  //seeding
+  saveAll(checks: Check[]): Promise<Check[]> {
+    return this.checksRepository.save(checks)
+  }
+
+  truncate(): Promise<void> {
+    return this.checksRepository.clear()
+  }
 }
