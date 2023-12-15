@@ -52,7 +52,7 @@ export class PostenService {
   }
 
   //Function for seeding
-  save(posten: Posten[]): Promise<Posten[]> {
+  saveAll(posten: Posten[]): Promise<Posten[]> {
     return this.postenRepository.save(posten)
   }
 

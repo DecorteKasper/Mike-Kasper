@@ -144,4 +144,36 @@ export class SeedService {
     return this.reportsService.truncate()
   }
 
+
+  //Posten
+  async addPostenFromJson() {
+    let thePosten: Posten[] = []
+
+    for (let post of posten) {
+      const p = new Posten()
+      p.numberPost = post.numberPost
+      p.uidRedderA = post.uidRedderA
+      p.uidRedderB = post.uidRedderB
+      p.uidRedderC = post.uidRedderC
+      p.uidRedderD = post.uidRedderD
+      p.uidRedderE = post.uidRedderE
+      p.uidRedderF = post.uidRedderF
+      p.uidRedderG = post.uidRedderG
+      p.uidEhbo1 = post.uidEhbo1 ?? null
+      p.uidEhbo2 = post.uidEhbo2 ?? null
+
+      thePosten.push(p)
+    }
+
+    try {
+      return await this.postenService.saveAll(thePosten)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async deleteAllPosten(): Promise<void> {
+    return this.postenService.truncate()
+  }
+
 }

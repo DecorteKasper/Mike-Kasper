@@ -6,10 +6,11 @@ import { UsersModule } from '../users/users.module';
 import { HolidaysModule } from 'src/holidays/holidays.module';
 import { MonthsModule } from 'src/months/months.module';
 import { ReportsModule } from 'src/reports/reports.module';
+import { PostenModule } from 'src/posten/posten.module';
 
 
 @Module({
-    imports: [ReportsModule ,MonthsModule ,HolidaysModule, UsersModule, CommandModule],
+    imports: [PostenModule ,ReportsModule ,MonthsModule ,HolidaysModule, UsersModule, CommandModule],
     providers: [DatabaseSeedCommand, SeedService],
 })
 export class SeedModule {}

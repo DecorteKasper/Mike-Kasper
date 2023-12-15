@@ -92,4 +92,26 @@ export class DatabaseSeedCommand {
     await this.seedService.deleteAllReports()
     console.log('reports deleted')
   }
+
+
+  //Posten
+  @Command({
+    command: 'seed:database:posten',
+    describe: 'seed the database with posten',
+  })
+  async seedPosten() {
+    console.log('seeding posten...')
+    const posten = await this.seedService.addPostenFromJson()
+    console.log(`${posten.length} posten created`)
+  }
+
+  @Command({
+    command: 'seed:reset:posten',
+    describe: 'delete all posten from database',
+  })
+  async deletePosten() {
+    console.log('deleting posten...')
+    await this.seedService.deleteAllPosten()
+    console.log('posten deleted')
+  }
 }
