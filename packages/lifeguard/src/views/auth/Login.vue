@@ -65,8 +65,8 @@
         <label for="email" class="text-sm mb-4 font-lato block">
           Email
         </label>
-        <input type="email" name="email" id="email" placeholder="Email@gmail.com"
-          class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-green"
+        <input type="email" name="email" id="email" placeholder="naam@email.com"
+          class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx"
           v-model="LoginCredentials.email" />
         <span class="text-red font-lato text-xs" v-if="v$.email.$error"> {{ v$.email.$errors[0].$message }} </span>
       </div>
@@ -74,13 +74,13 @@
         <label for="password" class="text-sm mb-4 font-lato block text-gray-700">
           Wachtwoord
         </label>
-        <input type="password" name="password" id="password"
-          class="mt-1 text-sm block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-green"
+        <input type="password" name="password" id="password" placeholder="********"
+          class="mt-1 text-sm block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx"
           v-model="LoginCredentials.password" />
         <span class="text-red block font-lato text-xs" v-if="v$.password.$error"> {{ v$.password.$errors[0].$message }}
         </span>
         <RouterLink to="/auth/forgot-password"
-          class="mt-1 inline-block rounded text-xs text-dark_grey2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-green">
+          class="mt-1 inline-block rounded text-xs text-dark_grey2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx">
           Wachtwoord vergeten?
         </RouterLink>
       </div>
@@ -91,7 +91,7 @@
       </div>
       <div class="flex justify-center">
         <RouterLink
-          class="mt-3 inline-block rounded text-center text-xs text-dark_grey2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-green"
+          class="mt-3 inline-block rounded text-center text-xs text-dark_grey2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx"
           to="/auth/register">
           Need to create an account?
         </RouterLink>
@@ -101,12 +101,27 @@
 </template>
   
 <script lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import useFirebase from '@/composables/useFirebase'
 import PrimaryButton from '@/components/generic/PrimaryButton.vue'
 import { useVuelidate } from '@vuelidate/core'
 import { required, email, minLength, helpers } from '@vuelidate/validators'
 import router from '@/router'
+import { GET_USER_BY_UID } from '@/graphql/user.query'
+import { useQuery } from '@vue/apollo-composable'
+
+
+interface User {
+  id: string
+  uid: string
+  name: string
+  surname: string
+  email: string
+  phoneNumber: string
+  zipCode: number
+  street: string
+  role: string
+}
 
 export default {
   
@@ -117,11 +132,19 @@ export default {
   setup() {
     // Composables
     const { login, firebaseUser } = useFirebase()
-    // Logic
-    const LoginCredentials = reactive({
-      email: 'test@test.be',
-      password: 'test123',
-    })
+    const LoginCredentials = reactive({email: '', password: '',})
+    const activeUser = ref<User | null>()
+    const activeUserRole = ref()
+    const { loading: userLoading, result: user,error: userError,} = useQuery(GET_USER_BY_UID, {uid: firebaseUser.value?.uid,})
+
+
+    watch(user, (Value) => {
+      console.log('Watch function triggered');
+      if (Value && Value.userByUid) {
+        activeUser.value = Value.userByUid;
+        activeUserRole.value = Value.userByUid.role;
+      }
+    });
 
     const rules = computed(() => {
       return {
@@ -146,8 +169,11 @@ export default {
       } else {
         login(LoginCredentials.email, LoginCredentials.password).then(
           () => {
-            console.log('logged in')
-            router.push('/')
+            if(activeUserRole.value == 300){
+              router.push('/')
+            } else {
+              router.push('/redder')
+            }
           },
         )
       }
