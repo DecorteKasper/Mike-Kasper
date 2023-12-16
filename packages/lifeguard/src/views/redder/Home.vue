@@ -257,6 +257,10 @@ export default defineComponent({
       }
     });
 
+    if (user) {
+      nameUser.value = user.value?.userByUid.name;
+    }
+
 
     //All users
     watch(usersResult, (newValue) => {
