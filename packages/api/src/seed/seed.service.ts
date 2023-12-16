@@ -39,6 +39,7 @@ export class SeedService {
 
     for (let user of users) {
       const u = new User()
+      u.uid = user.uid
       u.name = user.name
       u.surname = user.surname
       u.email = user.email
@@ -133,6 +134,7 @@ export class SeedService {
       r.textMateriaal = report.textMateriaal ?? null
       r.extraInfo = report.extraInfo ?? null
       r.reddersPost = report.reddersPost
+      r.status = report.status
 
       theReports.push(r)
     }
