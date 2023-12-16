@@ -83,7 +83,7 @@
 
 
 <script lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import Container from '@/components/generic/Container.vue';
 import { Calendar, DatePicker } from 'v-calendar';
 import 'v-calendar/style.css';
@@ -133,21 +133,28 @@ export default {
         const { loading: holidaysLoading, result: holidaysResult, error: holidaysError } = useQuery<{ holidays: Iholiday[] }>(ALL_HOLIDAYS);
 
 
-        watch(holidaysResult, (holidaysResultValue) => {
-            if (holidaysResultValue && holidaysResultValue.holidays) {
-                const holidaysData = holidaysResultValue.holidays;
+        const processHolidaysData = () => {
+            if (holidaysResult.value && holidaysResult.value.holidays) {
+                const holidaysData = holidaysResult.value.holidays;
 
                 // Filter holidaysData for the user with currentUserUid
-                currentUserHolidays.value = holidaysData.filter(holiday => holiday.uid === currentUserUid);
+                currentUserHolidays.value = holidaysData.filter((holiday) => holiday.uid === currentUserUid);
             }
-        });
+        };
+        watch(holidaysResult, () => {processHolidaysData();});
 
         //Redders van de post
-        watch([usersResult, postResult, holidaysResult], ([usersValue, postValue, holidaysResultValue]) => {
-            if (usersValue && usersValue.users && postValue && postValue.postByNumber && holidaysResultValue && holidaysResultValue.holidays) {
-                const users = usersValue.users as User[];
-                const post = postValue.postByNumber as Ipost;
-                const holidaysData = holidaysResultValue.holidays;
+        const processUserData = (() => {
+            if (usersResult.value &&
+                usersResult.value.users &&
+                postResult.value &&
+                postResult.value.postByNumber &&
+                holidaysResult.value &&
+                holidaysResult.value.holidays
+            ) {
+                const users = usersResult.value.users as User[];
+                const post = postResult.value.postByNumber as Ipost;
+                const holidaysData = holidaysResult.value.holidays;
 
                 //currentUserHolidays.value = holidaysData.filter(holiday => holiday.uid === currentUserUid);
                 //console.log(currentUserHolidays);
@@ -182,7 +189,7 @@ export default {
                 });
                 console.log(userHolidayDetails);
 
-            
+
 
                 // Get the users who have a holiday today
                 const usersWithHolidayToday = users.filter((user) =>
@@ -191,7 +198,7 @@ export default {
                         holiday.dates.some((date) => date.split('T')[0] === today) &&
                         holiday.uid === user.uid
                     )
-                );                
+                );
 
                 namesUsersWithHoliday.value = usersWithHolidayToday.map((user) => `${user.name} ${user.surname}`);
 
@@ -202,11 +209,8 @@ export default {
 
                 workersInPost.value = namesOfUsersInSpecificPost;
             }
-
-            
-
         });
-        
+        watch([usersResult, postResult, holidaysResult], () => processUserData());
 
 
         // Function to check if a worker has a holiday today
@@ -266,6 +270,11 @@ export default {
                 }),
             },
         ]);
+
+        onMounted(() => {
+            processUserData();
+            processHolidaysData();
+        })
 
         return {
             check_icon,
