@@ -15,7 +15,6 @@
       <ModalWindow @close-modal="closeModal" :isVisible="isModalVisible" :taskData="modalTaskData" />
     </div>
 
-
     <!-- <div>
       <ul>
         <li v-for="todo in sortedTodos" :key="todo.id">
