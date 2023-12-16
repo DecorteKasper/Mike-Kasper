@@ -10,9 +10,10 @@ import {
   signOut,
   updateProfile,
   updatePassword,
+  deleteUser,
   type User,
 } from 'firebase/auth'
-import firebase from 'firebase/compat/app'
+// import firebase from 'firebase/compat/app'
 import { ref } from 'vue'
 
 // Een test
@@ -130,6 +131,26 @@ const updatepassword = async (currentPassword: string, newPassword: string): Pro
   });
 };
 
+// Delete account
+
+const deleteAccount = async (): Promise<void> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // Check of de gebruiker is ingelogd
+      if (!firebaseUser.value) {
+        reject(new Error('User not authenticated'));
+        return;
+      }
+      // Verwijder de gebruiker
+      await deleteUser(firebaseUser.value);
+      console.log('Account succesvol verwijderd');
+      resolve();
+    } catch (error: any) {
+      console.error('Fout bij het verwijderen van het account', error);
+    }
+  });
+}
+
 
 export default () => {
   // State for each composable
@@ -142,5 +163,6 @@ export default () => {
     resetPassword,
     restoreUser,
     updatepassword,
+    deleteAccount,
   }
 }
