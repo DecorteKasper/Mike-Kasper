@@ -195,7 +195,7 @@
 
 
 <script lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import Container from '@/components/generic/Container.vue';
 import '@mdi/font/css/materialdesignicons.css';
 import type { Ireport } from '@/interfaces/report.interface';
@@ -328,47 +328,64 @@ export default {
 
 
         //redders tonen die moeten werken
-        watch([usersResult, postResult, holidaysResult], ([usersValue, postValue, holidaysResultValue]) => {
-            if (usersValue && usersValue.users && postValue && postValue.postByNumber && holidaysResultValue && holidaysResultValue.holidays) {
-                const users = usersValue.users as User[];
-                const post = postValue.postByNumber as Ipost;
-                const holidaysData = holidaysResultValue.holidays;
+        const processUserData = () => {
+            if (
+                usersResult.value &&
+                usersResult.value.users &&
+                postResult.value &&
+                postResult.value.postByNumber &&
+                holidaysResult.value &&
+                holidaysResult.value.holidays
+            ) {
+                const users = usersResult.value.users as User[];
+                const post = postResult.value.postByNumber as Ipost;
+                const holidaysData = holidaysResult.value.holidays;
 
                 // Get the current date
                 const today = new Date().toISOString().split('T')[0];
 
                 // Get the UIDs of users in the current post
-                const postUIDs = [post.uidRedderA, post.uidRedderB, post.uidRedderC, post.uidRedderD, post.uidRedderE, post.uidRedderF, post.uidRedderG];
+                const postUIDs = [
+                    post.uidRedderA,
+                    post.uidRedderB,
+                    post.uidRedderC,
+                    post.uidRedderD,
+                    post.uidRedderE,
+                    post.uidRedderF,
+                    post.uidRedderG,
+                ];
 
                 // Get the users who have a holiday today
                 const usersWithHolidayToday = users.filter((user) =>
-                    holidaysData.some((holiday) =>
-                        postUIDs.includes(holiday.uid) &&
-                        holiday.dates.some((date) => date.split('T')[0] === today) &&
-                        holiday.uid === user.uid
+                    holidaysData.some(
+                        (holiday) =>
+                            postUIDs.includes(holiday.uid) &&
+                            holiday.dates.some((date) => date.split('T')[0] === today) &&
+                            holiday.uid === user.uid
                     )
                 );
-                 // Get the names of users who work in the specific post
+
+                // Get the names of users who work in the specific post
                 const namesOfUsersInSpecificPost = users
                     .filter((user) => postUIDs.includes(user.uid))
                     .map((user) => `${user.name} ${user.surname}`);
 
                 workersInPost.value = namesOfUsersInSpecificPost;
 
-                console.log('namesOfUsersInSpecificPost', workersInPost);
-
                 // Get the names of users who don't have a holiday today
-                const usersWithoutHolidayToday = users.filter((user) =>
-                    !usersWithHolidayToday.some((userWithHoliday) => userWithHoliday.uid === user.uid) &&
-                    postUIDs.includes(user.uid)
+                const usersWithoutHolidayToday = users.filter(
+                    (user) =>
+                        !usersWithHolidayToday.some((userWithHoliday) => userWithHoliday.uid === user.uid) &&
+                        postUIDs.includes(user.uid)
                 );
 
                 // Get an array of names of users without holiday today
-                namesOfUsersWithoutHolidayToday.value = usersWithoutHolidayToday.map((user) => `${user.name} ${user.surname}`);
-
+                namesOfUsersWithoutHolidayToday.value = usersWithoutHolidayToday.map(
+                    (user) => `${user.name} ${user.surname}`
+                );
 
                 // Automatically select checkboxes for users in namesOfUsersWithoutHolidayToday
-               if (workersInPost.value !== null) {
+                if (workersInPost.value !== null) {
                     const indicesToSelect = namesOfUsersWithoutHolidayToday.value
                         .map((name) => workersInPost.value?.indexOf(name))
                         .filter((index) => index !== -1 && index !== null)
@@ -379,6 +396,13 @@ export default {
                     formData.value.aanwezigen = indicesToSelect;
                 }
             }
+        };
+        watch([usersResult, postResult, holidaysResult], () => {processUserData();});
+
+
+        // Execute the processUserData method when the component is mounted
+        onMounted(() => {
+            processUserData();
         });
 
 
