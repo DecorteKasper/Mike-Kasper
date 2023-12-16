@@ -173,7 +173,7 @@
               <!-- Hier komt input voor current password currentPassword -->
               <input type="password" name="surname" id="surname" placeholder="Nieuw wachtwoord" v-model="currentPassword"
                 class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx" />
-              <span class="text-red font-lato text-xs" v-if="ErrorsCurrentPassword"> {{ ErrorsCurrentPassword }}</span>
+              <span class="text-red font-lato text-xs" v-if="errorsCurrentPassword"> {{ errorsCurrentPassword }}</span>
             </div>
 
 
@@ -184,7 +184,7 @@
               <!-- Hier komt input voor current password currentPassword -->
               <input type="password" name="surname" id="surname" placeholder="Nieuw wachtwoord" v-model="newPassword"
                 class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx" />
-              <span class="text-red font-lato text-xs" v-if="ErrorsNewPassword"> {{ ErrorsNewPassword }}</span>
+              <span class="text-red font-lato text-xs" v-if="errorsNewPassword"> {{ errorsNewPassword }}</span>
 
             </div>
 
@@ -197,16 +197,16 @@
       </Form>
 
       <!-- Form 3 -->
-      <Form v-if="selectedForm === 3" class="py-10">
+      <Form @submit.prevent="handleDeleteAccount" v-if="selectedForm === 3" class="py-10">
         <div class="mb-10">
-          <h2 class="font-lato font-semibold text-lg mb-10">Account verwijderen</h2>
+          <h2 class="font-lato font-semibold text-lg mb-20">Account verwijderen</h2>
           <div class="flex">
             <div class="mr-6">
               <label for="name" class="text-sm font-lato block mb-4 text-dark_grey2">
-                Om het account te verwijderen, vul 'verwijder' in het inputveld in.
+                Om het account te verwijderen, vul <strong>'verwijder'</strong> in het inputveld in.
               </label>
-              <input type="password" name="name" id="name" placeholder="verwijder"
-                class="mt-1 text-sm font-lato block bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-green" />
+              <input type="text" name="name" id="name" placeholder="verwijder" v-model="deleteString"
+                class="mt-1 text-sm font-lato block bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx" />
               <!-- <span class="text-red font-lato text-xs" v-if="v$.name.$error"> {{ v$.name.$errors[0].$message }}</span> -->
 
             </div>
@@ -222,7 +222,7 @@
 
 <script lang="ts">
 import Container from '@/components/generic/Container.vue'
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted } from 'vue'
 import { UserCircle2, Lock, Trash2, CheckCircle } from 'lucide-vue-next'
 import PrimaryButton from '@/components/generic/PrimaryButton.vue'
 import useFirebase from '@/composables/useFirebase'
@@ -231,6 +231,7 @@ import useFirebase from '@/composables/useFirebase'
 import { useMutation } from '@vue/apollo-composable'
 import { UPDATE_USER } from '@/graphql/user.mutation'
 import type { Iuser } from '@/interfaces/user.interface'
+import router from '@/router'
 // import useCustomUser from '@/composables/useCustomUser'
 
 export default {
@@ -275,7 +276,7 @@ export default {
       selectedForm.value = formNumber; // Wanneer erop een menu-item wordt geklikt, wordt het overeenkomstige formulier weergegeven
       localStorage.setItem('selectedForm', formNumber.toString()); // Het geselecteerde formulier wordt opgeslagen in de localstorage
     }
-    const { firebaseUser, updatepassword } = useFirebase()
+    const { firebaseUser, updatepassword, deleteAccount } = useFirebase()
     const userData = ref<Iuser | null>()
 
     // User updaten
@@ -295,9 +296,17 @@ export default {
       zipCode: ''
     });
 
-
+    // Wordt gebruikt in HandleNewPassword
     const newPassword = ref('')
     const currentPassword = ref('')
+
+    const errorsNewPassword = ref('')
+    const errorsCurrentPassword = ref('')
+    const updateSuccess = ref(false)
+
+    // deleteAccount
+    const deleteString = ref('')
+
 
     onMounted(() => {
       const savedform = localStorage.getItem('selectedForm'); // Wanneer de pagina wordt herladen, wordt het laatst geselecteerde formulier weergegeven
@@ -305,7 +314,6 @@ export default {
         selectedForm.value = parseInt(savedform);
       }
     })
-
 
     const handleAccount = () => {
       const updateUserInput = {
@@ -340,11 +348,6 @@ export default {
         });
     };
 
-    const ErrorsNewPassword = ref('')
-    const ErrorsCurrentPassword = ref('')
-    const updateSuccess = ref(false)
-
-    // const 
     const handleNewPassword = () => {
       // Console log van het huidige wachtwoord en het nieuwe wachtwoord
       // console.log('currentPassword:', currentPassword.value, "newPassword:", newPassword.value);
@@ -353,13 +356,9 @@ export default {
         .then(() => {
           console.log('Wachtwoord succesvol bijgewerkt');
           // Aanpassing aanbrengen
-          ErrorsNewPassword.value = ''
-          ErrorsCurrentPassword.value = ''
-
-          nextTick(() => {
-            updateSuccess.value = true
-          })
-
+          errorsNewPassword.value = ''
+          errorsCurrentPassword.value = ''
+          updateSuccess.value = true
           // Voer hier verdere acties uit, bijvoorbeeld een succesbericht weergeven
         })
         .catch((error) => {
@@ -368,15 +367,15 @@ export default {
           // Voer specifieke acties uit op basis van het type fout
           if (error.code === 'auth/invalid-login-credentials') {
             console.log('Fout: Ongeldige inloggegevens. Het huidige wachtwoord is onjuist.');
-            ErrorsCurrentPassword.value = 'Wachtwoord niet correct'
+            errorsCurrentPassword.value = 'Wachtwoord niet correct'
             // Voer hier verdere acties uit voor onjuist huidig wachtwoord
           } else if (error.code === 'auth/user-not-found') {
             console.log('Fout: Gebruiker niet gevonden.');
-            ErrorsNewPassword.value = 'Gebruiker niet gevonden'
+            errorsNewPassword.value = 'Gebruiker niet gevonden'
             // Voer hier verdere acties uit voor gebruiker niet gevonden
           } else if (error.code === 'auth/weak-password') {
             console.log('Fout: Het nieuwe wachtwoord moet minstens 6 tekens lang zijn.');
-            ErrorsNewPassword.value = 'Minstens 6 tekens lang.'
+            errorsNewPassword.value = 'Minstens 6 tekens lang.'
           }
 
           else {
@@ -384,6 +383,20 @@ export default {
             // Voer hier verdere generieke foutafhandeling uit
           }
         });
+    }
+
+    const handleDeleteAccount = () => {
+      if (deleteString.value === 'verwijder') {
+        deleteAccount().then(() => {
+          // Hier nog een delete maken voor de mongoDb
+          console.log('Account succesvol verwijderd');
+          router.push({ path: '/auth/login' })
+        }).catch((error) => {
+          console.error('Fout bij het verwijderen van het account in Account.vue', error);
+        });
+      } else {
+        console.log('Typ verwijder in het inputveld')
+      }
     }
 
     return {
@@ -395,11 +408,13 @@ export default {
       changeUser,
       handleAccount,
       handleNewPassword,
+      handleDeleteAccount,
       newPassword,
       currentPassword,
-      ErrorsNewPassword,
-      ErrorsCurrentPassword,
-      updateSuccess
+      errorsNewPassword,
+      errorsCurrentPassword,
+      updateSuccess,
+      deleteString
     }
   }
 }

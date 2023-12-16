@@ -66,7 +66,7 @@ export class User {
   // @Column()
   // @Field()
   // locale?: string
-
+  
   @Column()
   @Field({ nullable: true })
   bathingPlace?: string
