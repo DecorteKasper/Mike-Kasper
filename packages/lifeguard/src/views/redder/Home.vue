@@ -59,7 +59,7 @@
         </div>
       </div>
 
-      <div class="bg-white w-full max-w-80 min-h-[20rem] h-auto mt-10 md:mt-0 rounded-cardRadius shadow-cardShadow px-6 py-5">
+      <div class="bg-white w-full max-w-80 min-h-[30rem] h-auto mt-10 md:mt-0 rounded-cardRadius shadow-cardShadow px-6 py-5">
         <p class="text-center mb-2 font-bold text-base mt-2">Verlofdagen</p>
         <div class="overflow-scroll max-h-96">
           <div v-for="(group, index) in holidaysFormatted" :key="index" class="flex flex-col">
@@ -74,9 +74,9 @@
       <div class="bg-white w-full max-w-80 min-h-[20rem] mt-10 md:mt-0 h-auto rounded-cardRadius shadow-cardShadow px-6 py-5">
         <p class="text-center mb-8 font-bold text-base mt-2">Verslag {{ dayOfMonth }} {{ monthName }}</p>
         <p class="text-center md:mt-12">{{ reportInfo }}</p>
-        <img class="max-w-[5rem] m-auto mt-4" v-if="reportInfo === 'Verslag is nog niet ingediend'" src="@/assets/icons/errorReport.svg" alt="Not Submitted Icon" />
+        <img class="max-w-[5rem] m-auto mt-4" v-if="reportInfo === 'Dagverslag is nog niet ingediend'" src="@/assets/icons/errorReport.svg" alt="Not Submitted Icon" />
         <img class="max-w-[5rem] m-auto mt-4" v-else src="@/assets/icons/checkReport.svg" alt="Submitted Icon" />
-        <button @click="goToReport" class="bg-greenx mt-10 px-8 py-2 rounded-lg text-white font-bold block m-auto hover:bg-dark_green" v-if="reportInfo === 'Verslag is nog niet ingediend'">Verslag invullen</button>
+        <button @click="goToReport" class="bg-greenx mt-10 px-8 py-2 rounded-lg text-white font-bold block m-auto hover:bg-dark_green" v-if="reportInfo === 'Dagverslag is nog niet ingediend'">Verslag invullen</button>
       </div>
     </div>
 
@@ -124,7 +124,7 @@ export default defineComponent({
     
     const userData = ref<User | null>();
     const currentUserUid = firebaseUser.value?.uid;
-    const currentUserPost = ref<number | null>(null);
+    const currentUserPost = ref<number>(4);
     const holidays = ref<Iholiday[] | null>(null);
     const holidaysFormatted = ref<{ date: string; users: { name: string; uid: string }[] }[] | null>(null);
     const namesOfUsersWithoutHolidayToday = ref<string[] | null>(null);
@@ -146,10 +146,36 @@ export default defineComponent({
     const { loading: userLoading, result: user, error: userError } = useQuery(GET_USER_BY_UID, {uid: firebaseUser.value?.uid,});
     const { loading: holidaysLoading, result: holidaysResult, error: holidaysError } = useQuery<{ holidays: Iholiday[] }>(ALL_HOLIDAYS);;
     const { loading: reportsLoading, result: reportsResult, error: reportsError } = useQuery<{ reports: Ireport[] }>(ALL_RECORDS);
-    const { loading: postLoading, result: postResult, error: postError } = useQuery(GET_POST_BY_NUMBER, { numberPost: 4});
+    // const { loading: postLoading, result: postResult, error: postError } = useQuery(GET_POST_BY_NUMBER, { numberPost: currentUserPost });
     const { loading: postenLoading, result: postenResult, error: postenError } = useQuery<{ posten: Ipost[] }>(ALL_POSTEN);
     const { loading: usersLoading, result: usersResult, error: usersError } = useQuery<{ users: User[] }>(GET_USERS);
 
+
+
+
+
+    //Postnummer van current user
+    watch([() => currentUserUid, postenResult], ([newUid, newValue]) => {
+      if (newUid && newValue && newValue.posten) {
+        const posten = newValue.posten as Ipost[];
+
+        posten.forEach((post) => {
+          if (
+            post.uidRedderA === newUid ||
+            post.uidRedderB === newUid ||
+            post.uidRedderC === newUid ||
+            post.uidRedderD === newUid ||
+            post.uidRedderE === newUid ||
+            post.uidRedderF === newUid ||
+            post.uidRedderG === newUid
+          ) {
+            currentUserPost.value = post.numberPost;
+          }
+        });
+      }
+      console.log("Current user post: ", currentUserPost.value);
+    });
+    const { loading: postLoading, result: postResult, error: postError } = useQuery(GET_POST_BY_NUMBER, { numberPost: currentUserPost.value });
     
 //----- WATCH FUNTIONS -----//
     //Holidays of the post
@@ -218,8 +244,6 @@ export default defineComponent({
         const users = usersResult.value.users as User[];
         const post = postResult.value.postByNumber as Ipost;
         const holidaysData = holidaysResult.value.holidays;
-
-        console.log("users: ", post);
 
         // Get the current date
         const today = new Date().toISOString().split('T')[0];
@@ -291,9 +315,9 @@ export default defineComponent({
         todayReports.value = reports.value.filter((report) => report.createdAt.startsWith(today));
 
         if (todayReports.value?.length === 0) {
-          reportInfo.value = "Verslag is nog niet ingediend";
+          reportInfo.value = "Dagverslag is nog niet ingediend";
         } else {
-          reportInfo.value = "Verslag is ingediend";
+          reportInfo.value = "Dagverslag is ingediend";
         }
       }
     };
@@ -312,29 +336,6 @@ export default defineComponent({
       nameUser.value = user.value?.userByUid.name;
       currentUserSeasideTown.value = user.value?.userByUid.bathingPlace;
     }
-
-
-
-    //Postnummer van current user
-    watch([() => currentUserUid, postenResult], ([newUid, newValue]) => {
-      if (newUid && newValue && newValue.posten) {
-        const posten = newValue.posten as Ipost[];
-
-        posten.forEach((post) => {
-          if (
-            post.uidRedderA === newUid ||
-            post.uidRedderB === newUid ||
-            post.uidRedderC === newUid ||
-            post.uidRedderD === newUid ||
-            post.uidRedderE === newUid ||
-            post.uidRedderF === newUid ||
-            post.uidRedderG === newUid
-          ) {
-            currentUserPost.value = post.numberPost;
-          }
-        });
-      }
-    });
 
 
 
