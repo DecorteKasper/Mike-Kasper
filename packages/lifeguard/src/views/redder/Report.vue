@@ -189,6 +189,15 @@
                 <!-- <v-btn class="bg-teal text-white font-lato mt-2 mb-6 lg:mt-5 rounded-md" type="submit">Verzend verslag</v-btn> -->
             </v-form>
 
+            <v-dialog v-model="isConfirmationDialogOpen" persistent>
+                <v-card class="min-h-[10rem] max-w-[30rem] m-auto min-w-full">
+                    <p class="text-center font-medium text-lg mt-6">Dagverslag is verzonden!</p>
+                    <v-card-actions>
+                        <button class="text-white font-bold bg-greenx px-10 py-2 rounded-lg m-auto mt-12" @click="toggleConfirmationDialog">Sluiten</button>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+
         </section>
     </Container>
 </template>
@@ -207,6 +216,8 @@ import { GET_POST_BY_NUMBER } from '@/graphql/post.query';
 import { GET_USERS } from '@/graphql/user.query';
 import type { Iholiday } from '@/interfaces/holiday.interface';
 import type { Ipost } from '@/interfaces/post.interface';
+
+
 
 
 interface User {
@@ -255,9 +266,14 @@ export default {
         const showTextAreaFieldInterventie = ref(false);
         const showTextAreaFieldOefenenOfSport = ref(false);
         const showTextAreaMateriaal = ref(false);
+        
+        const isConfirmationDialogOpen = ref(false);
 
         // Methods
-        const isSelected = (item:any) => formData.value.aanwezigen.includes(item as never);
+        const isSelected = (item: any) => formData.value.aanwezigen.includes(item as never);
+        const toggleConfirmationDialog = () => {
+            isConfirmationDialogOpen.value = !isConfirmationDialogOpen.value;
+        };
 
         const submitForm = () => {
             if (formData.value.valueRadioKind === '' || formData.value.valueRadioInterventie === '' || formData.value.valueRadioOefenen === '' || formData.value.valueRadioMateriaal === '')
@@ -265,24 +281,23 @@ export default {
                 console.log('Required values are empty');
             } else {
                 addReport({
-                    createReportInput: {
-                        uid: uidUser,
-                        aanwezigen: formData.value.aanwezigen,
-                        vervanging: formData.value.valueVervanging,
-                        radioKindVerloren: formData.value.valueRadioKind,
-                        radioInterventie: formData.value.valueRadioInterventie,
-                        textInterventie: formData.value.valueTextInterventie,
-                        radioOefening: formData.value.valueRadioOefenen,
-                        textOefening: formData.value.valueTextOefenen,
-                        radioMateriaal: formData.value.valueRadioMateriaal,
-                        textMateriaal: formData.value.valueTextMateriaal,
-                        extraInfo: formData.value.valueExtraInfo,
-                        status: false,
-                        reddersPost: 3
-                    }
-                }),
-                console.log('Form data:', formData.value);
-                alert('Formulier verzonden');
+                        createReportInput: {
+                                uid: uidUser,
+                                aanwezigen: formData.value.aanwezigen,
+                                vervanging: formData.value.valueVervanging,
+                                radioKindVerloren: formData.value.valueRadioKind,
+                                radioInterventie: formData.value.valueRadioInterventie,
+                                textInterventie: formData.value.valueTextInterventie,
+                                radioOefening: formData.value.valueRadioOefenen,
+                                textOefening: formData.value.valueTextOefenen,
+                                radioMateriaal: formData.value.valueRadioMateriaal,
+                                textMateriaal: formData.value.valueTextMateriaal,
+                                extraInfo: formData.value.valueExtraInfo,
+                                status: false,
+                                reddersPost: 3
+                            }
+                        }),
+                toggleConfirmationDialog();
             }
         };
 
@@ -426,6 +441,8 @@ export default {
             currentDateString,
             uidUser,
             workersInPost,
+            isConfirmationDialogOpen,
+            toggleConfirmationDialog,
         };
     },
 };

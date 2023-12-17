@@ -10,6 +10,7 @@ query postByNumber($numberPost: Float!) {
     uidRedderE
     uidRedderF
     uidRedderG
+    uidEhbo1      
   }
 }
 `

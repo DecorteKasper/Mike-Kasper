@@ -14,6 +14,7 @@ query userByUid($uid: String!) {
     numberOfHouse
     birth
     role
+    bathingPlace
     createdAt
     updateAt
   }
