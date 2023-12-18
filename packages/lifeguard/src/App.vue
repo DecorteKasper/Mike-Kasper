@@ -1,10 +1,11 @@
 <script lang="ts">
-import { provide, ref } from 'vue';
+import { provide, ref, watch } from 'vue';
 import AppFooter from './components/generic/FooterApp.vue'
 import AppHeader from './components/generic/HeaderApp.vue'
 import useGraphql from './composables/useGraphql';
 import { DefaultApolloClient } from '@vue/apollo-composable'
-import { onAuthStateChanged, getAuth } from 'firebase/auth';
+import { onAuthStateChanged, getAuth, applyActionCode } from 'firebase/auth';
+
 
 
 export default {
@@ -16,13 +17,16 @@ export default {
   setup() {
     const { apolloClient } = useGraphql()
     const isLoggedIn = ref(false);
+    const userId = ref<string>()
+
 
     // Luister naar de wijzigingen in de authenticatiestatus
     const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-      isLoggedIn.value = !!user; // Als er een gebruiker is, is de gebruiker ingelogd
+    onAuthStateChanged(auth, (currentUser) => {
+      isLoggedIn.value = !!currentUser; // Als er een gebruiker is, is de gebruiker ingelogd
+      // console.log('User is logged in: ', user?.uid);
+      userId.value = currentUser?.uid
     });
-
 
     // Maak alles beschikbaar in de scope*
     provide(DefaultApolloClient, apolloClient)

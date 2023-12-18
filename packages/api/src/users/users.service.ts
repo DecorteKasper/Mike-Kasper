@@ -4,6 +4,7 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role, User } from './entities/user.entity';
 import { MongoRepository, UpdateResult } from 'typeorm';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class UsersService {
@@ -24,6 +25,7 @@ export class UsersService {
     user.photoURL = createUserInput.photoURL ?? null
     user.email = createUserInput.email
     user.bathingPlace = createUserInput.bathingPlace ?? null
+    user.accessPlatform = createUserInput.accessPlatform ?? false
     user.phoneNumber = createUserInput.phoneNumber ?? null
     user.zipCode = createUserInput.zipCode ?? null
     user.street = createUserInput.street ?? null
@@ -61,14 +63,29 @@ export class UsersService {
     return this.userRepository.findOneByOrFail({ uid })
   }
   findAll() {
-    return this.userRepository.find()
-  }
-  findOne(id: string) {
-    return new Error(`This action returns a #${id} user`);
+    return this.userRepository.find();
   }
 
-  remove(id: string) {
-    return new Error(`This action removes a #${id} user`);
+  async findOne(uid: string) {
+    const user = await this.userRepository.findOne({ where: { uid } });
+    return user;
+  }
+
+  // async remove(id: string) {
+  //   const report = await this.reportsRepository.findOne({ _id: new ObjectId(id) } as any)
+  //   if (report) {
+  //     await this.reportsRepository.remove(report)
+  //     return report
+  //   }
+  //   return null
+  // }
+
+  async remove(uid: string) {
+    const user = await this.userRepository.findOne({ where: { uid } });
+    if (user) {
+      await this.userRepository.remove(user)
+      return user
+    }
   }
 
 
@@ -76,7 +93,6 @@ export class UsersService {
   saveAll(users: User[]): Promise<User[]> {
     return this.userRepository.save(users)
   }
-
   truncate(): Promise<void> {
     return this.userRepository.clear()
   }

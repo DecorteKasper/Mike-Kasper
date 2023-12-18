@@ -9,6 +9,7 @@ mutation createUser ($createUserInput: CreateUserInput!){
       surname
       email
       bathingPlace
+      accessPlatform
       phoneNumber
       zipCode
       street

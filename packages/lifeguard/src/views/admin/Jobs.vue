@@ -1,20 +1,28 @@
 <template>
-    <Container>
+    {{ firebaseUser }}
+    <Container v-if="accesUser.userByUid.accessPlatform">
         <div class="flex gap-6">
             <ul class="shadow-cardShadow rounded-cardRadius p-10 h-fit">
                 <li @click="showJobs"
-                    class="font-lato rounded-inputFieldRadius cursor-pointer hover:text-white hover-bg-green py-2 px-4 mb-4 transition-all duration-75 ease-in"
-                    :class="{ 'bg-green text-white': currentMenuItem === 'jobs' }">
+                    class="font-lato rounded-inputFieldRadius cursor-pointer  hover:translate-x-2 py-2 px-4 mb-4 transition-all duration-75 ease-in"
+                    :class="{ 'bg-greenx text-white': currentMenuItem === 'jobs' }">
                     Werknemers
                 </li>
                 <li @click="showSollis"
-                    class="font-lato rounded-inputFieldRadius cursor-pointer hover:text-white hover-bg-green py-2 px-4 transition-all duration-75 ease-in"
-                    :class="{ 'bg-green text-white': currentMenuItem === 'solli' }">
+                    class="font-lato rounded-inputFieldRadius cursor-pointer hover:translate-x-2 py-2 px-4 transition-all duration-75 ease-in"
+                    :class="{ 'bg-greenx text-white': currentMenuItem === 'solli' }">
                     sollicitaties
                 </li>
             </ul>
-            <CostumTable v-if="currentData === jobs" :jobsData="currentData" class="flex-1" />
-            <CostumTable v-else-if="currentData === solli" :sollisData="currentData" class="flex-1" />
+
+
+            <!-- <div>DIT ZIJN DE JOBS {{ jobs }}</div>
+            <div>-----------------------------------------------</div>
+            <div>DIT ZIJN DE SOLLIS {{ solli }}</div> -->
+
+            <CostumTable v-if="currentMenuItem === 'jobs'" :jobsData="jobs" class="flex-1" />
+            <CostumTable v-if="currentMenuItem === 'solli'" :sollisData="solli" class="flex-1" />
+
         </div>
     </Container>
 </template>
@@ -23,15 +31,12 @@
 import { ref } from 'vue';
 import CostumTable from '@/components/generic/CustomTable.vue'
 import Container from '@/components/generic/Container.vue';
-
-
-interface Job {
-    id: number;
-    name: string;
-    surname: string;
-    function: string;
-    status: boolean;
-}
+import useFirebase from '@/composables/useFirebase';
+import { GET_USER_BY_UID, GET_USERS } from '@/graphql/user.query'
+import router from '@/router'
+import { useQuery } from '@vue/apollo-composable';
+import { watch, onBeforeUnmount } from 'vue';
+import type { Iuser } from '@/interfaces/user.interface';
 
 
 export default {
@@ -44,104 +49,58 @@ export default {
 
     setup() {
 
-        const jobs = ref<Job[]>([
+        const { firebaseUser } = useFirebase();
+        const { result: user, error: userError } = useQuery(GET_USER_BY_UID, {
+            uid: firebaseUser.value?.uid,
+        });
 
-            {
-                id: 1,
-                name: "John",
-                surname: "Doe",
-                function: "Redder",
-                status: false,
-            },
-            {
-                id: 2,
-                name: "Alice",
-                surname: "Smith",
-                function: "Ehbo",
-                status: false,
-            },
-            {
-                id: 3,
-                name: "Bob",
-                surname: "Johnson",
-                function: "Ehbo",
-                status: false,
-            },
-            {
-                id: 4,
-                name: "Eva",
-                surname: "Brown",
-                function: "Redder",
-                status: false,
-            },
-            {
-                id: 5,
-                name: "David",
-                surname: "Lee",
-                function: "Redder",
-                status: false,
-            },
-        ])
-
-        const solli = ref<Job[]>([
-
-            {
-                id: 1,
-                name: "NewName1",
-                surname: "NewSurname1",
-                function: "NewFunction1",
-                status: false,  // Je kunt de status ook veranderen
-            },
-            {
-                id: 2,
-                name: "NewName2",
-                surname: "NewSurname2",
-                function: "NewFunction2",
-                status: false,
-            },
-            {
-                id: 3,
-                name: "NewName3",
-                surname: "NewSurname3",
-                function: "NewFunction3",
-                status: false,
-            },
-            {
-                id: 4,
-                name: "NewName4",
-                surname: "NewSurname4",
-                function: "NewFunction4",
-                status: false,
-            },
-            {
-                id: 5,
-                name: "NewName5",
-                surname: "NewSurname5",
-                function: "NewFunction5",
-                status: false,
-            },
-        ])
-        const currentData = ref(jobs.value);
+        // GET ALL USERS
+        const { result: users, error: usersError } = useQuery(GET_USERS)
+        const solli = ref<Iuser[]>([])
+        const jobs = ref<Iuser[]>([])
         const currentMenuItem = ref('jobs');
 
-        const showJobs = () => {
-            currentData.value = jobs.value; // Schakel naar de "jobs" data
-            currentMenuItem.value = 'jobs';
-            console.log(currentMenuItem);
-        }
-        const showSollis = () => {
-            currentData.value = solli.value; // Schakel naar de "sollis" data
-            currentMenuItem.value = 'solli';
-            console.log(currentMenuItem);
+        // voer een watch uit op de users
+        watch(users, () => {
+            const value = users.value?.users;
+            solli.value = value.filter((user: Iuser) => user.accessPlatform === false);
+            jobs.value = value.filter((user: Iuser) => user.accessPlatform === true);
+        })
+
+        if (users) {
+            const value = users.value?.users;
+            value?.forEach((user: Iuser) => {
+                if (user.accessPlatform === false) {
+                    solli.value = value.filter((user: Iuser) => user.accessPlatform === false);
+                } else {
+                    jobs.value = value.filter((user: Iuser) => user.accessPlatform === true);
+                }
+            });
         }
 
+        const acces = (() => {
+            if (user.value?.userByUid.accessPlatform === false) {
+                // Ga terug naar de homepagina
+                router.push({ path: '/' });
+            }
+        })();
+
+        const showJobs = () => {
+            currentMenuItem.value = 'jobs';
+        }
+        const showSollis = () => {
+            currentMenuItem.value = 'solli';
+        }
+
+
         return {
-            jobs,
             solli,
-            currentData,
+            jobs,
             showJobs,
             showSollis,
-            currentMenuItem
+            currentMenuItem,
+            firebaseUser,
+            accesUser: user
         }
     }
 }

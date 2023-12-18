@@ -1,5 +1,5 @@
 <template>
-  <Container class="py-12">
+  <Container v-if="userData?.accessPlatform" class="py-12">
     <header class="flex items-center justify-between">
       <RouterLink
         class="flex items-center space-x-4 hover:opacity-30 focus:outline-none focus-visible:ring-4 ring-blue-400 rounded-lg"
@@ -60,7 +60,7 @@
       <nav>
         <ul class="lg:flex items-center space-x-12 hidden">
 
-           <!-- HOME PAGINA HOOFDREDDER -->
+          <!-- HOME PAGINA HOOFDREDDER -->
           <li v-if="userData?.role === 300">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/">Home</RouterLink>
@@ -75,30 +75,30 @@
           <!-- PLANNING PAGINA HOOFDREDDER -->
           <li v-if="userData?.role === 300">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-            active-class="text-dark_green font-semibold" to="/schedule">Planning</RouterLink>
+              active-class="text-dark_green font-semibold" to="/schedule">Planning</RouterLink>
           </li>
-          
+
           <!-- PLANNING PAGINA REDDER + CHECKS -->
           <li v-if="userData?.role === 200 && checkMonths && !checkHolidays">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/redder/months">Keuze maanden</RouterLink>
           </li>
           <li v-if="userData?.role === 200 && checkHolidays && !checkMonths">
-              <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-                active-class="text-dark_green font-semibold" to="/redder/chooseschedule">Keuze verlofdagen</RouterLink>
+            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
+              active-class="text-dark_green font-semibold" to="/redder/chooseschedule">Keuze verlofdagen</RouterLink>
           </li>
           <li v-if="userData?.role === 200 && checkHolidays && checkMonths">
-                <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-                  active-class="text-dark_green font-semibold" to="/redder/schedule">Planning</RouterLink>
+            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
+              active-class="text-dark_green font-semibold" to="/redder/schedule">Planning</RouterLink>
           </li>
 
 
-          
+
           <li v-if="userData?.role === 300">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/reports">Verslagen</RouterLink>
           </li>
-          
+
           <li v-if="userData?.role === 200">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/redder/report">Dagverslag</RouterLink>
@@ -224,20 +224,8 @@ import { useRouter } from 'vue-router'
 //Checks
 import { ALL_CHECKS } from '@/graphql/check.query'
 import type { Icheck } from '@/interfaces/check.interface'
+import type { Iuser } from '@/interfaces/user.interface'
 
-
-interface User {
-  id: string
-  uid: string
-  name: string
-  surname: string
-  photoURL: string | null
-  email: string
-  phoneNumber: string
-  zipCode: number
-  street: string
-  role: number
-}
 
 export default {
   components: { Container, MenuIcon, XIcon, UserCircle2 },
@@ -283,7 +271,7 @@ export default {
 
   setup() {
     const { firebaseUser } = useFirebase()
-    const userData = ref<User | null>()
+    const userData = ref<Iuser>()
     const isMenuOpen = ref(false)
     const isSubmenuOpen = ref(false)
     const { logout } = useFirebase()
@@ -291,7 +279,9 @@ export default {
     const accessPlatform = ref();
     const checkHolidays = ref();
     const checkMonths = ref();
-
+    const { loading: userLoading, result: user, error: userError } = useQuery(GET_USER_BY_UID, { uid: firebaseUser.value?.uid, })
+    //Checks from db
+    const { loading: checkLoading, result: checkResult, error: checkError } = useQuery<{ checks: Icheck[] }>(ALL_CHECKS);
 
     const logoutUser = () => {
       logout().then(() => {
@@ -299,16 +289,13 @@ export default {
       })
     }
 
-    const { loading: userLoading, result: user, error: userError } = useQuery(GET_USER_BY_UID, {uid: firebaseUser.value?.uid,})
-    //Checks from db
-    const { loading: checkLoading, result: checkResult, error: checkError } = useQuery<{ checks: Icheck[] }> (ALL_CHECKS);
-
     // Watch the user result and set userRole when it's available
     watch(user, (newValue) => {
       if (newValue && newValue.userByUid) {
         userData.value = newValue.userByUid
       }
     })
+
 
     watch(checkResult, (newValue) => {
       if (newValue && newValue.checks && newValue.checks.length > 0) {

@@ -2,7 +2,7 @@ import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn } from 'typeorm';
 
 export enum Role {
-  SUPERADMIN = 400,
+  // SUPERADMIN = 400,
   HOOFDREDDER = 300,
   REDDER = 200,
   EHBO = 100,
@@ -63,10 +63,14 @@ export class User {
   @Field({ nullable: true })
   birthPlace: string
 
-  // @Column()
-  // @Field()
-  // locale?: string
-  
+  @Column() // Database link - Typeorm
+  @Field({ nullable: true })
+  accessPlatform: boolean
+
+  @Column() // Database link - Typeorm
+  @Field()
+  status: boolean
+
   @Column()
   @Field({ nullable: true })
   bathingPlace?: string
