@@ -1,11 +1,11 @@
 <template>
     <Container v-if="accessUser.userByUid.accessPlatform" class="font-lato">
-        <div class="flex flex-col mt-4 md:flex-row md:justify-evenly">
+        <div class="flex flex-col mt-4 md:flex-row md:justify-evenly gap-3">
 
 
 
             <div v-if="userRole == 200 || userRole == 100">
-                <div class="bg-white rounded-cardRadius shadow-cardShadow px-10 py-5 md:min-w-[40rem] md:min-h-[15rem]">
+                <div class="bg-white rounded-cardRadius shadow-cardShadow px-10 py-5 md:min-w-[40rem] md:min-h-[15rem] md:mb-0 sm:mb-10">
                     <h2 class="font-bold text-center text-black text-lg">Todo hoofdredder</h2>
 
                     <div class="mt-5 mb-13">

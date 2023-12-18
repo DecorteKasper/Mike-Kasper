@@ -10,20 +10,24 @@
 
         <div class="flex flex-row justify-between w-full max-w-[15rem] items-center">
           <div class="flex flex-col">
-            <p class="flex flex-col items-center"><span class="font-bold text-red">{{ temperature }} °C</span><span
+            <p class="flex flex-col items-center"><span class="font-bold text-red text-base mb-1">{{ temperature }} °C</span><span
                 class="text-xs">Temperatuur</span></p>
-            <p class="flex flex-col items-center mt-8"><span class="font-bold text-red">{{ windSpeed }} km/h</span><span
+            <p class="flex flex-col items-center mt-8"><span class="font-bold text-red text-base mb-1">{{ windSpeed }} km/h</span><span
                 class="text-xs">Windsnelheid</span></p>
-            <p class="flex flex-col items-center mt-8"><span class="font-bold text-red">{{ highTide }}</span><span
-                class="text-xs">Hoogwater</span></p>
+            <p class="flex flex-col items-center mt-8"><span class="font-bold text-red text-base mb-1">{{ windRichting }}</span><span
+                class="text-xs">Windrichting</span></p>
+            <!--<p class="flex flex-col items-center mt-8"><span class="font-bold text-red">{{ highTide }}</span><span
+                  class="text-xs">Hoogwater</span></p>-->
           </div>
           <div class="flex flex-col ">
-            <p class="flex flex-col items-center"><span class="font-bold text-red">{{ uvIndex }}</span><span
+            <p class="flex flex-col items-center"><span class="font-bold text-red text-base mb-1">{{ uvIndex }}</span><span
                 class="text-xs">UV-index</span></p>
-            <p class="flex flex-col items-center mt-8"><span class="font-bold text-red">{{ rainChance }} %</span><span
+            <p class="flex flex-col items-center mt-8"><span class="font-bold text-red text-base mb-1">{{ rainChance }} %</span><span
                 class="text-xs">Neerslag</span></p>
-            <p class="flex flex-col items-center mt-8"><span class="font-bold text-red">{{ lowTide }}</span><span
-                class="text-xs">Laagwater</span></p>
+            <p class="flex flex-col items-center mt-8"><span class="font-bold text-red text-base mb-1">{{ zichtbaarheid }} km</span><span
+                class="text-xs">Zichtbaarheid</span></p>
+            <!-- <p class="flex flex-col items-center mt-8"><span class="font-bold text-red">{{ lowTide }}</span><span
+                class="text-xs">Laagwater</span></p> -->
           </div>
         </div>
 
@@ -42,20 +46,22 @@
     <div class="flex flex-col md:flex-row items-center md:items-baseline justify-between mt-10 md:mt-18 max-w-7xl m-auto">
       <div class="bg-white w-full max-w-80 min-h-[20rem] h-auto rounded-cardRadius shadow-cardShadow px-6 py-5">
         <p class="text-center mb-8 font-bold text-base mt-2">Aanwezigen {{ dayOfMonth }} {{ monthName }}</p>
-        <div class="flex flex-col">
-          <p>Redders</p>
-          <div class="w-full h-[2px] rounded-lg bg-red mb-6 mt-1"></div>
-          <template v-for="(name, index) in namesOfUsersWithoutHolidayToday" :key="index">
-            <UserShown :name="name" />
-          </template>
-        </div>
-        <div class="flex flex-col mt-9">
-          <p>EHBO</p>
-          <div class="w-full h-[2px] rounded-lg bg-greenx mb-6 mt-1"></div>
-          <!-- <UserShown /> -->
-            <template v-for="(name, index) in namesOfUsersWithoutHolidayTodayEHBO" :key="index">
-            <UserShown :name="name" />
+        <div class="overflow-scroll max-h-96">
+          <div class="flex flex-col">
+            <p>Redders</p>
+            <div class="w-full h-[2px] rounded-lg bg-red mb-6 mt-1"></div>
+            <template v-for="(name, index) in namesOfUsersWithoutHolidayToday" :key="index">
+              <UserShown :name="name" />
             </template>
+          </div>
+          <div class="flex flex-col mt-9">
+            <p>EHBO</p>
+            <div class="w-full h-[2px] rounded-lg bg-greenx mb-6 mt-1"></div>
+            <!-- <UserShown /> -->
+              <template v-for="(name, index) in namesOfUsersWithoutHolidayTodayEHBO" :key="index">
+              <UserShown :name="name" />
+              </template>
+          </div>
         </div>
       </div>
 
@@ -138,6 +144,8 @@ export default defineComponent({
     const rainChance = ref("--");
     const highTide = ref("--:--");
     const lowTide = ref("--:--");
+    const windRichting = ref("--");
+    const zichtbaarheid = ref("--");
     const weatherIconUrl = ref("");
     const reportInfo = ref("");
     const nameUser = ref("redder");
@@ -394,6 +402,8 @@ export default defineComponent({
           windSpeed.value = data.current.wind_kph;
           uvIndex.value = data.current.uv;
           rainChance.value = data.current.precip_mm || 0;
+          windRichting.value = data.current.wind_dir;
+          zichtbaarheid.value = data.current.vis_km;
         } else {
           console.error('Error fetching weather data');
         }
@@ -436,6 +446,8 @@ export default defineComponent({
       namesOfUsersWithoutHolidayToday,
       namesOfUsersWithoutHolidayTodayEHBO,
       currentUserSeasideTown,
+      windRichting,
+      zichtbaarheid,
     };
   },
 });
