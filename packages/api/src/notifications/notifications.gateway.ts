@@ -4,6 +4,7 @@ import { FirebaseWebsocketGuard } from 'src/authentication/guards/firebase.webso
 import { TodoService } from 'src/todo/todo.service'
 import { Todo } from 'src/todo/entities/todo.entity'
 import { CreateTodoInput } from 'src/todo/dto/create-todo.input'
+import { UsersService } from 'src/users/users.service'
 
 @WebSocketGateway(+process.env.WS_PORT || 3004, {
   cors: {
@@ -21,6 +22,7 @@ export class NotificationsGateway
   private todos: Todo[] = [];
   constructor(
     private readonly todoService: TodoService,
+    private readonly usersService: UsersService,
   ) { }
 
   @WebSocketServer() //An alternative for afterInit()
@@ -48,6 +50,10 @@ export class NotificationsGateway
     // Vraag alle todo's in de database op en stuur ze naar de client
     const todos = await this.todoService.findAll();
     client.emit('todos', todos);
+
+
+    const users = await this.usersService.findAll();
+    client.emit('users', users);
   }
   // Deze functie werkt.
   sendTodo(payload: any) {
@@ -86,6 +92,49 @@ export class NotificationsGateway
     }
   }
 
+  async handleDeleteUser(id: string) {
+    try {
+      const removedUser = await this.usersService.remove(id);
+      console.log('removedUser realtime' + id);
+
+      if (removedUser) {
+        // Als het verwijderen is gelukt, stuur een bericht naar alle clients
+        this.server.emit('user:remove', removedUser);
+
+        // Haal bijgewerkte lijst met todos op
+        const updatedUsers = await this.usersService.findAll();
+
+        // Stuur de bijgewerkte lijst naar alle clients
+        this.server.emit('users', updatedUsers);
+      }
+    } catch (error) {
+      // Verwerk eventuele fouten bij het verwijderen
+      console.error(`Fout bij het verwijderen van user met ID ${id}:`, error.message);
+    }
+
+  }
+
+  async handleDeleteAllUsers(id: string[]) {
+    try {
+      const removedUsers = await this.usersService.removeAll(id);
+      console.log('removedUsers realtime' + id);
+
+      if (removedUsers) {
+        // Als het verwijderen is gelukt, stuur een bericht naar alle clients
+        this.server.emit('users:remove', removedUsers);
+
+        // Haal bijgewerkte lijst met todos op
+        const updatedUsers = await this.usersService.findAll();
+
+        // Stuur de bijgewerkte lijst naar alle clients
+        this.server.emit('users', updatedUsers);
+      }
+    } catch (error) {
+      // Verwerk eventuele fouten bij het verwijderen
+      console.error(`Fout bij het verwijderen van user met ID ${id}:`, error.message);
+    }
+  }
+
   async handleUpdate(payload: any) {
     try {
       const updatedTodo = await this.todoService.update(payload.id, payload);
@@ -104,6 +153,27 @@ export class NotificationsGateway
     } catch (error) {
       // Verwerk eventuele fouten bij het updaten
       console.error(`Fout bij het updaten van todo met ID ${payload.id}:`, error.message);
+    }
+  }
+
+  async handleUpdateUser(payload: any) {
+    try {
+      const updatedUser = await this.usersService.update(payload);
+      console.log('updatedUser realtime' + payload.id);
+
+      if (updatedUser) {
+        // Als het updaten is gelukt, stuur een bericht naar alle clients
+        this.server.emit('user:update', updatedUser);
+
+        // Haal bijgewerkte lijst met todos op
+        const updatedUsers = await this.usersService.findAll();
+
+        // Stuur de bijgewerkte lijst naar alle clients
+        this.server.emit('users', updatedUsers);
+      }
+    } catch (error) {
+      // Verwerk eventuele fouten bij het updaten
+      console.error(`Fout bij het updaten van user met ID ${payload.id}:`, error.message);
     }
   }
 

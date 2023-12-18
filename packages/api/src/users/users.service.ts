@@ -38,30 +38,30 @@ export class UsersService {
     return this.userRepository.save(user)
   }
 
-  async update(uid: string, updateUserInput: UpdateUserInput) {
-    const currentUser = await this.findOneByUid(uid)
-    const updateUser = new User()
-    // user.locale = createUserInput.locale ?? 'nl'
-    updateUser.name = updateUserInput.name
-    updateUser.surname = updateUserInput.surname
-    updateUser.photoURL = updateUserInput.photoURL ?? null
-    updateUser.email = updateUserInput.email ?? null
-    updateUser.phoneNumber = updateUserInput.phoneNumber ?? null
-    updateUser.birth = updateUserInput.birth ?? null
-    updateUser.birthPlace = updateUserInput.birthplace ?? null
+  async update(updateUserInput: UpdateUserInput) {
+    const currentUser = await this.findOneByUid(updateUserInput.uid)
+    currentUser.name = updateUserInput.name ?? currentUser.name
+    currentUser.surname = updateUserInput.surname ?? currentUser.surname
+    currentUser.photoURL = updateUserInput.photoURL ?? currentUser.photoURL
+    currentUser.email = updateUserInput.email ?? currentUser.email
+    currentUser.phoneNumber = updateUserInput.phoneNumber ?? currentUser.phoneNumber
+    currentUser.birth = updateUserInput.birth ?? currentUser.birth
+    currentUser.birthPlace = updateUserInput.birthplace ?? currentUser.birthPlace
 
-    updateUser.street = updateUserInput.street ?? null
-    updateUser.city = updateUserInput.city ?? null
-    updateUser.numberOfHouse = updateUserInput.numberOfHouse ?? null
-    updateUser.zipCode = updateUserInput.zipCode ?? null
+    currentUser.bathingPlace = updateUserInput.bathingPlace ?? currentUser.bathingPlace
+    currentUser.accessPlatform = updateUserInput.accessPlatform ?? false
+    currentUser.status = updateUserInput.status ?? false
 
+    currentUser.street = updateUserInput.street ?? currentUser.street
+    currentUser.city = updateUserInput.city ?? currentUser.city
+    currentUser.numberOfHouse = updateUserInput.numberOfHouse ?? currentUser.numberOfHouse
+    currentUser.zipCode = updateUserInput.zipCode ?? currentUser.zipCode
 
-    updateUser.createdAt = currentUser.createdAt
-    updateUser.updateAt = new Date()
+    currentUser.createdAt = currentUser.createdAt
+    currentUser.updateAt = new Date()
 
-    return this.userRepository.update(currentUser, updateUser)
+    return this.userRepository.update({ uid: updateUserInput.uid }, currentUser)
   }
-
 
   findOneByUid(uid: string) {
     const user = new User()

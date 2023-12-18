@@ -14,7 +14,7 @@
                     <X :stroke-width="2" :size="25" class="text-white" />
                 </button>
             </div>
-<!-- 
+            <!-- 
             <h1 v-if="taskData" class="mb-8 font-lato font-bold text-xl text-greenx">Post {{ localTaskData.post }}</h1>
             <p v-if="taskData" class="font-lato text-sm mb-8 leading-6 text-black">{{ localTaskData.description }}</p>
             <div v-if="taskData" class="flex justify-end">
@@ -30,20 +30,48 @@
                 </div>
             </div>
             <!-- Delete one -->
-            <div v-if="reportId || reportIds" class="flex flex-col">
+            <div class="flex flex-col">
                 <div>
-                    <h1 class="mb-8 font-lato font-medium text-lg text-black">Ben je zeker dat je dit verslag wilt
+                    <h1 v-if="reportId" class="mb-8 font-lato font-medium text-lg text-black">Ben je zeker dat je dit
+                        verslag wilt
                         verwijderen?
                     </h1>
+                    <h1 v-if="reportIds" class="mb-8 font-lato font-medium text-lg text-black">Ben je zeker dat je deze
+                        verslagen wilt
+                        verwijderen?</h1>
+
+                    <h1 v-if="userId" class="mb-8 font-lato font-medium text-lg text-black">Ben je zeker dat je deze user
+                        wil verwijdereren?
+                    </h1>
+                    <h1 v-if="userIds" class="mb-8 font-lato font-medium text-lg text-black">Ben je zeker dat je deze users
+                        wil verwijdereren?
+                    </h1>
+                    <h1 v-if="userUpdateId" class="mb-8 font-lato font-medium text-lg text-black">Wil je deze user
+                        accepteren?
+                    </h1>
+
                 </div>
 
                 <div class="flex gap-4 justify-center">
+                    <!-- Reports -->
                     <PrimaryButton v-if="reportId" label="Verwijderen" @click="deleteItem(deleteOneReport)" />
                     <PrimaryButton v-if="reportIds" label="Verwijderen" @click="deleteAll(deleteManyReports)" />
+                    <!-- Users -->
+                    <PrimaryButton v-if="userId" label="Verwijderen" @click="HandleDeleteOneUser(userId)" />
+                    <PrimaryButton v-if="userIds" label="Verwijderen" @click="HandleDeleteManyUser(userIds)" />
+                    <PrimaryButton v-if="userUpdateId" label="Accepteren" @click="HandleUpdateUser(userUpdateId)" />
+
                     <!-- Dit zal de secundary button zijn -->
-                    <PrimaryButton label="Annuleren" @click="CloseModal" />
+                    <SecondaryButton label="Annuleren" @click="CloseModal" />
                 </div>
             </div>
+
+
+            <!-- Delete user -->
+
+
+
+
         </div>
     </Transition>
 </template>
@@ -57,12 +85,14 @@ import type { Ireport } from '@/interfaces/report.interface';
 import { useMutation, useQuery } from '@vue/apollo-composable';
 import { ALL_RECORDS } from '@/graphql/report.query';
 import { DELETE_REPORT, DELETE_ALL_REPORTS } from '@/graphql/report.mutation'
+import { DELETE_USER, DELETE_ALL_USERS, UPDATE_USER } from '@/graphql/user.mutation'
 import PrimaryButton from '@/components/generic/PrimaryButton.vue';
+import SecondaryButton from './SecondaryButton.vue';
 
 
 export default {
 
-    components: { X, PrimaryButton },
+    components: { X, PrimaryButton, SecondaryButton },
     props: {
         // Om de modal te openen
         isVisible: {
@@ -78,6 +108,10 @@ export default {
             type: Object as () => Ireport,
             default: null
         },
+        ReportsData: {
+            type: Array as () => Ireport[],
+            default: () => []
+        },
         // Hier komt de id binnen van report om te deleten
         deleteOneReport: {
             type: String,
@@ -87,10 +121,21 @@ export default {
             type: Array as () => string[],
             default: () => []
         },
-        ReportsData: {
-            type: Array as () => Ireport[],
+        // Users deletes
+        deleteOneUser: {
+            type: String,
+            default: null
+        },
+        deleteManyUsers: {
+            type: Array as () => string[],
             default: () => []
         },
+        // user update
+        updateOneUser: {
+            type: String,
+            default: null
+        }
+
     },
 
     setup(props, { emit }) {
@@ -100,20 +145,36 @@ export default {
         // const localTaskData = ref<Itask>(props.taskData)
         const localReportData = ref<Ireport | null>()
         const reportId = ref<string | null>()
+        const userId = ref<string | null>()
+        const userUpdateId = ref<string | null>()
+        const userIds = ref<string[]>()
         const reportIds = ref<string[]>()
         const reports = ref<Ireport[]>(props.ReportsData);
 
         const { mutate: deleteReport } = useMutation(DELETE_REPORT)
+        const { mutate: deleteUser } = useMutation(DELETE_USER)
         const { mutate: deleteAllReports } = useMutation(DELETE_ALL_REPORTS)
-        
+        const { mutate: deleteAllUsers } = useMutation(DELETE_ALL_USERS)
+        const { mutate: updateUser } = useMutation(UPDATE_USER)
 
+
+
+        watch(() => props.updateOneUser, (newValue) => {
+            userUpdateId.value = newValue;
+        })
+        // Users deletes
+        watch(() => props.deleteOneUser, (newValue) => {
+            userId.value = newValue;
+        });
+        watch(() => props.deleteManyUsers, (newValue) => {
+            userIds.value = newValue;
+        });
+        // Reports deletes
         watch(() => props.deleteOneReport, (newValue) => {
             reportId.value = newValue;
-            console.log('Dit is de reportId', reportId.value)
         });
         watch(() => props.deleteManyReports, (newValue) => {
             reportIds.value = newValue;
-            console.log('Dit zijn de reportIds', reportIds.value)
         });
         watch(() => props.reportData, (newValue) => {
             localReportData.value = newValue;
@@ -145,12 +206,25 @@ export default {
                     console.log(error)
                 })
             }
-            // else if (jobs.value.length > 0) {
-            //     jobs.value = jobs.value.filter(job => job.id !== reportId);
-            // } else if (sollis.value.length > 0) {
-            //     sollis.value = sollis.value.filter(solli => solli.id !== reportId);
-            // }
         };
+        const HandleDeleteOneUser = (id: string) => {
+            console.log('userId', id)
+            if (id) {
+                // Delete from database
+                deleteUser({
+                    uid: id.valueOf()
+                }).then((result) => {
+                    if (!result?.data) {
+                        throw new Error('Failed to delete report')
+                    }
+                    console.log('user deleted', result.data)
+                    emit('close-modal')
+                    emit('item-deleted', id);
+                }).catch((error) => {
+                    console.log(error)
+                })
+            }
+        }
 
         // Delete all
         const deleteAll = (ids: string[]) => {
@@ -171,13 +245,48 @@ export default {
                     console.log(error)
                 })
             }
-            // else if (jobs.value.length > 0) {
-            //     jobs.value = jobs.value.filter(jobs => jobs.status !== true);
-            // } else if (sollis.value.length > 0) {
-            //     sollis.value = sollis.value.filter(solli => solli.status !== true);
-            // }
         };
+        const HandleDeleteManyUser = (ids: string[]) => {
 
+            if (ids) {
+                // Delete from database
+                deleteAllUsers({
+                    uids: ids
+                }).then((result) => {
+                    if (!result?.data) {
+                        throw new Error('Failed to delete report')
+                    }
+                    console.log('report deleted', result.data)
+                    emit('close-modal')
+                    emit('items-deleted', ids);
+                }).catch((error) => {
+                    console.log(error)
+                })
+            }
+        }
+
+        // Update user
+        const HandleUpdateUser = (uid: string) => {
+            console.log('Dit is de uid in de HandleUpdateUser', uid)
+            const userUpdate = {
+                uid: uid,
+                accessPlatform: true
+            }
+            if (uid) {
+                updateUser({
+                    updateUserInput: userUpdate
+                }).then((result) => {
+                    if (!result?.data) {
+                        throw new Error('Failed to delete report')
+                    }
+                    console.log('user updated', result.data)
+                    emit('close-modal')
+                    emit('item-updated', uid);
+                }).catch((error) => {
+                    console.log(error)
+                })
+            }
+        }
 
         // watch(() => props.taskData, (newValue) => {
         //     localTaskData.value = newValue;
@@ -195,8 +304,14 @@ export default {
             formatDate,
             deleteItem,
             deleteAll,
+            HandleDeleteOneUser,
+            HandleDeleteManyUser,
+            HandleUpdateUser,
             reportIds,
-            reportId
+            reportId,
+            userId,
+            userIds,
+            userUpdateId,
         }
     }
 }

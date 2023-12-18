@@ -68,7 +68,7 @@ export class User {
   accessPlatform: boolean
 
   @Column() // Database link - Typeorm
-  @Field()
+  @Field({ nullable: true })
   status: boolean
 
   @Column()
