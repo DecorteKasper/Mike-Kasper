@@ -14,8 +14,8 @@
                     <X :stroke-width="2" :size="25" class="text-white" />
                 </button>
             </div>
-
-            <!-- <h1 v-if="taskData" class="mb-8 font-lato font-bold text-xl text-greenx">Post {{ localTaskData.post }}</h1>
+<!-- 
+            <h1 v-if="taskData" class="mb-8 font-lato font-bold text-xl text-greenx">Post {{ localTaskData.post }}</h1>
             <p v-if="taskData" class="font-lato text-sm mb-8 leading-6 text-black">{{ localTaskData.description }}</p>
             <div v-if="taskData" class="flex justify-end">
                 <p class="font-lato text-xs text-greenx">{{ localTaskData.createdAt }}</p>
@@ -69,7 +69,6 @@ export default {
             type: Boolean,
             required: true
         },
-
         taskData: {
             type: Object as () => Itask,
             default: null

@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Role, User } from './entities/user.entity';
 import { MongoRepository, UpdateResult } from 'typeorm';
 import { ObjectId } from 'mongodb';
+import { v4 as uuidv4 } from 'uuid';
+
 
 @Injectable()
 export class UsersService {
@@ -15,9 +17,9 @@ export class UsersService {
   ) { }
 
 
-  create(uid: string, createUserInput: CreateUserInput) {
+  create(createUserInput: CreateUserInput) {
     const user = new User()
-    user.uid = uid
+    user.uid = uuidv4()
     // user.locale = createUserInput.locale ?? 'nl'
     user.role = createUserInput.role ?? Role.REDDER
     user.name = createUserInput.name
@@ -26,6 +28,7 @@ export class UsersService {
     user.email = createUserInput.email
     user.bathingPlace = createUserInput.bathingPlace ?? null
     user.accessPlatform = createUserInput.accessPlatform ?? false
+    user.status = createUserInput.status ?? false
     user.phoneNumber = createUserInput.phoneNumber ?? null
     user.zipCode = createUserInput.zipCode ?? null
     user.street = createUserInput.street ?? null
@@ -58,6 +61,8 @@ export class UsersService {
 
     return this.userRepository.update(currentUser, updateUser)
   }
+
+
   findOneByUid(uid: string) {
     const user = new User()
     return this.userRepository.findOneByOrFail({ uid })
@@ -71,6 +76,29 @@ export class UsersService {
     return user;
   }
 
+  async remove(uid: string) {
+    const user = await this.userRepository.findOne({ where: { uid } });
+    if (user) {
+      await this.userRepository.remove(user)
+      return user
+    }
+    return null
+  }
+
+
+  // Remove all users
+  async removeAll(ids: string[]) {
+    const users = await this.userRepository.find({ where: { uid: { $in: ids } } })
+    if (users) {
+      const result = users.length
+      await this.userRepository.remove(users)
+      console.log("Deleted:", result)
+      return users
+    }
+    return null;
+
+  }
+
   // async remove(id: string) {
   //   const report = await this.reportsRepository.findOne({ _id: new ObjectId(id) } as any)
   //   if (report) {
@@ -80,13 +108,7 @@ export class UsersService {
   //   return null
   // }
 
-  async remove(uid: string) {
-    const user = await this.userRepository.findOne({ where: { uid } });
-    if (user) {
-      await this.userRepository.remove(user)
-      return user
-    }
-  }
+
 
 
   //Function seeding

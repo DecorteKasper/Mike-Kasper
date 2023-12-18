@@ -17,7 +17,7 @@ export class UsersResolver {
   @UseGuards(FirebaseGuard)
   @Mutation(() => User)
   createUser(@Args('createUserInput') createUserInput: CreateUserInput, @FirebaseUser() user: UserRecord,) {
-    return this.usersService.create(user.uid, createUserInput);
+    return this.usersService.create(createUserInput);
   }
 
   @UseGuards(FirebaseGuard)
@@ -26,7 +26,6 @@ export class UsersResolver {
     const updatedUser = await this.usersService.update(user.uid, updateUserInput);
     return updatedUser;
   }
-
 
   // @AllowedRoles(Role.HOOFDREDDER)
   @UseGuards(FirebaseGuard)
@@ -40,8 +39,18 @@ export class UsersResolver {
     return this.usersService.findOneByUid(uid);
   }
 
+  // Verwijder een user
   @Mutation(() => User)
   removeUser(@Args('removeuser', { type: () => String }) id: string) {
     return this.usersService.remove(id);
   }
+
+  // 
+  @Mutation(() => [User], { nullable: true })
+  async removeAllUsers(@Args('removeAll', { type: () => [String] }) id: string[]) {
+    const users = await this.usersService.removeAll(id);
+    return users;
+  }
+
+
 }

@@ -6,8 +6,8 @@ import { number } from 'yargs';
 export class CreateUserInput {
   // @Field(() => String, { description: 'Optional locale of the current user' })
   // locale?: string;
-  @Field(() => String, { description: 'uid of the current user' })
-  uid: string;
+  // @Field(() => String, { description: 'uid of the current user' })
+  // uid: string;
 
   @Field(() => String, { description: 'First name of the current user' })
   name?: string;
@@ -36,6 +36,9 @@ export class CreateUserInput {
   // ACCES PLATFORM
   @Field(() => Boolean, { description: 'Access platform of the current user' })
   accessPlatform?: boolean;
+
+  @Field(() => Boolean, { description: 'Status of the current user' })
+  status?: boolean;
 
   @Field(() => String, { description: 'City of the current user', nullable: true })
   city?: string;

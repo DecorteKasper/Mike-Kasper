@@ -1,5 +1,5 @@
 <template>
-    {{ firebaseUser }}
+    <!-- {{ firebaseUser }} -->
     <Container v-if="accesUser.userByUid.accessPlatform">
         <div class="flex gap-6">
             <ul class="shadow-cardShadow rounded-cardRadius p-10 h-fit">
@@ -24,6 +24,8 @@
             <CostumTable v-if="currentMenuItem === 'solli'" :sollisData="solli" class="flex-1" />
 
         </div>
+
+
     </Container>
 </template>
 
@@ -65,6 +67,8 @@ export default {
             const value = users.value?.users;
             solli.value = value.filter((user: Iuser) => user.accessPlatform === false);
             jobs.value = value.filter((user: Iuser) => user.accessPlatform === true);
+
+            console.log('solli', users);
         })
 
         if (users) {
