@@ -80,10 +80,6 @@ import iconFireFighter from '@/assets/icons/firefighter.svg'
 import iconPolice from '@/assets/icons/police.svg'
 import iconVogels from '@/assets/icons/seagull.svg'
 import iconHoofdpost from '@/assets/icons/hoofdpost.svg'
-import { GET_USER_BY_UID } from '@/graphql/user.query';
-import { useQuery } from '@vue/apollo-composable';
-import useFirebase from '@/composables/useFirebase'
-
 import useFirebase from '@/composables/useFirebase'
 import { GET_USER_BY_UID } from '@/graphql/user.query'
 import router from '@/router'
@@ -181,7 +177,7 @@ export default {
             phoneNumberHoofdpost,
             phoneNumberVogels,
 
-            accessUser: user
+            accessUser: user,
 
             userRole,
             isConfirmationDialogOpen,
