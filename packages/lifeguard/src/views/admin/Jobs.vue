@@ -1,5 +1,5 @@
 <template>
-    {{ firebaseUser }}
+    <!-- {{ firebaseUser }} -->
     <Container v-if="accesUser.userByUid.accessPlatform">
         <div class="flex gap-6">
             <ul class="shadow-cardShadow rounded-cardRadius p-10 h-fit">
@@ -20,10 +20,17 @@
             <div>-----------------------------------------------</div>
             <div>DIT ZIJN DE SOLLIS {{ solli }}</div> -->
 
-            <CostumTable v-if="currentMenuItem === 'jobs'" :jobsData="jobs" class="flex-1" />
-            <CostumTable v-if="currentMenuItem === 'solli'" :sollisData="solli" class="flex-1" />
+            <CostumTable @show-modal="showModal" v-if="currentMenuItem === 'jobs'" :jobsData="jobs" class="flex-1" />
+            <CostumTable @show-modal="showModal" v-if="currentMenuItem === 'solli'" :sollisData="solli" class="flex-1" />
 
         </div>
+
+        <div>
+            <ModalWindow @close-modal="closeModal" :isVisible="isModalVisible" :deleteOneUser="(modalDelete as string)"
+                :deleteManyUsers="(modalDeleteMany as string[])" :updateOneUser="(modalUpdate as string)" />
+        </div>
+
+
     </Container>
 </template>
 
@@ -37,13 +44,16 @@ import router from '@/router'
 import { useQuery } from '@vue/apollo-composable';
 import { watch, onBeforeUnmount } from 'vue';
 import type { Iuser } from '@/interfaces/user.interface';
+import ModalWindow from '@/components/generic/ModalWindow.vue';
+import UseRealtime from "@/composables/useRealtime"
 
 
 export default {
 
     components: {
         CostumTable,
-        Container
+        Container,
+        ModalWindow
     },
 
 
@@ -60,12 +70,23 @@ export default {
         const jobs = ref<Iuser[]>([])
         const currentMenuItem = ref('jobs');
 
-        // voer een watch uit op de users
-        watch(users, () => {
-            const value = users.value?.users;
-            solli.value = value.filter((user: Iuser) => user.accessPlatform === false);
-            jobs.value = value.filter((user: Iuser) => user.accessPlatform === true);
+
+        const { on } = UseRealtime()
+
+        on('users', (users) => {
+            console.log('users', users);
+            solli.value = users.filter((user: Iuser) => user.accessPlatform === false);
+            jobs.value = users.filter((user: Iuser) => user.accessPlatform === true);
         })
+
+        // voer een watch uit op de users
+        // watch(users, () => {
+        //     const value = users.value?.users;
+        //     solli.value = value.filter((user: Iuser) => user.accessPlatform === false);
+        //     jobs.value = value.filter((user: Iuser) => user.accessPlatform === true);
+
+        //     console.log('solli', users);
+        // })
 
         if (users) {
             const value = users.value?.users;
@@ -92,6 +113,42 @@ export default {
             currentMenuItem.value = 'solli';
         }
 
+        // variabelen die ik kan meegeven aan de modalwindow
+        const modalDelete = ref<string | null>()
+        const modalDeleteMany = ref<string[] | null>()
+        const modalUpdate = ref<string | null>()
+        // Het modal venster is standaard niet zichtbaar
+        const isModalVisible = ref(false)
+
+
+
+        const showModal = (options: { id?: string, ids?: string[], uidToUpdate?: string }) => {
+            // Controleer of er een report of id beschikbaar is
+            if (options.id) {
+                isModalVisible.value = true
+                modalDelete.value = options.id;
+                console.log('modalDelete', modalDelete.value);
+            } else if (options.ids) {
+                isModalVisible.value = true
+                modalDeleteMany.value = options.ids;
+                console.log('modalDeleteMany', modalDeleteMany.value);
+            } else if (options.uidToUpdate) {
+                console.log('uidToUpdate', options.uidToUpdate);
+                isModalVisible.value = true
+                modalUpdate.value = options.uidToUpdate;
+            }
+            else {
+                console.log('Geen report of id beschikbaar');
+            }
+        }
+
+
+        const closeModal = () => {
+            isModalVisible.value = false
+            modalDelete.value = null
+            modalDeleteMany.value = null
+        }
+
 
         return {
             solli,
@@ -100,7 +157,13 @@ export default {
             showSollis,
             currentMenuItem,
             firebaseUser,
-            accesUser: user
+            accesUser: user,
+            showModal,
+            closeModal,
+            isModalVisible,
+            modalDelete,
+            modalDeleteMany,
+            modalUpdate
         }
     }
 }

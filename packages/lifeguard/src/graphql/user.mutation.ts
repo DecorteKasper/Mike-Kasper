@@ -19,7 +19,6 @@ mutation createUser ($createUserInput: CreateUserInput!){
     }
   }
 `
-
 export const UPDATE_USER = gql`
 mutation UpdateUser($updateUserInput: UpdateUserInput!) {
   updateUser(updateUserInput: $updateUserInput) {
@@ -36,6 +35,21 @@ mutation UpdateUser($updateUserInput: UpdateUserInput!) {
     numberOfHouse
   }
 }
-
-
+`
+export const DELETE_USER = gql`
+mutation RemoveUser($uid: String!) {
+  removeUser(removeuser: $uid) {
+    name
+    surname
+  }
+}
+`
+export const DELETE_ALL_USERS = gql`
+mutation RemoveAllUsers($uids: [String!]!) {
+  removeAllUsers(removeAll: $uids) {
+    name
+    surname
+    uid
+  }
+}
 `

@@ -9,24 +9,29 @@ import { FirebaseUser } from 'src/authentication/decorators/user.decorator';
 import { UserRecord } from 'firebase-admin/auth';
 import { AllowedRoles } from './decorators/role.decorator';
 import { RolesGuard } from './guards/roles.guard';
+import { NotificationsGateway } from 'src/notifications/notifications.gateway';
+
 
 @Resolver(() => User)
 export class UsersResolver {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly gateway: NotificationsGateway
+  ) { }
 
   @UseGuards(FirebaseGuard)
   @Mutation(() => User)
   createUser(@Args('createUserInput') createUserInput: CreateUserInput, @FirebaseUser() user: UserRecord,) {
-    return this.usersService.create(user.uid, createUserInput);
+    return this.usersService.create(createUserInput);
   }
 
   @UseGuards(FirebaseGuard)
   @Mutation(() => User)
   async updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput, @FirebaseUser() user: UserRecord,) {
-    const updatedUser = await this.usersService.update(user.uid, updateUserInput);
+    this.gateway.handleUpdateUser(updateUserInput)
+    const updatedUser = await this.usersService.update(updateUserInput);
     return updatedUser;
   }
-
 
   // @AllowedRoles(Role.HOOFDREDDER)
   @UseGuards(FirebaseGuard)
@@ -40,8 +45,19 @@ export class UsersResolver {
     return this.usersService.findOneByUid(uid);
   }
 
+  // Verwijder een user
   @Mutation(() => User)
   removeUser(@Args('removeuser', { type: () => String }) id: string) {
+    this.gateway.handleDeleteUser(id)
     return this.usersService.remove(id);
   }
+
+  // 
+  @Mutation(() => [User], { nullable: true })
+  async removeAllUsers(@Args('removeAll', { type: () => [String] }) id: string[]) {
+    this.gateway.handleDeleteAllUsers(id)
+    const users = await this.usersService.removeAll(id);
+    return users;
+  }
+
 }

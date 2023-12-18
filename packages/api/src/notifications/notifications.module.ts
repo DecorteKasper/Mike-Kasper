@@ -10,6 +10,7 @@ import { UsersModule } from 'src/users/users.module'
 @Module({
     imports: [
         forwardRef(() => TodoModule),
+        forwardRef(() => UsersModule)
         // AuthenticationModule,
         // UsersModule,
     ],

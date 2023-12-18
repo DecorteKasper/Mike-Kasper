@@ -45,9 +45,11 @@
                     <!-- Reports -->
                     <SecondaryButton v-if="ReportsData.length > 0" label="Verwijderen"
                         @click="openModalDeleteAll(itemIds)" />
-                    <!-- Jobs -->
+                    <!-- Sollicitaties  -->
                     <PrimaryButton v-if="sollisData.length > 0" label="Accepteer" @click="" />
-                    <SecondaryButton v-if="sollisData.length > 0" label="Afwijzen" @click="" />
+                    <SecondaryButton v-if="sollisData.length > 0" label="Afwijzen" @click="openModalDeleteAll(itemIds)" />
+                    <!-- Jobs -->
+                    <SecondaryButton v-if="jobsData.length > 0" label="Verwijderen" @click="openModalDeleteAll(itemIds)" />
                 </td>
 
             </tr>
@@ -56,8 +58,10 @@
             <tr v-for="(item, index) in filteredItems" :class="index % 2 === 0 ? ' h-12' : ' h-12 bg-gray'">
                 <td class="pl-14">
                     <label class="checkbox-status">
-                        <input type="checkbox" name="status" class="hidden" v-model="item.status"
-                            @click="getItemIds(item.id)">
+                        <input v-if="ReportsData.length > 0" type="checkbox" name="status" class="hidden"
+                            v-model="item.status" @click="getItemIds(item.id)">
+                        <input v-if="sollisData.length > 0 || jobsData.length > 0" type="checkbox" name="status"
+                            class="hidden" v-model="item.status" @click="getItemIds(item.uid)">
                         <div :class="{
                             'group p-1 w-fit bg-light_green rounded-full focus:outline-none cursor-pointer': item.status === true,
                             'group  p-1 w-fit bg-light_green rounded-full focus:outline-none cursor-pointer': item.status !== true
@@ -96,19 +100,26 @@
 
                 <td class="font-lato text-sm pr-14">
                     <div class="flex align-middle justify-end">
-                        <!-- Jobs en sollicitaties -->
-                        <button v-if="jobsData.length > 0 || sollisData.length > 0" class="mr-6" @click="">
+                        <!-- Jobs  -->
+                        <button v-if="jobsData.length > 0" class="mr-6" @click="openModalDelete(item.uid)">
+                            <Trash2 class="w-7 h-7 text-red" />
+                        </button>
+
+
+                        <!-- sollicitaties -->
+                        <button v-if="sollisData.length > 0" class="mr-6" @click="openModalDelete(item.uid)">
                             <X class="w-7 h-7 text-red" />
                         </button>
-                        <button v-if="jobsData.length > 0 || sollisData.length > 0">
+                        <button v-if="sollisData.length > 0" @click="openModalAcceptUser(item.uid)">
                             <CheckCircle class="w-7 h-7 text-dark_green" />
                         </button>
+
+
                         <!-- Reports -->
                         <!-- Button om te downloaden als pdf -->
                         <button v-if="ReportsData.length > 0" class="mr-6" @click="downloadPdf(item)">
                             <ArrowDownToLine class="w-7 h-7 text-greenx" />
                         </button>
-
                         <button v-if="ReportsData.length > 0" class="mr-6" @click="openModalDelete(item.id)">
                             <Trash2 class="w-7 h-7 text-red" />
                         </button>
@@ -129,19 +140,9 @@ import { Eye, Trash2, Check, CheckCircle, X, ArrowDownToLine, Search } from 'luc
 import PrimaryButton from './PrimaryButton.vue';
 import SecondaryButton from './SecondaryButton.vue';
 import type { Ireport } from '@/interfaces/report.interface';
-import { DELETE_REPORT, DELETE_ALL_REPORTS } from '@/graphql/report.mutation'
-import { useMutation } from '@vue/apollo-composable'
 import jsPDF from 'jspdf';
 import type { Iuser } from '@/interfaces/user.interface';
 
-
-interface Job {
-    id: string;
-    name: string;
-    surname: string;
-    function: string;
-    status: boolean;
-}
 
 export default {
 
@@ -207,6 +208,11 @@ export default {
             this.$emit('show-modal', { ids: ids });
         },
 
+        openModalAcceptUser(id: string) {
+            this.$emit('show-modal', { uidToUpdate: id });
+        },
+
+
         downloadPdf(item: any) {
             console.log('download pdf', item);
 
@@ -263,6 +269,7 @@ export default {
             } else {
                 itemIds.value.splice(index, 1);
             }
+            console.log('itemIds', itemIds.value)
         };
 
         // Select All
@@ -277,10 +284,12 @@ export default {
             // voor de jobs 
             jobs.value.forEach((job) => {
                 job.status = selectAllStatus;
+                itemIds.value.push(job.uid);
             });
             // voor de sollis
             sollis.value.forEach((solli) => {
                 solli.status = selectAllStatus;
+                itemIds.value.push(solli.uid);
             });
         };
 

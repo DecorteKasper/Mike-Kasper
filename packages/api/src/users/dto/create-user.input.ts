@@ -37,6 +37,9 @@ export class CreateUserInput {
   @Field(() => Boolean, { description: 'Access platform of the current user' })
   accessPlatform?: boolean;
 
+  @Field(() => Boolean, { description: 'Status of the current user' })
+  status?: boolean;
+
   @Field(() => String, { description: 'City of the current user', nullable: true })
   city?: string;
 
