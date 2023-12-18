@@ -46,9 +46,8 @@
                     <SecondaryButton v-if="ReportsData.length > 0" label="Verwijderen"
                         @click="openModalDeleteAll(itemIds)" />
                     <!-- Jobs -->
-                    <PrimaryButton v-if="jobsData.length > 0 || sollisData.length > 0" label="Accepteer" @click="" />
-                    <!-- <PrimaryButton v-if="jobsData.length > 0 || sollisData.length > 0" label="Afwijzen"
-                        @click="deleteAll" /> -->
+                    <PrimaryButton v-if="sollisData.length > 0" label="Accepteer" @click="" />
+                    <SecondaryButton v-if="sollisData.length > 0" label="Afwijzen" @click="" />
                 </td>
 
             </tr>
@@ -85,21 +84,22 @@
                 <!-- Jobs -->
                 <td v-if="jobsData.length > 0 && 'name' in item || sollisData.length > 0 && 'name' in item"
                     class="font-lato text-sm">{{ item.name }}</td>
-                <!-- <td v-if="sollisData.length > 0 && 'name' in item" class="font-lato text-sm">{{ item.name }}</td> -->
-
                 <td v-if="jobsData.length > 0 && 'surname' in item || sollisData.length > 0 && 'surname' in item"
                     class="font-lato text-sm">{{ item.surname }}</td>
-                <td v-if="jobsData.length > 0 && 'function' in item || sollisData.length > 0 && 'function' in item"
-                    class="font-lato text-sm">{{ item.function }}
+
+
+
+                <td v-if="jobsData.length > 0 && 'role' in item || sollisData.length > 0 && 'role' in item"
+                    class="font-lato text-sm">
+                    {{ item.role === 200 ? 'redder' : 'EHBO' }}
                 </td>
 
                 <td class="font-lato text-sm pr-14">
                     <div class="flex align-middle justify-end">
                         <!-- Jobs en sollicitaties -->
-                        <!-- <button v-if="jobsData.length > 0 || sollisData.length > 0" class="mr-6"
-                            @click="">
+                        <button v-if="jobsData.length > 0 || sollisData.length > 0" class="mr-6" @click="">
                             <X class="w-7 h-7 text-red" />
-                        </button> -->
+                        </button>
                         <button v-if="jobsData.length > 0 || sollisData.length > 0">
                             <CheckCircle class="w-7 h-7 text-dark_green" />
                         </button>
@@ -132,6 +132,7 @@ import type { Ireport } from '@/interfaces/report.interface';
 import { DELETE_REPORT, DELETE_ALL_REPORTS } from '@/graphql/report.mutation'
 import { useMutation } from '@vue/apollo-composable'
 import jsPDF from 'jspdf';
+import type { Iuser } from '@/interfaces/user.interface';
 
 
 interface Job {
@@ -151,11 +152,11 @@ export default {
             default: () => []
         },
         jobsData: {
-            type: Array as () => Job[],
+            type: Array as () => Iuser[],
             default: () => []
         },
         sollisData: {
-            type: Array as () => Job[],
+            type: Array as () => Iuser[],
             default: () => []
         },
         deleteEvent: {
@@ -243,9 +244,8 @@ export default {
 
     setup(props) {
 
-
-        const sollis = ref<Job[]>(props.sollisData);
-        const jobs = ref<Job[]>(props.jobsData);
+        const sollis = ref<Iuser[]>(props.sollisData);
+        const jobs = ref<Iuser[]>(props.jobsData);
         const reports = ref<Ireport[]>(props.ReportsData);
         // Select values
         const selectAll = ref(false)
@@ -268,7 +268,7 @@ export default {
         // Select All
         const toggleSelectAll = () => {
             const selectAllStatus = selectAll.value;
-            console.log(selectAllStatus)
+            // console.log(selectAllStatus)
 
             reports.value.forEach((report) => {
                 report.status = selectAllStatus;
@@ -291,6 +291,12 @@ export default {
 
         watch(() => props.deleteEvents, (newValue) => {
             reports.value = reports.value.filter(report => !newValue.includes(report.id));
+        });
+        watch(() => props.sollisData, (newValue) => {
+            sollis.value = newValue;
+        });
+        watch(() => props.jobsData, (newValue) => {
+            jobs.value = newValue;
         });
 
         // Format date
@@ -317,8 +323,7 @@ export default {
                 // Voer hier zoeklogica uit voor job-gerelateerde eigenschappen
                 return (
                     job.name.toLowerCase().includes(searchTermValue) ||
-                    job.surname.toLowerCase().includes(searchTermValue) ||
-                    job.function.toLowerCase().includes(searchTermValue)
+                    job.surname.toLowerCase().includes(searchTermValue)
                 );
             });
 
@@ -326,8 +331,7 @@ export default {
                 // Voer hier zoeklogica uit voor job-gerelateerde eigenschappen
                 return (
                     solli.name.toLowerCase().includes(searchTermValue) ||
-                    solli.surname.toLowerCase().includes(searchTermValue) ||
-                    solli.function.toLowerCase().includes(searchTermValue)
+                    solli.surname.toLowerCase().includes(searchTermValue)
                 );
             });
 

@@ -1,5 +1,5 @@
 <template>
-    <Container>
+    <Container v-if="accessUser.userByUid.accessPlatform">
         <CostumTable @show-modal="showModal" :ReportsData="ReportsData" :deleteEvent="DeletedId"
             :deleteEvents="DeletedIds" />
         <div>
@@ -19,6 +19,9 @@ import { ALL_RECORDS } from '@/graphql/report.query';
 import type { Ireport } from '@/interfaces/report.interface';
 import { useQuery } from '@vue/apollo-composable';
 import ModalWindow from '@/components/generic/ModalWindow.vue';
+import useFirebase from '@/composables/useFirebase'
+import { GET_USER_BY_UID } from '@/graphql/user.query'
+import router from '@/router'
 
 
 
@@ -40,6 +43,21 @@ export default {
         const modalDeleteMany = ref<string[] | null>()
         // Het modal venster is standaard niet zichtbaar
         const isModalVisible = ref(false)
+        const { firebaseUser } = useFirebase()
+        const { result: user, error: userError } = useQuery(GET_USER_BY_UID, {
+            uid: firebaseUser.value?.uid,
+        })
+
+
+        const acces = (() => {
+            if (user.value?.userByUid.accessPlatform === false) {
+                // Ga terug naar de homepagina
+                router.push({ path: '/' });
+            }
+        })();
+
+
+
         // Functie om de modal te openen 2 parameters: report en id als optie
         const showModal = (options: { report?: any, id?: string, ids?: string[] }) => {
             // Controleer of er een report of id beschikbaar is
@@ -120,7 +138,8 @@ export default {
             DeletedMany,
             // Om mee te sturen naar CustomTable
             DeletedId,
-            DeletedIds
+            DeletedIds,
+            accessUser: user
         }
     }
 }

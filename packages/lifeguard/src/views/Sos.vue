@@ -1,7 +1,7 @@
 <template>
-    <Container class="font-lato">
-
+    <Container v-if="accessUser.userByUid.accessPlatform" class="font-lato">
         <div class="flex flex-col mt-4 md:flex-row md:justify-evenly">
+
 
 
             <div v-if="userRole == 200 || userRole == 100">
@@ -30,28 +30,33 @@
                 <h2 class="font-bold text-center text-black text-lg">Belangrijke telefoonnummers</h2>
 
                 <div class="mt-8">
-                    <div class="flex flex-row items-center px-4 py-2 gap-6 bg-greenx text-white font-semibold rounded-lg mt-4 cursor-pointer hover:bg-dark_green transition-all m-auto md:max-w-[30rem]" @click="makePhoneCall(phoneNumberHoofdpost)">
+                    <div class="flex flex-row items-center px-4 py-2 gap-6 bg-greenx text-white font-semibold rounded-lg mt-4 cursor-pointer hover:bg-dark_green transition-all m-auto md:max-w-[30rem]"
+                        @click="makePhoneCall(phoneNumberHoofdpost)">
                         <img class="w-7" :src="iconHoofdpost" alt="Icon Hoofdpost">
-                        <a :href="'tel:' +phoneNumberHoofdpost">Hoofdpost</a>
+                        <a :href="'tel:' + phoneNumberHoofdpost">Hoofdpost</a>
                     </div>
 
-                    <div class="flex flex-row items-center px-4 py-2 gap-6 bg-greenx text-white font-semibold rounded-lg mt-4 cursor-pointer hover:bg-dark_green transition-all m-auto md:max-w-[30rem]" @click="makePhoneCall(phoneNumber112)">
+                    <div class="flex flex-row items-center px-4 py-2 gap-6 bg-greenx text-white font-semibold rounded-lg mt-4 cursor-pointer hover:bg-dark_green transition-all m-auto md:max-w-[30rem]"
+                        @click="makePhoneCall(phoneNumber112)">
                         <img class="w-7" :src="iconFireFighter" alt="Icon brandweer">
-                        <a :href="'tel:' +phoneNumber112">Brandweer/Ambulance</a>
+                        <a :href="'tel:' + phoneNumber112">Brandweer/Ambulance</a>
                     </div>
 
-                    <div class="flex flex-row items-center px-4 py-2 gap-6 bg-greenx text-white font-semibold rounded-lg mt-4 cursor-pointer hover:bg-dark_green transition-all m-auto md:max-w-[30rem]" @click="makePhoneCall(phoneNumberPolice)">
+                    <div class="flex flex-row items-center px-4 py-2 gap-6 bg-greenx text-white font-semibold rounded-lg mt-4 cursor-pointer hover:bg-dark_green transition-all m-auto md:max-w-[30rem]"
+                        @click="makePhoneCall(phoneNumberPolice)">
                         <img class="w-7" :src="iconPolice" alt="Icon politie">
-                        <a :href="'tel:' +phoneNumberPolice">Politie</a>
+                        <a :href="'tel:' + phoneNumberPolice">Politie</a>
                     </div>
 
-                    <div class="flex flex-row items-center px-4 py-2 gap-6 bg-greenx text-white font-semibold rounded-lg mt-4 cursor-pointer hover:bg-dark_green transition-all m-auto md:max-w-[30rem]" @click="makePhoneCall(phoneNumberVogels)">
+                    <div class="flex flex-row items-center px-4 py-2 gap-6 bg-greenx text-white font-semibold rounded-lg mt-4 cursor-pointer hover:bg-dark_green transition-all m-auto md:max-w-[30rem]"
+                        @click="makePhoneCall(phoneNumberVogels)">
                         <img class="w-7" :src="iconVogels" alt="Icon Zeemeeuw">
-                        <a :href="'tel:' +phoneNumberVogels">Vogelbescherming</a>
+                        <a :href="'tel:' + phoneNumberVogels">Vogelbescherming</a>
                     </div>
                 </div>
             </div>
         </div>
+
 
             <v-dialog v-model="isConfirmationDialogOpen" persistent>
                 <v-card class="min-h-[10rem] max-w-[20rem] m-auto min-w-full">
@@ -62,12 +67,13 @@
                 </v-card>
             </v-dialog>
 
+
     </Container>
 </template>
 
 <script lang="ts">
 import { ADD_TODO } from '@/graphql/todo.mutation'
-import { useMutation } from '@vue/apollo-composable'
+import { useMutation, useQuery } from '@vue/apollo-composable'
 import Container from '@/components/generic/Container.vue'
 import { ref, watch } from 'vue'
 import iconFireFighter from '@/assets/icons/firefighter.svg'
@@ -77,6 +83,11 @@ import iconHoofdpost from '@/assets/icons/hoofdpost.svg'
 import { GET_USER_BY_UID } from '@/graphql/user.query';
 import { useQuery } from '@vue/apollo-composable';
 import useFirebase from '@/composables/useFirebase'
+
+import useFirebase from '@/composables/useFirebase'
+import { GET_USER_BY_UID } from '@/graphql/user.query'
+import router from '@/router'
+
 
 
 export default {
@@ -89,6 +100,7 @@ export default {
         const phoneNumberPolice = ref('+1234567890');
         const phoneNumberHoofdpost = ref('+1234567890');
         const phoneNumberVogels = ref('+1234567890');
+
         const userRole = ref();
         const { firebaseUser } = useFirebase();
         const isConfirmationDialogOpen = ref(false);
@@ -99,6 +111,7 @@ export default {
             isConfirmationDialogOpen.value = !isConfirmationDialogOpen.value;
         };
 
+
         const { mutate: addTodo } = useMutation(ADD_TODO)
         const todoMessage = ref(
             {
@@ -108,6 +121,7 @@ export default {
         )
 
 
+
         watch(user, (newValue) => {
             if (newValue && newValue.userByUid) {
             }
@@ -115,6 +129,7 @@ export default {
         if (user) {
             userRole.value = user.value?.userByUid.role
         }
+
 
         const SendTodo = () => {
             const todo = {
@@ -146,6 +161,13 @@ export default {
             window.location.href = 'tel:' + phoneNumber;
         };
 
+        const acces = (() => {
+            if (user.value?.userByUid.accessPlatform === false) {
+                // Ga terug naar de homepagina
+                router.push({ path: '/' });
+            }
+        })();
+
         return {
             SendTodo,
             todoMessage,
@@ -158,9 +180,13 @@ export default {
             phoneNumberPolice,
             phoneNumberHoofdpost,
             phoneNumberVogels,
+
+            accessUser: user
+
             userRole,
             isConfirmationDialogOpen,
             toggleConfirmationDialog,
+
         }
     }
 }

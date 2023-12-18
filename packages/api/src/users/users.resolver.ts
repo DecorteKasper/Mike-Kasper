@@ -17,11 +17,6 @@ export class UsersResolver {
   @UseGuards(FirebaseGuard)
   @Mutation(() => User)
   createUser(@Args('createUserInput') createUserInput: CreateUserInput, @FirebaseUser() user: UserRecord,) {
-
-    // if (user.uid !== createUserInput.uid) {
-    //   // This is a security check. The uid of the user that is authenticated in Firebase must match the uid of the user that is being created.
-    //   throw new Error('You can only create a user for yourself.')
-    //   }
     return this.usersService.create(user.uid, createUserInput);
   }
 
@@ -41,12 +36,12 @@ export class UsersResolver {
   }
 
   @Query(() => User, { name: 'userByUid' })
-  findOneByUid(@Args('string', { type: () => String }) uid: string) {
+  findOneByUid(@Args('uid', { type: () => String }) uid: string) {
     return this.usersService.findOneByUid(uid);
   }
 
   @Mutation(() => User)
-  removeUser(@Args('string', { type: () => String }) id: string) {
+  removeUser(@Args('removeuser', { type: () => String }) id: string) {
     return this.usersService.remove(id);
   }
 }

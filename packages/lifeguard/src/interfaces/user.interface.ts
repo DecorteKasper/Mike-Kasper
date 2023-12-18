@@ -12,6 +12,7 @@ export interface Iuser {
   email: string
   phoneNumber: number
   bathingPlace: string
+  accessPlatform: boolean
   birth: Date
   birthplace: string
   city: string
@@ -19,6 +20,7 @@ export interface Iuser {
   street: string
   numberOfHouse: number
   role: number
+  status: boolean
   createdAt: string
   updatedAt: string
 }

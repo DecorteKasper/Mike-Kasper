@@ -6,7 +6,6 @@
         <label for="">
             <textarea class="bg-dark_grey" cols="30" rows="10" v-model="todoMessage.description"
                 placeholder="type something">
-
           </textarea>
         </label>
         <div>

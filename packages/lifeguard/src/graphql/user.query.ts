@@ -12,6 +12,7 @@ query userByUid($uid: String!) {
     zipCode
     street
     numberOfHouse
+    accessPlatform
     birth
     role
     bathingPlace
@@ -29,6 +30,7 @@ query {
     role
     email
     bathingPlace
+    accessPlatform
     phoneNumber
     zipCode
     street

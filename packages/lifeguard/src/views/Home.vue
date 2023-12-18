@@ -1,9 +1,12 @@
 <template>
-  <Container>
-    <h1 class="text-3xl font-bold font-lato tracking-wide mb-6">Welkom, <span class="font-medium">{{ activeUser?.name }}
+  <Container v-if="user.userByUid.accessPlatform === false">
+    <Acces />
+  </Container>
+  <Container v-if="user.userByUid.accessPlatform">
+    <h1 class="text-3xl font-bold font-lato tracking-wide mb-6">Welkom, <span class="font-medium">{{ user.userByUid.name
+    }} {{ user.userByUid.surname }}
       </span>
     </h1>
-
     <div class="flex gap-10">
       <Schedule />
       <Holidays />
@@ -14,6 +17,7 @@
     <div>
       <ModalWindow @close-modal="closeModal" :isVisible="isModalVisible" :taskData="modalTaskData" />
     </div>
+
 
     <!-- <div>
       <ul>
@@ -53,6 +57,7 @@ import Tasks from "@/components/generic/Tasks.vue"
 import UseRealtime from "@/composables/useRealtime"
 import ModalWindow from '@/components/generic/ModalWindow.vue'
 import type { Itask } from '@/interfaces/task.interface'
+import Acces from '@/components/generic/Acces.vue'
 
 // TODO: refactor to interface
 
@@ -69,12 +74,12 @@ interface User {
 }
 
 export default {
-  components: { Container, Schedule, Holidays, Tasks, ModalWindow },
+  components: { Container, Schedule, Holidays, Tasks, ModalWindow, Acces },
 
   setup() {
     const { firebaseUser } = useFirebase()
     const activeUser = ref<User | null>()
-    // console.log(firebaseUser.value)
+
     const {
       loading: userLoading,
       result: user,
@@ -82,6 +87,8 @@ export default {
     } = useQuery(GET_USER_BY_UID, {
       uid: firebaseUser.value?.uid,
     })
+    // console.log(user.value.userByUid.accessPlatform)
+
     const { on } = UseRealtime()
     const Todos = ref<any>([])
 
@@ -91,11 +98,11 @@ export default {
     })
 
 
-    watch(user, (Value) => {
-      if (Value && Value.userByUid) {
-        activeUser.value = Value.userByUid
-      }
-    })
+    // watch(user, (Value) => {
+    //   if (Value) {
+    //     activeUser.value = Value.userByUid
+    //   }
+    // })
 
     const sortedTodos = computed(() => {
       const todosCopy = [...Todos.value]

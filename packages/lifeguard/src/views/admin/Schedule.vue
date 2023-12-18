@@ -1,5 +1,5 @@
 <template>
-    <Container>
+    <Container v-if="accesUser.userByUid.accessPlatform">
         <div class="flex">
 
             <!-- Left side -->
@@ -205,6 +205,10 @@ import margotRobbie from "../../img/MargotRobbie.jpg"
 import { LifeBuoyIcon, UserCircle2, Cross, ChevronDown } from 'lucide-vue-next'
 import { ref } from 'vue';
 import { User } from 'lucide-vue-next';
+import { useQuery } from '@vue/apollo-composable'
+import useFirebase from '@/composables/useFirebase'
+import { GET_USER_BY_UID } from '@/graphql/user.query'
+import router from '@/router'
 
 
 interface User {
@@ -236,6 +240,20 @@ export default {
         const Role = ref<string>("1");
         const Post = ref<string>("1");
         const selectedMonth = ref("Juni");
+
+        const { firebaseUser } = useFirebase()
+        const { result: user, error: userError } = useQuery(GET_USER_BY_UID, {
+            uid: firebaseUser.value?.uid,
+        })
+
+        const acces = (() => {
+            if (user.value?.userByUid.accessPlatform === false) {
+                // Ga terug naar de homepagina
+                router.push({ path: '/' });
+            }
+        })();
+
+
 
         const beschikbaarheid = ref<User[]>([
             {
@@ -277,7 +295,6 @@ export default {
                 beschikbaarheid: "Augustus",
             },
         ]);
-
         const shifts = ref<User[]>([
             {
                 id: "",
@@ -333,7 +350,8 @@ export default {
             beschikbaarheid,
             shifts,
             moveCard,
-            selectedMonth
+            selectedMonth,
+            accesUser: user
         }
     }
 }

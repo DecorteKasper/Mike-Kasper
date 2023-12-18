@@ -1,5 +1,5 @@
 <template>
-  <Container>
+  <Container v-if="userAcces.userByUid.accessPlatform">
     <div class="flex gap-40">
       <ul class="shadow-cardShadow rounded-cardRadius p-10 h-fit flex flex-col gap-4">
         <h2 class="font-lato text-lg font-semibold mb-4">Instellingen</h2>
@@ -226,9 +226,9 @@ import { ref, onMounted } from 'vue'
 import { UserCircle2, Lock, Trash2, CheckCircle } from 'lucide-vue-next'
 import PrimaryButton from '@/components/generic/PrimaryButton.vue'
 import useFirebase from '@/composables/useFirebase'
-// import { GET_USER_BY_UID } from '@/graphql/user.query'
+import { GET_USER_BY_UID } from '@/graphql/user.query'
 // import { useQuery } from '@vue/apollo-composable'
-import { useMutation } from '@vue/apollo-composable'
+import { useMutation, useQuery } from '@vue/apollo-composable'
 import { UPDATE_USER } from '@/graphql/user.mutation'
 import type { Iuser } from '@/interfaces/user.interface'
 import router from '@/router'
@@ -272,16 +272,14 @@ export default {
     // const { customUser } = useCustomUser();
     const selectedForm = ref(1); // Houdt bij welk formulier moet worden weergegeven, standaard ingesteld op Form 1
     const selectedFile = ref<File | null>(null);
-    const showForm = (formNumber: number) => {
-      selectedForm.value = formNumber; // Wanneer erop een menu-item wordt geklikt, wordt het overeenkomstige formulier weergegeven
-      localStorage.setItem('selectedForm', formNumber.toString()); // Het geselecteerde formulier wordt opgeslagen in de localstorage
-    }
     const { firebaseUser, updatepassword, deleteAccount } = useFirebase()
     const userData = ref<Iuser | null>()
 
     // User updaten
     const { mutate: updateUser, loading: updateUserLoading, onDone: updateUserCreated } = useMutation<Iuser>(UPDATE_USER);
-
+    const { result: user, error: userError } = useQuery(GET_USER_BY_UID, {
+      uid: firebaseUser.value?.uid,
+    })
     const changeUser = ref({
       photoUrl: '',
       name: '',
@@ -306,6 +304,19 @@ export default {
 
     // deleteAccount
     const deleteString = ref('')
+
+
+    const acces = (() => {
+      if (user.value?.userByUid.accessPlatform === false) {
+        // Ga terug naar de homepagina
+        router.push({ path: '/' });
+      }
+    })();
+
+    const showForm = (formNumber: number) => {
+      selectedForm.value = formNumber; // Wanneer erop een menu-item wordt geklikt, wordt het overeenkomstige formulier weergegeven
+      localStorage.setItem('selectedForm', formNumber.toString()); // Het geselecteerde formulier wordt opgeslagen in de localstorage
+    }
 
 
     onMounted(() => {
@@ -405,6 +416,7 @@ export default {
       selectedFile,
       firebaseUser,
       userData,
+      userAcces: user,
       changeUser,
       handleAccount,
       handleNewPassword,
@@ -414,7 +426,7 @@ export default {
       errorsNewPassword,
       errorsCurrentPassword,
       updateSuccess,
-      deleteString
+      deleteString,
     }
   }
 }
