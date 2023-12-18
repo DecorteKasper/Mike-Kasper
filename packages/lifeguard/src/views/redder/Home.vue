@@ -17,7 +17,7 @@
             <p class="flex flex-col items-center mt-8"><span class="font-bold text-red">{{ highTide }}</span><span
                 class="text-xs">Hoogwater</span></p>
           </div>
-          <div class="flex flex-col">
+          <div class="flex flex-col ">
             <p class="flex flex-col items-center"><span class="font-bold text-red">{{ uvIndex }}</span><span
                 class="text-xs">UV-index</span></p>
             <p class="flex flex-col items-center mt-8"><span class="font-bold text-red">{{ rainChance }} %</span><span
@@ -27,12 +27,12 @@
           </div>
         </div>
 
-        <div class="flex flex-col md:flex-row md:mt-0">
+        <div class="flex flex-col md:flex-row md:mt-0 mt-6">
           <div class="w-20 h-[2px] md:w-[2px] md:h-28 m-auto bg-dark_green rounded-md mb-3 md:mb-0 md:mr-14"></div>
 
           <div class="flex flex-col items-center justify-center">
             <p>{{ dayOfWeek }} {{ dayOfMonth }} {{ monthName }}</p>
-            <p class="font-bold">Knokke-Heist</p>
+            <p class="font-bold">{{ currentUserSeasideTown }}</p>
           </div>
 
         </div>
@@ -53,10 +53,13 @@
           <p>EHBO</p>
           <div class="w-full h-[2px] rounded-lg bg-greenx mb-6 mt-1"></div>
           <!-- <UserShown /> -->
+            <template v-for="(name, index) in namesOfUsersWithoutHolidayTodayEHBO" :key="index">
+            <UserShown :name="name" />
+            </template>
         </div>
       </div>
 
-      <div class="bg-white w-full max-w-80 min-h-[20rem] h-auto mt-10 md:mt-0 rounded-cardRadius shadow-cardShadow px-6 py-5">
+      <div class="bg-white w-full max-w-80 min-h-[30rem] h-auto mt-10 md:mt-0 rounded-cardRadius shadow-cardShadow px-6 py-5">
         <p class="text-center mb-2 font-bold text-base mt-2">Verlofdagen</p>
         <div class="overflow-scroll max-h-96">
           <div v-for="(group, index) in holidaysFormatted" :key="index" class="flex flex-col">
@@ -71,9 +74,9 @@
       <div class="bg-white w-full max-w-80 min-h-[20rem] mt-10 md:mt-0 h-auto rounded-cardRadius shadow-cardShadow px-6 py-5">
         <p class="text-center mb-8 font-bold text-base mt-2">Verslag {{ dayOfMonth }} {{ monthName }}</p>
         <p class="text-center md:mt-12">{{ reportInfo }}</p>
-        <img class="max-w-[5rem] m-auto mt-4" v-if="reportInfo === 'Verslag is nog niet ingediend'" src="@/assets/icons/errorReport.svg" alt="Not Submitted Icon" />
+        <img class="max-w-[5rem] m-auto mt-4" v-if="reportInfo === 'Dagverslag is nog niet ingediend'" src="@/assets/icons/errorReport.svg" alt="Not Submitted Icon" />
         <img class="max-w-[5rem] m-auto mt-4" v-else src="@/assets/icons/checkReport.svg" alt="Submitted Icon" />
-        <button @click="goToReport" class="bg-greenx mt-10 px-8 py-2 rounded-lg text-white font-bold block m-auto hover:bg-dark_green" v-if="reportInfo === 'Verslag is nog niet ingediend'">Verslag invullen</button>
+        <button @click="goToReport" class="bg-greenx mt-10 px-8 py-2 rounded-lg text-white font-bold block m-auto hover:bg-dark_green" v-if="reportInfo === 'Dagverslag is nog niet ingediend'">Verslag invullen</button>
       </div>
     </div>
 
@@ -82,7 +85,7 @@
 
 
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent, ref, watch, onBeforeMount, onMounted } from 'vue';
 import Container from '@/components/generic/Container.vue';
 import weatherIcon from '@/assets/photos/weather.svg';
 import UserShown from '@/components/generic/UserShown.vue';
@@ -116,19 +119,16 @@ export default defineComponent({
     const dayOfWeek = currentDate.toLocaleDateString('nl-NL', { weekday: 'long' });
     const dayOfMonth = currentDate.getDate();
     const monthName = currentDate.toLocaleDateString('nl-NL', { month: 'long' });
-    const currentMonth = currentDate.getMonth();
-    const currentYear = currentDate.getFullYear();
     const { firebaseUser } = useFirebase();
     const router = useRouter();
     
     const userData = ref<User | null>();
     const currentUserUid = firebaseUser.value?.uid;
-    const currentUserPost = ref<number | null>(null);
+    const currentUserPost = ref<number>(4);
     const holidays = ref<Iholiday[] | null>(null);
-    //    const holidaysFormatted = ref<string[] | null>(null);
-    //const holidaysFormatted = ref<{ dates: { date: string; users: User[] }[] }[] | null>(null);
     const holidaysFormatted = ref<{ date: string; users: { name: string; uid: string }[] }[] | null>(null);
     const namesOfUsersWithoutHolidayToday = ref<string[] | null>(null);
+    const namesOfUsersWithoutHolidayTodayEHBO = ref<string[] | null>(null);
 
     const reports = ref<Ireport[] | null>(null);
     const todayReports = ref<Ireport[] | null>(null);
@@ -141,129 +141,17 @@ export default defineComponent({
     const weatherIconUrl = ref("");
     const reportInfo = ref("");
     const nameUser = ref("redder");
-    //const weatherIcon:any = weatherIcon;
+    const currentUserSeasideTown = ref("Badplaats");
     
     const { loading: userLoading, result: user, error: userError } = useQuery(GET_USER_BY_UID, {uid: firebaseUser.value?.uid,});
     const { loading: holidaysLoading, result: holidaysResult, error: holidaysError } = useQuery<{ holidays: Iholiday[] }>(ALL_HOLIDAYS);;
     const { loading: reportsLoading, result: reportsResult, error: reportsError } = useQuery<{ reports: Ireport[] }>(ALL_RECORDS);
-    const { loading: postLoading, result: postResult, error: postError } = useQuery(GET_POST_BY_NUMBER, { numberPost: 4});
+    // const { loading: postLoading, result: postResult, error: postError } = useQuery(GET_POST_BY_NUMBER, { numberPost: currentUserPost });
     const { loading: postenLoading, result: postenResult, error: postenError } = useQuery<{ posten: Ipost[] }>(ALL_POSTEN);
     const { loading: usersLoading, result: usersResult, error: usersError } = useQuery<{ users: User[] }>(GET_USERS);
 
-    
-//----- WATCH FUNTIONS -----//
-    //Holidays of the post
-    watch([usersResult, postResult, holidaysResult], ([usersValue, postValue, holidaysResultValue]) => {
-      if (usersValue && usersValue.users && postValue && postValue.postByNumber && holidaysResultValue && holidaysResultValue.holidays) {
-        const users = usersValue.users as User[];
-        const post = postValue.postByNumber as Ipost;
-        const holidaysData = holidaysResultValue.holidays;
-        const postUIDs = [post.uidRedderA, post.uidRedderB, post.uidRedderC, post.uidRedderD, post.uidRedderE, post.uidRedderF, post.uidRedderG];
-
-        //verzamelt alle gekozen verlofdagen door de redders in de post
-        const holidaysFormattedArray = (holidaysData ?? [])
-          .filter(holiday => postUIDs.includes(holiday.uid))
-          .flatMap(holiday => holiday.dates.map(date => ({
-            date,
-            user: users.find(user => user.uid === holiday.uid),
-          })));
-
-        //voegt alle redders toe bij de datum waarop ze verlof hebben
-        const groupedHolidays = holidaysFormattedArray.reduce((acc, holiday) => {
-          const { date, user } = holiday;
-          const existingHolidays = acc.get(date) || [];
-          acc.set(date, [...existingHolidays, user].filter(Boolean));
-          return acc;
-        }, new Map<string, (User | undefined)[]>());
-
-        //maakt er een array van
-        holidaysFormatted.value = Array.from(groupedHolidays.entries()).map(([date, users]) => ({
-          date,
-          users: users.filter(Boolean) as User[],
-        }));
-
-        //sorteren van datums
-        holidaysFormatted.value = holidaysFormatted.value
-          .slice()
-          .sort((a, b) => {
-            const dateA = new Date(a.date).getTime();
-            const dateB = new Date(b.date).getTime();
-            return dateA - dateB;
-          });
-      }
-    });
 
 
-    //redders tonen die moeten werken
-    watch([usersResult, postResult, holidaysResult], ([usersValue, postValue, holidaysResultValue]) => {
-      if (usersValue && usersValue.users && postValue && postValue.postByNumber && holidaysResultValue && holidaysResultValue.holidays) {
-        const users = usersValue.users as User[];
-        const post = postValue.postByNumber as Ipost;
-        const holidaysData = holidaysResultValue.holidays;
-
-        // Get the current date
-        const today = new Date().toISOString().split('T')[0];
-
-        // Get the UIDs of users in the current post
-        const postUIDs = [post.uidRedderA, post.uidRedderB, post.uidRedderC, post.uidRedderD, post.uidRedderE, post.uidRedderF, post.uidRedderG];
-
-        // Get the users who have a holiday today
-       const usersWithHolidayToday = users.filter((user) =>
-          holidaysData.some((holiday) =>
-            postUIDs.includes(holiday.uid) &&
-            holiday.dates.some((date) => date.split('T')[0] === today) &&
-            holiday.uid === user.uid
-         )
-       );
-
-        // Get the names of users who don't have a holiday today
-        const usersWithoutHolidayToday = users.filter((user) =>
-          !usersWithHolidayToday.some((userWithHoliday) => userWithHoliday.uid === user.uid) &&
-          postUIDs.includes(user.uid)
-        );
-
-        // Get an array of names of users without holiday today
-        namesOfUsersWithoutHolidayToday.value = usersWithoutHolidayToday.map((user) => `${user.name} ${user.surname}`);
-      }
-    });
-
-
-
-     
-
-
-    //Reports
-    watch(() => reportsResult.value, (newValue) => {
-      if (newValue && newValue.reports) {
-        reports.value = newValue.reports;
-        // Filter reports that have createdAt date equal to today
-        const today = new Date().toISOString().split('T')[0];
-        todayReports.value = reports.value.filter((report) => report.createdAt.startsWith(today));
-
-        if (todayReports.value?.length === 0) {
-          reportInfo.value = "Verslag is nog niet ingediend";
-        } else {
-          reportInfo.value = "Verslag is ingediend";
-        }
-      }
-    });
-
-
-    //Current User
-    watch(user, (newValue) => {
-      if (newValue && newValue.userByUid) {
-        userData.value = newValue.userByUid;
-        nameUser.value = user.value?.userByUid.name;
-      }
-    });
-
-
-    //All users
-    watch(usersResult, (newValue) => {
-      if (newValue && newValue.users) {
-        const users = newValue.users as User[];
-      }
-    });
 
 
     //Postnummer van current user
@@ -285,30 +173,177 @@ export default defineComponent({
           }
         });
       }
+      console.log("Current user post: ", currentUserPost.value);
     });
+    const { loading: postLoading, result: postResult, error: postError } = useQuery(GET_POST_BY_NUMBER, { numberPost: currentUserPost.value });
+    
+//----- WATCH FUNTIONS -----//
+    //Holidays of the post
+     const processHolidayData = () => {
+      if (usersResult.value && usersResult.value.users && postResult.value && postResult.value.postByNumber && holidaysResult.value && holidaysResult.value.holidays) {
+        const users = usersResult.value.users as User[];
+        const post = postResult.value.postByNumber as Ipost;
+        const holidaysData = holidaysResult.value.holidays;
+
+        const postUIDs = [
+          post.uidRedderA,
+          post.uidRedderB,
+          post.uidRedderC,
+          post.uidRedderD,
+          post.uidRedderE,
+          post.uidRedderF,
+          post.uidRedderG,
+        ];
+
+        const holidaysFormattedArray = (holidaysData ?? [])
+          .filter((holiday) => postUIDs.includes(holiday.uid))
+          .flatMap((holiday) =>
+            holiday.dates.map((date) => ({
+              date,
+              user: users.find((user) => user.uid === holiday.uid),
+            }))
+        );  
 
 
-    //Post van het current user
-    watch(postResult, (newValue) => {
-      if (newValue && newValue.postByNumber) {
-        const post = newValue.postByNumber as Ipost;
+        const groupedHolidays = holidaysFormattedArray.reduce((acc, holiday) => {
+          const { date, user } = holiday;
+          const existingHolidays = acc.get(date) || [];
+          acc.set(date, [...existingHolidays, user].filter(Boolean));
+          return acc;
+        }, new Map<string, (User | undefined)[]>());
+
+
+        holidaysFormatted.value = Array.from(groupedHolidays.entries()).map(([date, users]) => ({
+          date,
+          users: users.filter(Boolean) as User[],
+        }));
+
+        
+        holidaysFormatted.value = holidaysFormatted.value
+          .slice()
+          .sort((a, b) => {
+            const dateA = new Date(a.date).getTime();
+            const dateB = new Date(b.date).getTime();
+            return dateA - dateB;
+          });
+      }
+    };
+    watch([usersResult, postResult, holidaysResult], () => {processHolidayData();});
+
+
+    //redders tonen die moeten werken
+      const processUserData = () => {
+      if (
+        usersResult.value &&
+        usersResult.value.users &&
+        postResult.value &&
+        postResult.value.postByNumber &&
+        holidaysResult.value &&
+        holidaysResult.value.holidays
+      ) {
+        const users = usersResult.value.users as User[];
+        const post = postResult.value.postByNumber as Ipost;
+        const holidaysData = holidaysResult.value.holidays;
+
+        // Get the current date
+        const today = new Date().toISOString().split('T')[0];
+
+        // Get the UIDs of users in the current post
+        const postUIDs = [
+          post.uidRedderA,
+          post.uidRedderB,
+          post.uidRedderC,
+          post.uidRedderD,
+          post.uidRedderE,
+          post.uidRedderF,
+          post.uidRedderG,
+        ];
+        const postUIDsEHBO = [
+          post.uidEhbo1,
+        ];
+
+
+        // Get the users who have a holiday today
+        const usersWithHolidayToday = users.filter((user) =>
+          holidaysData.some(
+            (holiday) =>
+              postUIDs.includes(holiday.uid) &&
+              holiday.dates.some((date) => date.split('T')[0] === today) &&
+              holiday.uid === user.uid
+          )
+        );
+        const usersWithHolidayTodayEHBO = users.filter((user) =>
+          holidaysData.some(
+            (holiday) =>
+              postUIDsEHBO.includes(holiday.uid) &&
+              holiday.dates.some((date) => date.split('T')[0] === today) &&
+              holiday.uid === user.uid
+          )
+        );
+
+        // Get the names of users who don't have a holiday today
+        const usersWithoutHolidayToday = users.filter(
+          (user) =>
+            !usersWithHolidayToday.some((userWithHoliday) => userWithHoliday.uid === user.uid) &&
+            postUIDs.includes(user.uid)
+        );
+        const usersWithoutHolidayTodayEHBO = users.filter(
+          (user) =>
+            !usersWithHolidayTodayEHBO.some((userWithHoliday) => userWithHoliday.uid === user.uid) &&
+            postUIDsEHBO.includes(user.uid)
+        );
+
+        // Get an array of names of users without holiday today
+        namesOfUsersWithoutHolidayToday.value = usersWithoutHolidayToday.map(
+          (user) => `${user.name} ${user.surname}`
+        );
+        namesOfUsersWithoutHolidayTodayEHBO.value = usersWithoutHolidayTodayEHBO.map(
+          (user) => `${user.name} ${user.surname}`
+        );
+      }
+    };
+    watch([usersResult, postResult, holidaysResult], processUserData);
+   
+
+    //Reports
+    const processReports = () => {
+      if (reportsResult.value && reportsResult.value.reports) {
+        reports.value = reportsResult.value.reports;
+
+        // Filter reports that have createdAt date equal to today
+        const today = new Date().toISOString().split('T')[0];
+        todayReports.value = reports.value.filter((report) => report.createdAt.startsWith(today));
+
+        if (todayReports.value?.length === 0) {
+          reportInfo.value = "Dagverslag is nog niet ingediend";
+        } else {
+          reportInfo.value = "Dagverslag is ingediend";
+        }
+      }
+    };
+    watch(reportsResult, processReports);
+
+
+
+    //Current User
+    watch(user, (newValue) => {
+      if (newValue && newValue.userByUid) {
+        userData.value = newValue.userByUid;
+        nameUser.value = user.value?.userByUid.name;
       }
     });
+    if (user) {
+      nameUser.value = user.value?.userByUid.name;
+      currentUserSeasideTown.value = user.value?.userByUid.bathingPlace;
+    }
 
 
-    // //Users in de post
-    // watch([usersResult, postResult], ([usersValue, postValue]) => {
-    //   if (usersValue && usersValue.users && postValue && postValue.postByNumber) {
-    //     const users = usersValue.users as User[];
-    //     const post = postValue.postByNumber as Ipost;
 
-    //     // Check if any of the UIDs in the post object are in the array of users
-    //     const usersInCurrenPost = users.filter(user =>
-    //       [post.uidRedderA, post.uidRedderB, post.uidRedderC, post.uidRedderD, post.uidRedderE, post.uidRedderF, post.uidRedderG].includes(user.uid)
-    //     );
-    //   }
-    // });
-
+    onMounted(() => {
+      processReports();
+      processUserData();
+      processHolidayData();
+    });
 
 
 
@@ -399,6 +434,8 @@ export default defineComponent({
       currentUserUid,
       currentUserPost,
       namesOfUsersWithoutHolidayToday,
+      namesOfUsersWithoutHolidayTodayEHBO,
+      currentUserSeasideTown,
     };
   },
 });

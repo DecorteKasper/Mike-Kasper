@@ -8,20 +8,18 @@
         <div class="flex flex-col lg:flex-row lg:justify-around lg:mt-14 lg:items-baseline items-center font-lato ">
 <!-- EERSTE CARD -->
             <div class="bg-white w-full h-auto min-h-[20rem] rounded-cardRadius shadow-cardShadow px-6 py-7 lg:px-16 lg:max-w-xl lg:h-[28rem]">
-                <div class="flex flex-row justify-between items-center m-auto max-w-lg">
-                    <button class="text-lg" @click="showPreviousDay">&larr;</button>
+                <!-- <div class="flex flex-row justify-between items-center m-auto max-w-lg"> -->
+                    <!-- <button class="text-lg" @click="showPreviousDay">&larr;</button> -->
                     <h2 class="font-bold text-center text-base">Verlof op <span class="text-red">{{ currentDateString }}</span></h2>
-                    <button class="text-lg" @click="showNextDay">&rarr;</button>
-                </div>
+                    <!-- <button class="text-lg" @click="showNextDay">&rarr;</button> -->
+                <!-- </div> -->
 
-                <div class="mt-7 m-auto max-w-lg">
-
-
+                <div class="mt-7 m-auto max-w-lg md:min-h-[29rem]">
                     <div v-if="workersInPost && workersInPost.length">
                         <div v-for="(worker, index) in  workersInPost "
                             :key="index"
-                            :class="{ 'bg-greenx': isWorkerWithHoliday(worker), 'bg-gray': !isWorkerWithHoliday(worker) }"
-                            class="rounded-full px-4 py-2 text-sm flex flex-row mt-4">
+                            :class="{ 'bg-greenx text-white font-semibold': isWorkerWithHoliday(worker), 'bg-gray': !isWorkerWithHoliday(worker) }"
+                            class="rounded-full px-4 py-3 text-sm flex flex-row mt-4">
                             <img class="w-4 mr-7" :src="isWorkerWithHoliday(worker) ? check_icon : uncheck_icon" alt="check">
                             <div class="font-normal">
                             <p>
@@ -32,24 +30,24 @@
                         </div>
                     </div>
                     <div v-else>
-                        <p>No workers available.</p>
+                        <p>Geen data beschikbaar</p>
                     </div>
                 </div>
             </div>
 
 <!-- TWEEDE CARD -->
-            <div class="bg-white w-full h-auto min-h-[20rem] rounded-cardRadius shadow-cardShadow px-6 py-7 mt-10 lg:mt-0 lg:ml-8 lg:px-16 lg:max-w-xl lg:h-[28rem]">
+            <div class="bg-white w-full h-auto min-h-[20rem] md:min-h-[36rem] rounded-cardRadius shadow-cardShadow px-6 py-7 mt-10 lg:mt-0 lg:ml-8 lg:px-16 lg:max-w-xl lg:h-[28rem]">
                 <h2 class="font-bold text-center text-base">Verlofverdeling Post 3</h2>
 
                 <div class="mt-7 m-auto max-w-lg">
                     <div class="flex flex-row">
                         <div class="w-40"></div>
-                        <div class="w-6 m-auto"><p class="text-greenx text-[10px]">Verlofdagen</p></div>
-                        <div class="w-6 m-auto"><p class="text-red text-[10px]">Werkdagen</p></div>
+                        <div class="w-6 m-auto"><p class="text-greenx text-[11px]">Verlofdagen</p></div>
+                        <div class="w-6 m-auto"><p class="text-red text-[11px]">Werkdagen</p></div>
                     </div>
 
                     <div v-if="userHolidayDetails && userHolidayDetails.length">
-                        <div v-for="(user, index) in userHolidayDetails" :key="index" class="bg-gray rounded-full px-4 py-2 text-sm flex flex-row mt-4">
+                        <div v-for="(user, index) in userHolidayDetails" :key="index" class="bg-gray rounded-full px-4 py-3 text-sm flex flex-row mt-4">
                             <div class="font-normal w-44">
                                 <p>
                                     <span class="font-bold mr-6">{{ String.fromCharCode(65 + index) }}</span>
@@ -83,7 +81,7 @@
 
 
 <script lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import Container from '@/components/generic/Container.vue';
 import { Calendar, DatePicker } from 'v-calendar';
 import 'v-calendar/style.css';
@@ -133,21 +131,28 @@ export default {
         const { loading: holidaysLoading, result: holidaysResult, error: holidaysError } = useQuery<{ holidays: Iholiday[] }>(ALL_HOLIDAYS);
 
 
-        watch(holidaysResult, (holidaysResultValue) => {
-            if (holidaysResultValue && holidaysResultValue.holidays) {
-                const holidaysData = holidaysResultValue.holidays;
+        const processHolidaysData = () => {
+            if (holidaysResult.value && holidaysResult.value.holidays) {
+                const holidaysData = holidaysResult.value.holidays;
 
                 // Filter holidaysData for the user with currentUserUid
-                currentUserHolidays.value = holidaysData.filter(holiday => holiday.uid === currentUserUid);
+                currentUserHolidays.value = holidaysData.filter((holiday) => holiday.uid === currentUserUid);
             }
-        });
+        };
+        watch(holidaysResult, () => {processHolidaysData();});
 
         //Redders van de post
-        watch([usersResult, postResult, holidaysResult], ([usersValue, postValue, holidaysResultValue]) => {
-            if (usersValue && usersValue.users && postValue && postValue.postByNumber && holidaysResultValue && holidaysResultValue.holidays) {
-                const users = usersValue.users as User[];
-                const post = postValue.postByNumber as Ipost;
-                const holidaysData = holidaysResultValue.holidays;
+        const processUserData = (() => {
+            if (usersResult.value &&
+                usersResult.value.users &&
+                postResult.value &&
+                postResult.value.postByNumber &&
+                holidaysResult.value &&
+                holidaysResult.value.holidays
+            ) {
+                const users = usersResult.value.users as User[];
+                const post = postResult.value.postByNumber as Ipost;
+                const holidaysData = holidaysResult.value.holidays;
 
                 //currentUserHolidays.value = holidaysData.filter(holiday => holiday.uid === currentUserUid);
                 //console.log(currentUserHolidays);
@@ -182,7 +187,7 @@ export default {
                 });
                 console.log(userHolidayDetails);
 
-            
+
 
                 // Get the users who have a holiday today
                 const usersWithHolidayToday = users.filter((user) =>
@@ -191,7 +196,7 @@ export default {
                         holiday.dates.some((date) => date.split('T')[0] === today) &&
                         holiday.uid === user.uid
                     )
-                );                
+                );
 
                 namesUsersWithHoliday.value = usersWithHolidayToday.map((user) => `${user.name} ${user.surname}`);
 
@@ -202,11 +207,8 @@ export default {
 
                 workersInPost.value = namesOfUsersInSpecificPost;
             }
-
-            
-
         });
-        
+        watch([usersResult, postResult, holidaysResult], () => processUserData());
 
 
         // Function to check if a worker has a holiday today
@@ -266,6 +268,11 @@ export default {
                 }),
             },
         ]);
+
+        onMounted(() => {
+            processUserData();
+            processHolidaysData();
+        })
 
         return {
             check_icon,

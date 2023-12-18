@@ -189,13 +189,22 @@
                 <!-- <v-btn class="bg-teal text-white font-lato mt-2 mb-6 lg:mt-5 rounded-md" type="submit">Verzend verslag</v-btn> -->
             </v-form>
 
+            <v-dialog v-model="isConfirmationDialogOpen" persistent>
+                <v-card class="min-h-[10rem] max-w-[30rem] m-auto min-w-full">
+                    <p class="text-center font-medium text-lg mt-6">Dagverslag is verzonden!</p>
+                    <v-card-actions>
+                        <button class="text-white font-bold bg-greenx px-10 py-2 rounded-lg m-auto mt-12" @click="toggleConfirmationDialog">Sluiten</button>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+
         </section>
     </Container>
 </template>
 
 
 <script lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import Container from '@/components/generic/Container.vue';
 import '@mdi/font/css/materialdesignicons.css';
 import type { Ireport } from '@/interfaces/report.interface';
@@ -207,6 +216,8 @@ import { GET_POST_BY_NUMBER } from '@/graphql/post.query';
 import { GET_USERS } from '@/graphql/user.query';
 import type { Iholiday } from '@/interfaces/holiday.interface';
 import type { Ipost } from '@/interfaces/post.interface';
+
+
 
 
 interface User {
@@ -255,9 +266,14 @@ export default {
         const showTextAreaFieldInterventie = ref(false);
         const showTextAreaFieldOefenenOfSport = ref(false);
         const showTextAreaMateriaal = ref(false);
+        
+        const isConfirmationDialogOpen = ref(false);
 
         // Methods
-        const isSelected = (item:any) => formData.value.aanwezigen.includes(item as never);
+        const isSelected = (item: any) => formData.value.aanwezigen.includes(item as never);
+        const toggleConfirmationDialog = () => {
+            isConfirmationDialogOpen.value = !isConfirmationDialogOpen.value;
+        };
 
         const submitForm = () => {
             if (formData.value.valueRadioKind === '' || formData.value.valueRadioInterventie === '' || formData.value.valueRadioOefenen === '' || formData.value.valueRadioMateriaal === '')
@@ -265,24 +281,23 @@ export default {
                 console.log('Required values are empty');
             } else {
                 addReport({
-                    createReportInput: {
-                        uid: uidUser,
-                        aanwezigen: formData.value.aanwezigen,
-                        vervanging: formData.value.valueVervanging,
-                        radioKindVerloren: formData.value.valueRadioKind,
-                        radioInterventie: formData.value.valueRadioInterventie,
-                        textInterventie: formData.value.valueTextInterventie,
-                        radioOefening: formData.value.valueRadioOefenen,
-                        textOefening: formData.value.valueTextOefenen,
-                        radioMateriaal: formData.value.valueRadioMateriaal,
-                        textMateriaal: formData.value.valueTextMateriaal,
-                        extraInfo: formData.value.valueExtraInfo,
-                        status: false,
-                        reddersPost: 3
-                    }
-                }),
-                console.log('Form data:', formData.value);
-                alert('Formulier verzonden');
+                        createReportInput: {
+                                uid: uidUser,
+                                aanwezigen: formData.value.aanwezigen,
+                                vervanging: formData.value.valueVervanging,
+                                radioKindVerloren: formData.value.valueRadioKind,
+                                radioInterventie: formData.value.valueRadioInterventie,
+                                textInterventie: formData.value.valueTextInterventie,
+                                radioOefening: formData.value.valueRadioOefenen,
+                                textOefening: formData.value.valueTextOefenen,
+                                radioMateriaal: formData.value.valueRadioMateriaal,
+                                textMateriaal: formData.value.valueTextMateriaal,
+                                extraInfo: formData.value.valueExtraInfo,
+                                status: false,
+                                reddersPost: 3
+                            }
+                        }),
+                toggleConfirmationDialog();
             }
         };
 
@@ -328,47 +343,64 @@ export default {
 
 
         //redders tonen die moeten werken
-        watch([usersResult, postResult, holidaysResult], ([usersValue, postValue, holidaysResultValue]) => {
-            if (usersValue && usersValue.users && postValue && postValue.postByNumber && holidaysResultValue && holidaysResultValue.holidays) {
-                const users = usersValue.users as User[];
-                const post = postValue.postByNumber as Ipost;
-                const holidaysData = holidaysResultValue.holidays;
+        const processUserData = () => {
+            if (
+                usersResult.value &&
+                usersResult.value.users &&
+                postResult.value &&
+                postResult.value.postByNumber &&
+                holidaysResult.value &&
+                holidaysResult.value.holidays
+            ) {
+                const users = usersResult.value.users as User[];
+                const post = postResult.value.postByNumber as Ipost;
+                const holidaysData = holidaysResult.value.holidays;
 
                 // Get the current date
                 const today = new Date().toISOString().split('T')[0];
 
                 // Get the UIDs of users in the current post
-                const postUIDs = [post.uidRedderA, post.uidRedderB, post.uidRedderC, post.uidRedderD, post.uidRedderE, post.uidRedderF, post.uidRedderG];
+                const postUIDs = [
+                    post.uidRedderA,
+                    post.uidRedderB,
+                    post.uidRedderC,
+                    post.uidRedderD,
+                    post.uidRedderE,
+                    post.uidRedderF,
+                    post.uidRedderG,
+                ];
 
                 // Get the users who have a holiday today
                 const usersWithHolidayToday = users.filter((user) =>
-                    holidaysData.some((holiday) =>
-                        postUIDs.includes(holiday.uid) &&
-                        holiday.dates.some((date) => date.split('T')[0] === today) &&
-                        holiday.uid === user.uid
+                    holidaysData.some(
+                        (holiday) =>
+                            postUIDs.includes(holiday.uid) &&
+                            holiday.dates.some((date) => date.split('T')[0] === today) &&
+                            holiday.uid === user.uid
                     )
                 );
-                 // Get the names of users who work in the specific post
+
+                // Get the names of users who work in the specific post
                 const namesOfUsersInSpecificPost = users
                     .filter((user) => postUIDs.includes(user.uid))
                     .map((user) => `${user.name} ${user.surname}`);
 
                 workersInPost.value = namesOfUsersInSpecificPost;
 
-                console.log('namesOfUsersInSpecificPost', workersInPost);
-
                 // Get the names of users who don't have a holiday today
-                const usersWithoutHolidayToday = users.filter((user) =>
-                    !usersWithHolidayToday.some((userWithHoliday) => userWithHoliday.uid === user.uid) &&
-                    postUIDs.includes(user.uid)
+                const usersWithoutHolidayToday = users.filter(
+                    (user) =>
+                        !usersWithHolidayToday.some((userWithHoliday) => userWithHoliday.uid === user.uid) &&
+                        postUIDs.includes(user.uid)
                 );
 
                 // Get an array of names of users without holiday today
-                namesOfUsersWithoutHolidayToday.value = usersWithoutHolidayToday.map((user) => `${user.name} ${user.surname}`);
-
+                namesOfUsersWithoutHolidayToday.value = usersWithoutHolidayToday.map(
+                    (user) => `${user.name} ${user.surname}`
+                );
 
                 // Automatically select checkboxes for users in namesOfUsersWithoutHolidayToday
-               if (workersInPost.value !== null) {
+                if (workersInPost.value !== null) {
                     const indicesToSelect = namesOfUsersWithoutHolidayToday.value
                         .map((name) => workersInPost.value?.indexOf(name))
                         .filter((index) => index !== -1 && index !== null)
@@ -379,6 +411,13 @@ export default {
                     formData.value.aanwezigen = indicesToSelect;
                 }
             }
+        };
+        watch([usersResult, postResult, holidaysResult], () => {processUserData();});
+
+
+        // Execute the processUserData method when the component is mounted
+        onMounted(() => {
+            processUserData();
         });
 
 
@@ -402,6 +441,8 @@ export default {
             currentDateString,
             uidUser,
             workersInPost,
+            isConfirmationDialogOpen,
+            toggleConfirmationDialog,
         };
     },
 };

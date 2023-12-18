@@ -6,6 +6,8 @@ import { number } from 'yargs';
 export class CreateUserInput {
   // @Field(() => String, { description: 'Optional locale of the current user' })
   // locale?: string;
+  @Field(() => String, { description: 'uid of the current user' })
+  uid: string;
 
   @Field(() => String, { description: 'First name of the current user' })
   name?: string;

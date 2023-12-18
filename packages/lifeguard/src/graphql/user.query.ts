@@ -15,6 +15,7 @@ query userByUid($uid: String!) {
     accessPlatform
     birth
     role
+    bathingPlace
     createdAt
     updateAt
   }
