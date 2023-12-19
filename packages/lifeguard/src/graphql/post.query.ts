@@ -10,7 +10,8 @@ query postByNumber($numberPost: Float!) {
     uidRedderE
     uidRedderF
     uidRedderG
-    uidEhbo1      
+    uidRedderH
+    uidRedderI
   }
 }
 `
@@ -24,7 +25,7 @@ query {
     uidRedderE
     uidRedderF
     uidRedderG
-	uidEhbo1
-    uidEhbo2
+    uidRedderH
+    uidRedderI
   }
 }`

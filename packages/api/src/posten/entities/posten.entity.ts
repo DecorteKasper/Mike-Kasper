@@ -5,48 +5,48 @@ import { Column, Entity, ObjectIdColumn } from 'typeorm';
 @Entity()
 @ObjectType()
 export class Posten {
-  
+
   @ObjectIdColumn()
   @Field(() => ID)
   id: ObjectId
 
-  @Column()
+  @Column({ nullable: true })
   @Field(() => Number)
   numberPost: number
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   uidRedderA: string
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   uidRedderB: string
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   uidRedderC: string
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   uidRedderD: string
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   uidRedderE: string
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   uidRedderF: string
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   uidRedderG: string
 
-  @Column({nullable: true})
+  @Column()
   @Field(() => String, { nullable: true })
-  uidEhbo1?: string
+  uidRedderH: string
 
-  @Column({nullable: true})
+  @Column()
   @Field(() => String, { nullable: true })
-  uidEhbo2?: string
+  uidRedderI: string
 }

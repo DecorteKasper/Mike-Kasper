@@ -11,8 +11,8 @@ mutation createPosten($createPostenInput: CreatePostenInput!) {
     uidRedderE
     uidRedderF
     uidRedderG
-    uidEhbo1
-    uidEhbo2
+    uidRedderH
+    uidRedderI
   }
 }
 `
