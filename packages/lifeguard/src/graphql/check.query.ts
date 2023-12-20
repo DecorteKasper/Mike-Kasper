@@ -9,3 +9,12 @@ query {
   }
 }
 `
+
+export const FIND_ONE_CHECK_BY_ID = gql`
+query getCheckById($id: String!){
+  getCheckById(id: $id) {
+    checkMonths
+    checkHolidays
+  }
+}
+`
