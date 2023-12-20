@@ -99,7 +99,7 @@
           </li>
 
           <!-- VERSLAGEN PAGINA REDDER -->
-          <li v-if="userData?.role === 200">
+          <li v-if="userData?.role === 200 && checkHolidays && checkMonths">
             <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
               active-class="text-dark_green font-semibold" to="/redder/report">Dagverslag</RouterLink>
           </li>
