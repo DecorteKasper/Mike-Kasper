@@ -4,6 +4,7 @@ import { UpdatePostenInput } from './dto/update-posten.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Posten } from './entities/posten.entity';
 import { Repository } from 'typeorm';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class PostenService {
@@ -30,18 +31,25 @@ export class PostenService {
     return this.postenRepository.save(P)
   }
 
-  findAll() {
-    return this.postenRepository.find()
-  }
-
-  findOne(id: string) {
-    return `This action returns a #${id} posten`;
-  }
-
   findOneByNumber(numberPost: number) {
     return this.postenRepository.findOneByOrFail({ numberPost });
   }
 
+  // Find one by id
+  FindOneById(id: string) {
+    if (!ObjectId.isValid(id)) throw new Error('Invalid ObjectId')
+    // @ts-ignore
+    return this.reportsRepository.findOneByOrFail({ _id: new ObjectId(id) })
+  }
+
+  // removeAllPosten
+
+
+  // findPostById(id: string)
+
+  findAll() {
+    return this.postenRepository.find();
+  }
 
   update(id: string, updatePostenInput: UpdatePostenInput) {
     return `This action updates a #${id} posten`;

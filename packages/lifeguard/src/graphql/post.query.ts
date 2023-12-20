@@ -18,6 +18,7 @@ query postByNumber($numberPost: Float!) {
 export const ALL_POSTEN = gql`
 query {
   posten {
+    id
     numberPost
     uidRedderA
     uidRedderB
