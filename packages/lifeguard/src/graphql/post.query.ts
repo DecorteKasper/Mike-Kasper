@@ -10,13 +10,15 @@ query postByNumber($numberPost: Float!) {
     uidRedderE
     uidRedderF
     uidRedderG
-    uidEhbo1      
+    uidRedderH
+    uidRedderI
   }
 }
 `
 export const ALL_POSTEN = gql`
 query {
   posten {
+    id
     numberPost
     uidRedderA
     uidRedderB
@@ -24,7 +26,7 @@ query {
     uidRedderE
     uidRedderF
     uidRedderG
-	uidEhbo1
-    uidEhbo2
+    uidRedderH
+    uidRedderI
   }
 }`

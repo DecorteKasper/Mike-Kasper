@@ -22,6 +22,8 @@ export class Holiday {
   @Field(() => Number)
   post: number
 
+  
+
   @CreateDateColumn({ type: 'timestamp', nullable: true })
   @Field({ nullable: true })
   createdAt?: Date

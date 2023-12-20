@@ -150,7 +150,6 @@ export class SeedService {
     return this.reportsService.truncate()
   }
 
-
   //Posten
   async addPostenFromJson() {
     let thePosten: Posten[] = []
@@ -165,8 +164,8 @@ export class SeedService {
       p.uidRedderE = post.uidRedderE
       p.uidRedderF = post.uidRedderF
       p.uidRedderG = post.uidRedderG
-      p.uidEhbo1 = post.uidEhbo1 ?? null
-      p.uidEhbo2 = post.uidEhbo2 ?? null
+      p.uidRedderH = post.uidRedderH ?? null
+      p.uidRedderI = post.uidRedderI ?? null
 
       thePosten.push(p)
     }
@@ -181,7 +180,6 @@ export class SeedService {
   async deleteAllPosten(): Promise<void> {
     return this.postenService.truncate()
   }
-
 
   //Checks
   async addChecksFromJson() {

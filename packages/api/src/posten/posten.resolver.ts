@@ -8,10 +8,10 @@ import { UserRecord } from 'firebase-admin/auth';
 
 @Resolver(() => Posten)
 export class PostenResolver {
-  constructor(private readonly postenService: PostenService) {}
+  constructor(private readonly postenService: PostenService) { }
 
   @Mutation(() => Posten)
-  createPosten(@Args('createPostenInput') createPostenInput: CreatePostenInput) : Promise<Posten> {
+  createPosten(@Args('createPostenInput') createPostenInput: CreatePostenInput): Promise<Posten> {
     return this.postenService.create(createPostenInput);
   }
 
@@ -23,6 +23,11 @@ export class PostenResolver {
   @Query(() => Posten, { name: 'postByNumber' })
   findOneByNumber(@Args('number', { type: () => Number }) numberPost: number) {
     return this.postenService.findOneByNumber(numberPost);
+  }
+
+  @Query(() => Posten, { name: 'postById' })
+  findOne(@Args('id', { type: () => String }) id: string) {
+    return this.postenService.FindOneById(id);
   }
 
   // @Mutation(() => Posten)

@@ -1,4 +1,5 @@
 <template>
+  <!-- {{ firebaseUser }} -->
   <Container v-if="user.userByUid.accessPlatform === false">
     <Acces />
   </Container>
