@@ -95,6 +95,11 @@ export default {
 
             updateIsUserInHolidays();
         });
+        if (monthsResult.value) {
+            console.log("Months: ", monthsResult.value);
+
+            updateIsUserInHolidays();
+        }
 
 
         function updateIsUserInHolidays() {

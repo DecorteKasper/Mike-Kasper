@@ -93,6 +93,10 @@ export default {
             console.log("Holidays: ", holidaysResult.value);
             updateIsUserInHolidays();
         });
+        if (holidaysResult.value) {
+            console.log("Holidays: ", holidaysResult.value);
+            updateIsUserInHolidays();
+        }
 
         function updateIsUserInHolidays() {
             if (holidaysResult.value?.holidays && firebaseUser.value?.uid) {
