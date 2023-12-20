@@ -27,7 +27,7 @@ export class ReportsService {
     R.radioMateriaal = createReportInput.radioMateriaal
     R.textMateriaal = createReportInput.textMateriaal ?? null
     R.extraInfo = createReportInput.extraInfo ?? null
-    R.status = false
+    R.status = false ?? null
     R.reddersPost = createReportInput.reddersPost
 
     return this.reportsRepository.save(R)
