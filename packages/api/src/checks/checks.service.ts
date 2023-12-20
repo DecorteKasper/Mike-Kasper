@@ -4,13 +4,15 @@ import { UpdateCheckInput } from './dto/update-check.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Check } from './entities/check.entity';
 import { Repository } from 'typeorm';
+import { ObjectId } from 'mongodb';
+import { MongoRepository } from 'typeorm';
 
 @Injectable()
 export class ChecksService {
 
   constructor(
     @InjectRepository(Check)
-    private readonly checksRepository: Repository<Check>,
+    private readonly checksRepository: MongoRepository<Check>,
   ) {}
 
 
@@ -21,6 +23,19 @@ export class ChecksService {
     C.accessPlatform = createCheckInput.accessPlatform
 
     return this.checksRepository.save(C)
+  }
+
+  findOne(id: string) {
+    if (!ObjectId.isValid(id)) throw new Error('Invalid ObjectId')
+    // @ts-ignore
+    return this.checksRepository.findOne({ _id: new ObjectId(id) })
+  }
+    
+  async update(updateCheckInput: UpdateCheckInput) {
+    const currentCheck = await this.findOne(updateCheckInput.id)
+    currentCheck.checkMonths = updateCheckInput.checkMonths ?? currentCheck.checkMonths
+    currentCheck.checkHolidays = updateCheckInput.checkHolidays ?? currentCheck.checkHolidays
+    return this.checksRepository.save(currentCheck)
   }
 
   // update(id: string, updateCheckInput: UpdateCheckInput) {
@@ -45,9 +60,9 @@ export class ChecksService {
     return this.checksRepository.find();
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} check`;
-  }
+  // findOne(id: string) {
+  //   return `This action returns a #${id} check`;
+  // }
 
 
   remove(id: string) {

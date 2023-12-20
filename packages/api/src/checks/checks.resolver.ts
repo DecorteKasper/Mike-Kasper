@@ -18,12 +18,13 @@ export class ChecksResolver {
     return this.checksService.findAll();
   }
   
-  // @Mutation(() => Check)
-  // updateCheck(@Args('updateCheckInput') updateCheckInput: UpdateCheckInput) {
-  //   return this.checksService.update(updateCheckInput.id, updateCheckInput);
-  // }
+  @Mutation(() => Check)
+  updateCheck(@Args('updateCheckInput') updateCheckInput: UpdateCheckInput) {
+    return this.checksService.update(updateCheckInput);
+  }
 
-  @Query(() => Check, { name: 'check' })
+
+  @Query(() => Check, { name: 'getCheckById' })
   findOne(@Args('id', { type: () => String }) id: string) {
     return this.checksService.findOne(id);
   }
