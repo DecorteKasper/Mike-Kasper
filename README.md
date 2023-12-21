@@ -34,7 +34,7 @@ Platform two is designed to provide lifeguards with the information and tools th
 <br/>
 
 ### Database Configuration
-1. Run the api folder `npm run dev:pwa`
+1. Run the api folder `npm run dev:api`
 2. Open the app "MongoDB Compass"
 3. Make a new connection with the URI `mongodb://localhost:27027`
 4. Go to the api folder `cd packages/api`
