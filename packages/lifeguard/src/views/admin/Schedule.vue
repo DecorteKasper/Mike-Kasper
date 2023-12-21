@@ -1,7 +1,7 @@
 <template>
     <Container v-if="accesUser.userByUid.accessPlatform">
         <!-- Dit is de frontend om de planning te maken -->
-        <div v-if="OfficialSchedule.length < 0">
+        <div v-if="OfficialSchedule.length <= 0">
             <div class="flex gap-12 mb-10">
 
                 <!-- Left side -->
