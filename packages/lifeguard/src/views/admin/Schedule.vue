@@ -1,5 +1,24 @@
 <template>
     <Container v-if="accesUser.userByUid.accessPlatform">
+
+        <div class="w-full bg-dark_grey mb-5 rounded-inputFieldRadius">
+            <div class="px-6 w-1/3">
+                <div class="flex justify-between items-center">
+                    <p class="font-lato font-bold text-black"> Laat redders beschikbare maanden invullen:</p>
+                    <div class="">
+                        <v-switch class="text-black" color="success" v-model="toggleSwitchMonths" hide-details></v-switch>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <p class="font-lato font-bold text-black"> Laat redders verlofdagen doorgeven:</p>
+                    <div class="">
+                        <v-switch class="text-black" color="success" v-model="toggleSwitchHolidays" hide-details></v-switch>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <!-- Dit is de frontend om de planning te maken -->
         <div v-if="OfficialSchedule.length <= 0">
             <div class="flex gap-12 mb-10">
@@ -324,6 +343,9 @@
             </div>
         </div>
 
+
+
+
     </Container>
 </template>
 
@@ -334,7 +356,6 @@ import Schedule from '@/components/generic/Schedule.vue';
 import margotRobbie from "../../img/MargotRobbie.jpg"
 import { LifeBuoyIcon, UserCircle2, Cross, ChevronDown } from 'lucide-vue-next'
 import { ref, watch } from 'vue';
-import { User } from 'lucide-vue-next';
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import useFirebase from '@/composables/useFirebase'
 import { GET_USER_BY_UID, GET_USERS } from '@/graphql/user.query'
@@ -349,6 +370,8 @@ import SecondaryButton from '@/components/generic/SecondaryButton.vue';
 import type { Ipost } from '@/interfaces/post.interface';
 import ModalWindow from '@/components/generic/ModalWindow.vue';
 import type { Imonth } from '@/interfaces/month.interface';
+import { UPDATE_CHECK } from '@/graphql/check.mutation'
+import { FIND_ONE_CHECK_BY_ID } from '@/graphql/check.query'
 
 
 
@@ -384,18 +407,22 @@ export default {
         const { result: months, error: monthsError } = useQuery(ALL_MONTHS)
         const { result: users, error: usersError } = useQuery(GET_USERS)
         const { result: posten, error: postenError } = useQuery(ALL_POSTEN)
+        const { result: check, error: checksError } = useQuery(FIND_ONE_CHECK_BY_ID, {
+            id: "658463a5393b2d95c4850080",
+        })
+
 
         // Mutations
         const { mutate: deleteAllMonths } = useMutation(DELETE_ALL_MONTHS)
         const { mutate: deleteAllPosten } = useMutation(DELETE_ALL_POSTEN)
         const { mutate: addPost } = useMutation(ADD_POST)
+        const { mutate: updateCheck } = useMutation(UPDATE_CHECK)
 
         // Constanten voor het maken van de planning
         const availability = ref<Iavalability[]>([])
         const shifts = ref<Iavalability[]>([]);
 
         // Constanten voor de officieële planning
-        // const usersList = ref<Iuser[]>([]);
         const monthList = ref<Imonth[]>([]);
         const postenList = ref<Ipost[]>([]);
         const OfficialSchedule = ref<Iavalability[]>([]);
@@ -426,13 +453,10 @@ export default {
 
         // Functies om de planning te maken
         const CheckAvailability = (ArrayUsers: Iuser[], ArrayMonths: Imonth[]) => {
-            // console.log(ArrayUsers);
-            // console.log(ArrayMonths);
             if (ArrayUsers.length > 0 && ArrayMonths.length > 0) {
                 ArrayUsers.forEach(itemUser => {
                     ArrayMonths.forEach(itemMonth => {
                         if (itemUser.uid === itemMonth.uid) {
-                            // console.log('Name:', itemUser.name + 'Month:', itemMonth.months);
                             const values = {
                                 uid: itemUser.uid,
                                 role: itemUser.role,
@@ -451,10 +475,7 @@ export default {
             }
         }
 
-
         const moveCard = ((user: Iavalability, direction: string, currentMonth: string, post: number) => {
-
-            // console.log('Dit is de user in moveCard function:', user.name + ' ' + user.surname + ' ' + post + ' ' + currentMonth)
 
             let sourceArray: Iavalability[], destinationArray: Iavalability[];
 
@@ -464,13 +485,8 @@ export default {
                 destinationArray = availability.value;
 
             } else if (direction === 'right') {
-
                 sourceArray = availability.value;
                 destinationArray = shifts.value;
-
-                console.log('Dit is de destinationArray', destinationArray)
-
-                console.log('Er wordt naar Links verplaatst.')
             } else {
                 console.warn('Ongeldige richting');
                 return;
@@ -482,18 +498,10 @@ export default {
             if (userIndex !== -1) {
                 // Verwijder de gebruiker uit de sourceArray
                 const movedUser = sourceArray.splice(userIndex, 1)[0];
-
-                // Pas de maand aan in de destinationArray
-                // movedUser.months = [currentMonth];
                 // Wijzig de post van de gebruiker
                 movedUser.post = Post.value;
                 // Voeg de gebruiker toe aan de doelarray
                 destinationArray.push(movedUser);
-
-
-                // console.log('Dit is de sourceArray:', destinationArray)
-                // Logbericht
-                // console.log(`Verplaats kaartje: ${user.name} ${user.surname} naar ${direction} kolom en naar post ${Post.value}`);
             } else {
                 console.warn('Gebruiker niet gevonden in beschikbaarheid array');
             }
@@ -547,11 +555,6 @@ export default {
                 });
             }
         };
-
-        // const isPostField = (field: string): field is keyof Ipost => {
-        //     // Controleer of de veldnaam overeenkomt met een veld in Ipost
-        //     return ['id', 'numberPost', 'uidRedderA', 'uidRedderB', 'uidRedderC', 'uidRedderD', 'uidRedderE', 'uidRedderF', 'uidRedderG', 'uidRedderH', 'uidRedderI'].includes(field);
-        // };
 
         const processDataOfficialplanning = (users: Iuser[], months: Imonth[], posten: Ipost[]) => {
             if (users && months && posten) {
@@ -622,6 +625,52 @@ export default {
         }
 
 
+        const toggleSwitchHolidays = ref();
+        const toggleSwitchMonths = ref();
+
+        watch(check, (checkValue) => {
+            const { getCheckById: value } = checkValue;
+
+            toggleSwitchHolidays.value = value?.checkHolidays;
+            toggleSwitchMonths.value = value?.checkMonths;
+        })
+
+
+        watch(toggleSwitchMonths, (toggleSwitchMonthsValue) => {
+            const checkMonths = {
+                id: "658463a5393b2d95c4850080",
+                checkMonths: toggleSwitchMonthsValue,
+                checkHolidays: toggleSwitchHolidays.value,
+                accessPlatform: true,
+            }
+            updateCheck({
+                updateCheckInput: checkMonths
+            }).then(() => {
+                console.log('Check months is geupdate');
+            }).catch((error) => {
+                console.error(error);
+            });
+        })
+
+
+        watch(toggleSwitchHolidays, (toggleSwitchHolidaysValue) => {
+            const checkHolidays = {
+                id: "658463a5393b2d95c4850080",
+                checkMonths: toggleSwitchMonths.value,
+                checkHolidays: toggleSwitchHolidaysValue,
+                accessPlatform: true,
+            }
+            updateCheck({
+                updateCheckInput: checkHolidays
+            }).then(() => {
+                console.log('Check months is geupdate');
+            }).catch((error) => {
+                console.error(error);
+            });
+        })
+
+
+
         return {
             Role,
             Post,
@@ -637,11 +686,10 @@ export default {
             confirmDelete,
             cancelDelete,
             confirmation,
+            toggleSwitchHolidays,
+            toggleSwitchMonths
         }
     }
 }
-
-
-
 
 </script>
