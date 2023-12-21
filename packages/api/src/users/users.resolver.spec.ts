@@ -26,4 +26,40 @@ describe('UsersResolver', () => {
   it('should be defined', () => {
     expect(resolver).toBeDefined();
   });
+
+  //Create
+  describe('createUser', () => { 
+    let myUserDTO: CreateUserInput
+    let resultUser: User
+    let myUserRecord: UserRecord
+
+    beforeEach(async () => { 
+      myUserDTO = {
+        name: userStub().name,
+        surname: userStub().surname,
+        email: userStub().email,
+        phoneNumber: userStub().phoneNumber,
+        zipCode: userStub().zipCode,
+        street: userStub().street,
+        numberOfHouse: userStub().numberOfHouse,
+        birth: userStub().birth,
+        role: userStub().role,
+        accessPlatform: userStub().accessPlatform,
+        status: userStub().status,
+        bathingPlace: userStub().bathingPlace,
+        photoURL: userStub().photoURL,
+        city: userStub().city
+      }
+      
+      resultUser = await resolver.createUser(myUserDTO, myUserRecord)
+    })
+
+    it('should call userService.create one time', async () => { 
+      expect(mockedService.create).toHaveBeenCalledTimes(1)
+    })
+
+    // it('should call userService.create with the correct parameters', async () => {
+    //   expect(mockedService.create).toBeCalledWith(myUserDTO.uid, myUserDTO)
+    // })
+  });
 });
