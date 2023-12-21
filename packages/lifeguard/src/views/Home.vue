@@ -4,7 +4,7 @@
     <Acces />
   </Container>
   <Container v-if="user.userByUid.accessPlatform">
-    <h1 class="text-3xl font-bold font-lato tracking-wide mb-6">Welkom, <span class="font-medium">{{ user.userByUid.name
+    <h1 class="text-3xl font-lato tracking-wide mb-6">Welkom, <span class="font-lato font-bold">{{ user.userByUid.name
     }} {{ user.userByUid.surname }}
       </span>
     </h1>
@@ -19,30 +19,6 @@
       <ModalWindow @close-modal="closeModal" :isVisible="isModalVisible" :taskData="modalTaskData" />
     </div>
 
-
-    <!-- <div>
-      <ul>
-        <li v-for="todo in sortedTodos" :key="todo.id">
-          {{ todo.post }} - {{ todo.description }}
-        </li>
-      </ul>
-    </div> -->
-
-
-    <!-- <p>{{ firebaseUser }}</p> -->
-    <!-- <div v-if="userLoading">Loading...</div>
-    <div v-if="userError">
-      {{ userError }}
-    </div> -->
-
-    <!-- <div v-if="user" class="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 grid-rows-auto gap-12">
-
-      <div>
-        <h2 class="text-lg font-semibold tracking-wide">
-          {{ activeUser?.role }}
-        </h2>
-      </div>
-    </div> -->
   </Container>
 </template>
 

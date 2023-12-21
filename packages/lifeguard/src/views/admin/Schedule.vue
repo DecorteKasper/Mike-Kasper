@@ -1,7 +1,7 @@
 <template>
     <Container v-if="accesUser.userByUid.accessPlatform">
         <!-- Dit is de frontend om de planning te maken -->
-        <div v-if="postenList.length <= 0">
+        <div v-if="OfficialSchedule.length < 0">
             <div class="flex gap-12 mb-10">
 
                 <!-- Left side -->
@@ -187,7 +187,7 @@
         </div>
 
         <!-- Als de planning is gemaakt komt deze block tevoorschijn -->
-        <div v-if="postenList.length > 0">
+        <div v-if="OfficialSchedule.length > 0">
             <div class="flex flex-col items-center h-116">
                 <div class="w-4/6 shadow-cardShadow rounded-cardRadius p-14 h-116 mb-8  my-custom-scrollbar overflow-auto">
 
@@ -324,7 +324,6 @@
             </div>
         </div>
 
-
     </Container>
 </template>
 
@@ -397,12 +396,6 @@ export default {
         ModalWindow
     },
 
-    methods: {
-        openModal(monthsId: string[], postenId: string[]) {
-            this.$emit('show-modal', { months: monthsId, posten: postenId })
-        }
-    },
-
     setup() {
 
         // Firebase
@@ -417,15 +410,15 @@ export default {
         const Role = ref<number>(1);
         const confirmation = ref(false);
 
-        // Guery's en mutations
+        // Query's
         const { result: months, error: monthsError } = useQuery(ALL_MONTHS)
         const { result: users, error: usersError } = useQuery(GET_USERS)
-        const { mutate: addPost } = useMutation(ADD_POST)
         const { result: posten, error: postenError } = useQuery(ALL_POSTEN)
 
         // Mutations
         const { mutate: deleteAllMonths } = useMutation(DELETE_ALL_MONTHS)
         const { mutate: deleteAllPosten } = useMutation(DELETE_ALL_POSTEN)
+        const { mutate: addPost } = useMutation(ADD_POST)
 
         // Constanten voor het maken van de planning
         const availability = ref<IAvalability[]>([])
@@ -443,8 +436,7 @@ export default {
                 const { users: ArrayUsers } = usersValue;
                 const { months: ArrayMonths } = monthsValue;
                 const { posten: ArrayPosten } = postenValue;
-                postenList.value = ArrayPosten;
-                monthList.value = ArrayMonths;
+
                 // Functie voor planning te maken
                 if (postenList) {
                     CheckAvailability(ArrayUsers, ArrayMonths); // Call the function here
@@ -581,6 +573,7 @@ export default {
                     createPostenInput: result
                 }).then(() => {
                     console.log('Post toegevoegd');
+                    window.location.reload();
                 }).catch((error) => {
                     console.error(error);
                 });
