@@ -9,7 +9,7 @@
             }} {{ user.userByUid.surname }}
             </span>
           </h1>
-          <div class="flex gap-10">
+          <div class="flex flex-col md:flex-row items-center gap-10">
             <Schedule />
             <Holidays />
           </div>

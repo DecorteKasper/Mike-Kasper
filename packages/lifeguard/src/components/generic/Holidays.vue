@@ -1,5 +1,5 @@
 <template>
-    <div class="w-1/2 shadow-cardShadow rounded-cardRadius h-116 pb-20 pt-14 px-14">
+    <div class="w-full md:w-1/2 shadow-cardShadow rounded-cardRadius h-116 pb-20 pt-14 px-14">
         <h1 class="font-lato text-lg font-semibold mb-6">Opkomende verlofdagen</h1>
 
         <div class="overflow-auto h-full my-custom-scrollbar">

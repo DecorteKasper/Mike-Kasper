@@ -1,8 +1,8 @@
 <template>
-    <div class="w-1/2 shadow-cardShadow rounded-cardRadius p-14 h-116 my-custom-scrollbar overflow-auto">
+    <div class="w-full md:w-1/2 shadow-cardShadow rounded-cardRadius p-14 h-116 my-custom-scrollbar overflow-auto">
         <!-- Header schedule -->
         <div class="flex flex-wrap justify-between">
-            <h2 class="font-lato font-semibold text-lg">{{ currentMonth }}</h2>
+            <h2 class="font-lato font-semibold text-lg mb-4 md:mb-0">{{ currentMonth }}</h2>
             <div>
                 <label class="radio-role">
                     <input type="radio" :value=200 name="role" class="hidden" v-model="Role">
