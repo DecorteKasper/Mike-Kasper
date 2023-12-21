@@ -133,18 +133,6 @@ export default {
     // Composables
     const { login, firebaseUser } = useFirebase()
     const LoginCredentials = reactive({email: '', password: '',})
-    const activeUser = ref<User | null>()
-    const activeUserRole = ref()
-    const { loading: userLoading, result: user,error: userError,} = useQuery(GET_USER_BY_UID, {uid: firebaseUser.value?.uid,})
-
-
-    watch(user, (Value) => {
-      console.log('Watch function triggered');
-      if (Value && Value.userByUid) {
-        activeUser.value = Value.userByUid;
-        activeUserRole.value = Value.userByUid.role;
-      }
-    });
 
     const rules = computed(() => {
       return {
@@ -169,11 +157,7 @@ export default {
       } else {
         login(LoginCredentials.email, LoginCredentials.password).then(
           () => {
-            if(activeUserRole.value == 300){
-              router.push('/')
-            } else {
-              router.push('/redder')
-            }
+            router.push('/')
           },
         )
       }
