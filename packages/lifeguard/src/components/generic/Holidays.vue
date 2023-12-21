@@ -33,15 +33,6 @@ import type { Iuser } from '@/interfaces/user.interface';
 import type { Iholiday } from '@/interfaces/holiday.interface';
 import { UserCircle2, LifeBuoyIcon, Cross } from 'lucide-vue-next';
 
-interface IuserWithHoliday {
-    uid: string;
-    name: string;
-    surname: string;
-    photoURL: string | null;
-    role: number | null;
-    dates: string[];
-}
-
 export default {
 
     components: {
@@ -49,7 +40,6 @@ export default {
         UserCircle2,
         Cross
     },
-
 
     setup() {
         const { result: usersResult } = useQuery(GET_USERS);
