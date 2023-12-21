@@ -2,24 +2,24 @@
     <div class="w-1/2 shadow-cardShadow rounded-cardRadius p-14 h-116 my-custom-scrollbar overflow-auto">
         <!-- Header schedule -->
         <div class="flex flex-wrap justify-between">
-            <h2 class="font-lato font-semibold text-lg">Dagelijkse planning</h2>
+            <h2 class="font-lato font-semibold text-lg">{{ currentMonth }}</h2>
             <div>
                 <label class="radio-role">
-                    <input type="radio" value="200" name="role" class="hidden" v-model="Role">
+                    <input type="radio" :value=200 name="role" class="hidden" v-model="Role">
                     <span
-                        :class="{ 'bg-red text-xs font-regular text-white px-4 py-2 rounded-l-buttonRadius focus:outline-none cursor-pointer': Role === '200', 'bg-dark_grey text-xs font-medium text-black px-4 py-2 rounded-l-buttonRadius focus:outline-none cursor-pointer': Role !== '200' }">Redder</span>
+                        :class="{ 'bg-red text-xs font-regular text-white px-4 py-2 rounded-l-buttonRadius focus:outline-none cursor-pointer': Role === 200, 'bg-dark_grey text-xs font-medium text-black px-4 py-2 rounded-l-buttonRadius focus:outline-none cursor-pointer': Role !== 200 }">Redder</span>
                 </label>
 
                 <label class="radio-role">
-                    <input type="radio" value="1" name="role" class="hidden" v-model="Role">
+                    <input type="radio" :value=1 name="role" class="hidden" v-model="Role">
                     <span
-                        :class="{ 'bg-red text-xs font-regular text-white px-4 py-2 focus:outline-none cursor-pointer': Role === '1', 'bg-dark_grey text-xs font-medium text-black px-4 py-2 focus:outline-none cursor-pointer': Role !== '1' }">All</span>
+                        :class="{ 'bg-red text-xs font-regular text-white px-4 py-2 focus:outline-none cursor-pointer': Role === 1, 'bg-dark_grey text-xs font-medium text-black px-4 py-2 focus:outline-none cursor-pointer': Role !== 1 }">All</span>
                 </label>
 
                 <label class="radio-role">
-                    <input type="radio" value="100" name="role" class="hidden" v-model="Role">
+                    <input type="radio" :value=100 name="role" class="hidden" v-model="Role">
                     <span
-                        :class="{ 'bg-dark_green text-xs font-regular text-white px-4 py-2 rounded-r-buttonRadius focus:outline-none cursor-pointer': Role === '100', 'bg-dark_grey text-xs font-medium text-black px-4 py-2 rounded-r-buttonRadius focus:outline-none cursor-pointer': Role !== '100' }">Ehbo</span>
+                        :class="{ 'bg-dark_green text-xs font-regular text-white px-4 py-2 rounded-r-buttonRadius focus:outline-none cursor-pointer': Role === 100, 'bg-dark_grey text-xs font-medium text-black px-4 py-2 rounded-r-buttonRadius focus:outline-none cursor-pointer': Role !== 100 }">Ehbo</span>
                 </label>
 
             </div>
@@ -28,54 +28,52 @@
             <!-- Posten -->
             <!-- Radio buttons posten -->
             <label class="radio-post">
-                <input type="radio" value="1" name="post" class="hidden" v-model="Post">
+                <input type="radio" :value=1 name="post" class="hidden" v-model="Post">
                 <span
-                    :class="{ 'bg-dark_green text-xs text-white px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post === '1', 'bg-dark_grey text-xs text-black px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post !== '1', }">Post
+                    :class="{ 'bg-dark_green text-xs text-white px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post === 1, 'bg-dark_grey text-xs text-black px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post !== 1, }">Post
                     1</span>
             </label>
             <label class="radio-post">
-                <input type="radio" value="2" name="post" class="hidden" v-model="Post">
+                <input type="radio" :value=2 name="post" class="hidden" v-model="Post">
                 <span
-                    :class="{ 'bg-dark_green text-xs text-white px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post === '2', 'bg-dark_grey text-xs text-black px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post !== '2', }">Post
+                    :class="{ 'bg-dark_green text-xs text-white px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post === 2, 'bg-dark_grey text-xs text-black px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post !== 2, }">Post
                     2</span>
             </label>
             <label class="radio-post">
-                <input type="radio" value="3" name="post" class="hidden" v-model="Post">
+                <input type="radio" :value=3 name="post" class="hidden" v-model="Post">
                 <span
-                    :class="{ 'bg-dark_green text-xs text-white px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post === '3', 'bg-dark_grey text-xs text-black px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post !== '3', }">Post
+                    :class="{ 'bg-dark_green text-xs text-white px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post === 3, 'bg-dark_grey text-xs text-black px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post !== 3, }">Post
                     3</span>
             </label>
             <label class="radio-post">
-                <input type="radio" value="4" name="post" class="hidden" v-model="Post">
+                <input type="radio" :value=4 name="post" class="hidden" v-model="Post">
                 <span
-                    :class="{ 'bg-dark_green text-xs text-white px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post === '4', 'bg-dark_grey text-xs text-black px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post !== '4', }">Post
+                    :class="{ 'bg-dark_green text-xs text-white px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post === 4, 'bg-dark_grey text-xs text-black px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post !== 4, }">Post
                     4</span>
             </label>
             <label class="radio-post">
-                <input type="radio" value="5" name="post" class="hidden" v-model="Post">
+                <input type="radio" :value=5 name="post" class="hidden" v-model="Post">
                 <span
-                    :class="{ 'bg-dark_green text-xs text-white px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post === '5', 'bg-dark_grey text-xs text-black px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post !== '5', }">Post
+                    :class="{ 'bg-dark_green text-xs text-white px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post === 5, 'bg-dark_grey text-xs text-black px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post !== 5, }">Post
                     5</span>
             </label>
             <label class="radio-post">
-                <input type="radio" value="6" name="post" class="hidden" v-model="Post">
+                <input type="radio" :value=6 name="post" class="hidden" v-model="Post">
                 <span
-                    :class="{ 'bg-dark_green text-xs text-white px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post === '6', 'bg-dark_grey text-xs text-black px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post !== '6', }">Post
+                    :class="{ 'bg-dark_green text-xs text-white px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post === 6, 'bg-dark_grey text-xs text-black px-4 py-2 rounded-buttonRadius focus:outline-none cursor-pointer': Post !== 6, }">Post
                     6</span>
             </label>
         </div>
         <div class="mt-8">
             <!-- Redders -->
-            <div v-if="Role === '200' || Role === '1'">
+            <div v-if="Role === 200 || Role === 1">
                 <div class="border-b-red border-b-2 mb-4">
                     <h3 class="font-lato text-base text-red">Redders</h3>
                 </div>
                 <div class="flex flex-wrap gap-4">
                     <!-- Redder card  -->
                     <div class="bg-dark_grey rounded-inputFieldRadius px-4 py-2 flex items-center gap-4 w-fit"
-                        v-for="(user) in users.filter(user => user.role === '200' && user.post === Post)">
-
-
+                        v-for="(user) in OfficialSchedule.filter(user => user.role === 200 && user.post === Post && user.months.some(month => currentMonth.includes(month)))">
                         <img v-if="user.photoURL" class="h-8 w-8 rounded-full" :src="user.photoURL || ''" alt="">
                         <div v-else>
                             <UserCircle2 class="h-7 w-7 object-cover text-red" />
@@ -86,7 +84,7 @@
                 </div>
             </div>
             <!-- Ehbo -->
-            <div v-if="Role === '100' || Role === '1'">
+            <div v-if="Role === 100 || Role === 1">
                 <div class="border-b-dark_green border-b-2 my-4">
                     <h3 class="font-lato text-base text-dark_green">Ehbo</h3>
                 </div>
@@ -94,7 +92,7 @@
                 <div class="flex flex-wrap gap-4">
                     <!-- ehbo card  -->
                     <div class="bg-dark_grey rounded-inputFieldRadius px-4 py-2 flex items-center gap-4 w-fit"
-                        v-for=" user  in   users.filter(user => user.role === '100' && user.post === Post) ">
+                        v-for="(user) in OfficialSchedule.filter(user => user.role === 100 && user.post === Post && user.months.some(month => currentMonth.includes(month)))">
                         <img v-if="user.photoURL" class="h-8 w-8 rounded-full" :src="user.photoURL || ''" alt="">
                         <div v-else>
                             <UserCircle2 class="h-7 w-7 object-cover text-dark_green" />
@@ -109,33 +107,34 @@
 </template>
 
 <script lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 import margotRobbie from "../../img/MargotRobbie.jpg"
 import { LifeBuoyIcon, UserCircle2, Cross } from 'lucide-vue-next'
+import type { Iuser } from '@/interfaces/user.interface';
+import { useQuery } from '@vue/apollo-composable';
+import { ALL_MONTHS } from '@/graphql/month.query';
+import { GET_USERS } from '@/graphql/user.query';
+import { ALL_POSTEN } from '@/graphql/post.query';
+import type { Ipost } from '@/interfaces/post.interface';
 
 
-interface User {
+interface IAvalability {
+    uid: string;
+    role: number | null;
+    name: string | null;
+    surname: string | null;
+    photoURL: string | null;
+    post: number | null;
+    months: string[] | [];
+}
+
+interface IMonth {
     id: string;
     uid: string;
-    name: string;
-    surname: string;
-    photoURL: string | null;
-    email: string;
-    phoneNumber: string | null;
-    bathingPlace: string;
-    birth: Date | null;
-
-    zipCode: number | null;
-    street: string | null;
-    numberOfHouse: number | null;
-
-    post: string;
-    role: string;
-    createdAt: Date;
-    updateAt: Date;
-
+    months: string;
 }
+
 
 export default {
 
@@ -145,191 +144,84 @@ export default {
         Cross
     },
 
-
     setup() {
-        const Role = ref<string>("1");
-        const Post = ref<string>("1");
+        const Role = ref<number>(1);
+        const Post = ref<number>(1);
+        const currentMonth = "augustus";
 
-        const users = ref<User[]>([
+        const { result: months, error: monthsError } = useQuery(ALL_MONTHS)
+        const { result: users, error: usersError } = useQuery(GET_USERS)
+        const { result: posten, error: postenError } = useQuery(ALL_POSTEN)
 
-            {
-                id: "653e40a340a50bedb1c53925",
-                uid: "VqrsOpd6zqVQi7P8gOfLCv2ofCI3",
-                role: "200",
-                name: "Mike",
-                surname: "Vanoosthuyze",
-                email: "mvanoosthuyze@gmail.com",
-                bathingPlace: "Nieuwpoort",
-                photoURL: margotRobbie,
-                phoneNumber: null,
-                zipCode: null,
-                street: null,
-                numberOfHouse: null,
-                birth: null,
-                createdAt: new Date("2023-10-29T11:23:15.565+00:00"),
-                updateAt: new Date("2023-10-29T11:23:15.565+00:00"),
-                post: "1",
-            },
-            {
-                id: "654e40a340a50bedb1c53926",
-                uid: "AbcOpd6zqVQi7P8gOfLCv2ofCI3",
 
-                role: "100",
-                name: "Sarah",
-                surname: "Smith",
-                email: "ssmith@example.com",
-                bathingPlace: "Miami",
-                photoURL: null,
-                phoneNumber: "123-456-7890",
-                zipCode: 33123,
-                street: "Ocean Drive",
-                numberOfHouse: 42,
-                birth: new Date("1990-05-15T08:00:00.000Z"),
-                createdAt: new Date("2023-10-28T14:45:30.123+00:00"),
-                updateAt: new Date("2023-10-28T14:45:30.123+00:00"),
-                post: "1",
-            },
-            {
-                id: "655e40a340a50bedb1c53927",
-                uid: "XyzOpd6zqVQi7P8gOfLCv2ofCI3",
+        const monthList = ref<IMonth[]>([]);
+        const postenList = ref<Ipost[]>([]);
+        const OfficialSchedule = ref<IAvalability[]>([]);
 
-                role: "100",
-                name: "Carlos",
-                surname: "Rodriguez",
-                email: "crodriguez@example.com",
-                bathingPlace: "Barcelona",
-                photoURL: null,
-                phoneNumber: "987-654-3210",
-                zipCode: 8520,
-                street: "Ramblas",
-                numberOfHouse: 7,
-                birth: new Date("1985-11-20T12:30:00.000Z"),
-                createdAt: new Date("2023-10-27T09:15:45.987+00:00"),
-                updateAt: new Date("2023-10-27T09:15:45.987+00:00"),
-                post: "2",
-            },
-            // Voeg meer gebruikers toe zoals nodig
-            {
-                id: "656e40a340a50bedb1c53928",
-                uid: "PqrOpd6zqVQi7P8gOfLCv2ofCI3",
+        // Watch 
+        watch([users, months, posten], ([usersValue, monthsValue, postenValue]) => {
+            if (usersValue && monthsValue && postenValue) {
+                const { users: ArrayUsers } = usersValue;
+                const { months: ArrayMonths } = monthsValue;
+                const { posten: ArrayPosten } = postenValue;
+                postenList.value = ArrayPosten;
+                monthList.value = ArrayMonths;
+                // Functie voor planning te maken
+                if (postenList) {
+                    processDataOfficialplanning(ArrayUsers, ArrayMonths, ArrayPosten);
+                }
 
-                role: "200",
-                name: "Marie",
-                surname: "Dupont",
-                email: "mdupont@example.com",
-                bathingPlace: "Paris",
-                photoURL: null,
-                phoneNumber: "33-1-23456789",
-                zipCode: 75001,
-                street: "Champs-Elysées",
-                numberOfHouse: 12,
-                birth: new Date("1988-07-05T14:45:00.000Z"),
-                createdAt: new Date("2023-10-26T15:30:20.456+00:00"),
-                updateAt: new Date("2023-10-26T15:30:20.456+00:00"),
-                post: "2",
-            },
-            {
-                id: "657e40a340a50bedb1c53929",
-                uid: "LmnOpd6zqVQi7P8gOfLCv2ofCI3",
+            }
+        })
 
-                role: "100",
-                name: "Hans",
-                surname: "Schmidt",
-                email: "hschmidt@example.com",
-                bathingPlace: "Berlin",
-                photoURL: null,
-                phoneNumber: "49-30-12345678",
-                zipCode: 10117,
-                street: "Unter den Linden",
-                numberOfHouse: 18,
-                birth: new Date("1992-02-10T10:00:00.000Z"),
-                createdAt: new Date("2023-10-25T12:15:10.789+00:00"),
-                updateAt: new Date("2023-10-25T12:15:10.789+00:00"),
-                post: "4",
-            },
-            {
-                id: "658e40a340a50bedb1c53930",
-                uid: "RstOpd6zqVQi7P8gOfLCv2ofCI3",
+        const processDataOfficialplanning = (users: Iuser[], months: IMonth[], posten: Ipost[]) => {
+            if (users && months && posten) {
 
-                role: "100",
-                name: "Giuseppe",
-                surname: "Bianchi",
-                email: "gbianchi@example.com",
-                bathingPlace: "Rome",
-                photoURL: null,
-                phoneNumber: "39-06-98765432",
-                zipCode: 8520,
-                street: "Via del Corso",
-                numberOfHouse: 24,
-                birth: new Date("1987-03-18T09:30:00.000Z"),
-                createdAt: new Date("2023-10-24T16:50:40.234+00:00"),
-                updateAt: new Date("2023-10-24T16:50:40.234+00:00"),
-                post: "4",
-            },
+                const combinedData: IAvalability[] = [];
 
-            {
-                id: "659e40a340a50bedb1c53931",
-                uid: "FghOpd6zqVQi7P8gOfLCv2ofCI3",
+                const isPostField = (field: string): field is keyof Ipost => {
+                    return ['uidRedderA', 'uidRedderB', 'uidRedderC', 'uidRedderD', 'uidRedderE', 'uidRedderF', 'uidRedderG', 'uidRedderH', 'uidRedderI'].includes(field);
+                };
 
-                role: "200",
-                name: "Maria",
-                surname: "Santos",
-                email: "msantos@example.com",
-                bathingPlace: "Lisbon",
-                photoURL: margotRobbie,
-                phoneNumber: "351-21-1234567",
-                zipCode: 1100,
-                street: "Rua Augusta",
-                numberOfHouse: 30,
-                birth: new Date("1995-09-22T11:15:00.000Z"),
-                createdAt: new Date("2023-10-23T13:40:50.678+00:00"),
-                updateAt: new Date("2023-10-23T13:40:50.678+00:00"),
-                post: "4",
-            },
-            {
-                id: "660e40a340a50bedb1c53932",
-                uid: "MnoOpd6zqVQi7P8gOfLCv2ofCI3",
+                for (const user of users) {
+                    const userPosten = posten.filter(post => {
+                        const postFields = ['uidRedderA', 'uidRedderB', 'uidRedderC', 'uidRedderD', 'uidRedderE', 'uidRedderF', 'uidRedderG', 'uidRedderH', 'uidRedderI'];
+                        return postFields.some(field => isPostField(field) && post[field] === user.uid);
+                    }).map(post => post.numberPost);
 
-                role: "100",
-                name: "Elena",
-                surname: "Ivanova",
-                email: "eivanova@example.com",
-                bathingPlace: "Moscow",
-                photoURL: margotRobbie,
-                phoneNumber: "7-495-7654321",
-                zipCode: 101000,
-                street: "Tverskaya Street",
-                numberOfHouse: 15,
-                birth: new Date("1991-12-03T17:20:00.000Z"),
-                createdAt: new Date("2023-10-22T10:25:35.543+00:00"),
-                updateAt: new Date("2023-10-22T10:25:35.543+00:00"),
-                post: "3",
-            },
-            {
-                id: "661e40a340a50bedb1c53933",
-                uid: "QweOpd6zqVQi7P8gOfLCv2ofCI3",
+                    // Vind de bijbehorende maanden voor de gebruiker
+                    const userMonths = months
+                        .filter(month => month.uid === user.uid)  // Filter maanden voor de gebruiker
+                        .map(month => month.months)  // Neem alleen de 'months' array
 
-                role: "200",
-                name: "Yuki",
-                surname: "Suzuki",
-                email: "ysuzuki@example.com",
-                bathingPlace: "Tokyo",
-                photoURL: margotRobbie,
-                phoneNumber: "81-3-9876-5432",
-                zipCode: 8520,
-                street: "Ginza Street",
-                numberOfHouse: 8,
-                birth: new Date("1993-06-25T10:10:00.000Z"),
-                createdAt: new Date("2023-10-21T11:35:25.456+00:00"),
-                updateAt: new Date("2023-10-21T11:35:25.456+00:00"),
-                post: "3",
-            },
-        ]);
+                    // Voeg de gebruiker alleen toe als post niet null is
+                    if (userPosten.length > 0 && userPosten[0] !== null) {
+                        combinedData.push({
+                            uid: user.uid,
+                            role: user.role,
+                            name: user.name,
+                            surname: user.surname,
+                            photoURL: user.photoURL,
+                            post: userPosten[0],
+                            // @ts-ignore
+                            months: userMonths.length > 0 ? userMonths[0] : [],
+                        });
+                    }
+                }
+
+                console.log('Dit is de OfficialSchedule:', combinedData)
+                OfficialSchedule.value = combinedData;
+            }
+        };
+
+
 
         return {
             Role,
             Post,
             users,
+            OfficialSchedule,
+            currentMonth
         }
     }
 }
