@@ -267,7 +267,7 @@ export default defineComponent({
           post.uidRedderG,
         ];
         const postUIDsEHBO = [
-          post.uidEhbo1,
+          post.uidRedderH,
         ];
 
 

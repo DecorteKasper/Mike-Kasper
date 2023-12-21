@@ -8,6 +8,6 @@ export interface Ipost {
     uidRedderE: string
     uidRedderF: string
     uidRedderG: string
-    uidEhbo1: string
-    uidEhbo2: string
+    uidRedderH: string
+    uidRedderI: string
 }
