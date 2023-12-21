@@ -64,14 +64,13 @@
         <p class="text-red-600">{{ error.message }}</p>
       </div>
 
-      <div class="mt-6 flex">
-
+      <div class="mt-12 flex">
         <div class="mr-6">
           <label for="name" class="text-sm block mb-4 text-dark_grey2 font-semibold">
             Voornaam
           </label>
           <input type="text" name="name" id="name" placeholder="Voornaam"
-            class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-green"
+            class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx"
             v-model="newUser.name" />
           <!-- <div class="text-red-600" v-if="!validations.newUser.name.required">Voornaam is verplicht!</div> -->
           <span class="text-red font-lato text-xs" v-if="v$.name.$error"> {{ v$.name.$errors[0].$message }}</span>
@@ -83,25 +82,25 @@
           </label>
 
           <input type="text" name="surname" id="surname" placeholder="Achternaam" v-model="newUser.surname"
-            class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-green" />
+            class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx" />
           <span class="text-red font-lato text-xs" v-if="v$.surname.$error"> {{ v$.surname.$errors[0].$message }}</span>
         </div>
       </div>
 
       <!-- email -->
-      <div class="mt-6">
+      <div class="mt-8">
         <label for="email" class="text-sm block mb-4 text-dark_grey2 font-semibold">
           Email
         </label>
-        <input type="text" name="email" id="email" placeholder="test.test@gmail.com"
-          class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-green"
+        <input type="text" name="email" id="email" placeholder="voornaam.naam@email.com"
+          class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx"
           v-model="newUser.email" />
         <span class="text-red font-lato text-xs" v-if="v$.email.$error"> {{ v$.email.$errors[0].$message }}</span>
       </div>
 
 
       <!-- Functie -->
-      <div class="mt-6">
+      <div class="mt-8">
         <label for="job" class="text-sm block mb-4 text-dark_grey2 font-semibold">
           Selecteer uw jobfunctie
         </label>
@@ -122,51 +121,50 @@
       </div>
 
       <!-- Dropdown -->
-      <div class="mt-6">
+      <div class="mt-8">
         <label for="job" class="text-sm block mb-4 text-dark_grey2 font-semibold">
-          Selecteer uw jobfunctie
+          Selecteer uw badstad
         </label>
 
         <div>
           <VueMultiselect class="rounded-lg" :model-value="newUser.badplaats" :options="options"
-            @update:model-value="newUser.badplaats = $event" />
+            @update:model-value="newUser.badplaats = $event" placeholder="Selecteer badstad" />
         </div>
         <span class="text-red" v-if="v$.badplaats.$error"> {{ v$.badplaats.$errors[0].$message }}</span>
       </div>
 
 
       <!-- Wachtwoord -->
-
-      <div class="mt-6 flex">
+      <div class="mt-8 flex">
         <div class="mr-6">
           <label for="password" class="text-sm block mb-4 text-dark_grey2 font-semibold">
-            wachtwoord
+            Wachtwoord
           </label>
           <input type="password" name="password" id="password" placeholder="********"
-            class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-green"
+            class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx"
             v-model="newUser.password.password" />
           <span class="text-red" v-if="v$.password.password.$error"> {{ v$.password.password.$errors[0].$message }}</span>
         </div>
         <div>
           <label for="passwordrepeat" class="text-sm block mb-4 text-dark_grey2 font-semibold">
-            herhaal wachtwoord
+            Herhaal wachtwoord
           </label>
           <input type="password" name="passwordrepeat" id="passwordrepeat" placeholder="********"
-            class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-green"
+            class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx"
             v-model="newUser.password.passwordrepeat" />
           <span class="text-red" v-if="v$.password.passwordrepeat.$error"> {{
             v$.password.passwordrepeat.$errors[0].$message }}</span>
         </div>
       </div>
 
-      <div class="flex justify-center mt-5">
-        <PrimaryButton label="Registreer" />
+      <div class="flex justify-center mt-8">
+        <PrimaryButton label="Registreren" class="w-36 font-bold"/>
       </div>
       <div class="flex justify-center">
         <RouterLink
-          class="mt-1 rounded text-xs text-dark_grey2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-green"
+          class="mt-2 rounded text-xs text-dark_grey2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx"
           to="/auth/login">
-          Already have an account?
+          Heb je al een account?
         </RouterLink>
       </div>
     </form>

@@ -55,7 +55,7 @@
     </svg>
 
     <form @submit.prevent="handleLogin" class="w-full mt-10 shadow-cardShadow rounded-cardRadius px-28 py-12">
-      <h1 class="text-xl font-lato font-bold">Login </h1>
+      <h1 class="text-xl font-lato font-bold">Inloggen</h1>
       <!-- {{ firebaseUser }} -->
       <!-- <div v-if="error">
         <p class="text-red-600">{{ error.message }}</p>
@@ -86,14 +86,14 @@
       </div>
 
       <!-- Button -->
-      <div class="flex justify-center">
-        <PrimaryButton label="Login" />
+      <div class="flex justify-center mt-8">
+        <PrimaryButton label="Login" class="w-36 font-bold" />
       </div>
       <div class="flex justify-center">
         <RouterLink
           class="mt-3 inline-block rounded text-center text-xs text-dark_grey2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx"
           to="/auth/register">
-          Need to create an account?
+          Account aanmaken?
         </RouterLink>
       </div>
     </form>

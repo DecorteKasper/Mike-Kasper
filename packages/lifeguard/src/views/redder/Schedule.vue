@@ -180,11 +180,14 @@ export default {
                 });
 
                 // Check if there is a matching uid and display the full name in the console
-                userHolidayDetails.value = users.map((user) => {
-                    const fullName = `${user.name} ${user.surname}`;
-                    const holidaysAmount = dateCountByUID[user.uid] || 0;
-                    return { name: fullName, aantalVerlofdagen: holidaysAmount, aantalWerkdagen: totalDaysInMonth - holidaysAmount };
-                });
+                userHolidayDetails.value = users
+                    .map((user) => {
+                        const fullName = `${user.name} ${user.surname}`;
+                        const holidaysAmount = dateCountByUID[user.uid] || 0;
+                        return { name: fullName, aantalVerlofdagen: holidaysAmount, aantalWerkdagen: totalDaysInMonth - holidaysAmount };
+                    })
+                    .filter((user) => user.aantalVerlofdagen !== 0);
+
                 console.log(userHolidayDetails);
 
 
