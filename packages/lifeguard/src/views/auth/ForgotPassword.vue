@@ -63,15 +63,15 @@
 
       <div class="mt-8">
         <label for="email" class="text-sm mb-4 font-lato block">
-          Email address
+          Emailadres
         </label>
-        <input type="email" name="email" id="email" placeholder="name.surname@outlook.com"
+        <input type="email" name="email" id="email" placeholder="naam.achternaam@email.com"
           class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius p-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-green"
           v-model="ResetCredentials.email" />
         <span class="text-red font-lato text-xs" v-if="v$.email.$error"> {{ v$.email.$errors[0].$message }}</span>
       </div>
 
-      <div class="flex justify-center">
+      <div class="flex justify-center mt-7">
 
         <PrimaryButton label="verzend wachtwoord reset" />
 
@@ -83,7 +83,7 @@
         <RouterLink
           class="mt-1 inline-block rounded text-xs text-dark_grey2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-green"
           to="/auth/login">
-          Remember? Go to login.
+          Toch inloggen?
         </RouterLink>
       </div>
     </form>
