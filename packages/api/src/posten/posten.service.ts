@@ -3,15 +3,16 @@ import { CreatePostenInput } from './dto/create-posten.input';
 import { UpdatePostenInput } from './dto/update-posten.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Posten } from './entities/posten.entity';
-import { Repository } from 'typeorm';
+import { Repository, MongoRepository } from 'typeorm';
 import { ObjectId } from 'mongodb';
+
 
 @Injectable()
 export class PostenService {
 
   constructor(
     @InjectRepository(Posten)
-    private readonly postenRepository: Repository<Posten>,
+    private readonly postenRepository: MongoRepository<Posten>,
   ) { }
 
 
@@ -39,10 +40,25 @@ export class PostenService {
   FindOneById(id: string) {
     if (!ObjectId.isValid(id)) throw new Error('Invalid ObjectId')
     // @ts-ignore
-    return this.reportsRepository.findOneByOrFail({ _id: new ObjectId(id) })
+    return this.postenRepository.findOne({ _id: new ObjectId(id) })
   }
 
   // removeAllPosten
+  async removeAllPosten(ids: string[]) {
+    const posten = await this.postenRepository.find({ where: { _id: { $in: ids.map(id => new ObjectId(id)) } } })
+    if (posten) {
+      const result = posten.length
+      await this.postenRepository.remove(posten)
+      console.log("Deleted:", result)
+      return posten
+    }
+    return null;
+  }
+
+
+
+
+
 
 
   // findPostById(id: string)

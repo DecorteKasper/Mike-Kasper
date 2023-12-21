@@ -6,10 +6,10 @@ import { UpdateMonthInput } from './dto/update-month.input';
 
 @Resolver(() => Month)
 export class MonthsResolver {
-  constructor(private readonly monthsService: MonthsService) {}
+  constructor(private readonly monthsService: MonthsService) { }
 
   @Mutation(() => Month)
-  createMonth(@Args('createMonthInput') createMonthInput: CreateMonthInput) :Promise<Month> {
+  createMonth(@Args('createMonthInput') createMonthInput: CreateMonthInput): Promise<Month> {
     return this.monthsService.create(createMonthInput);
   }
 
@@ -32,4 +32,14 @@ export class MonthsResolver {
   removeMonth(@Args('string', { type: () => String }) id: string) {
     return this.monthsService.remove(id);
   }
+
+  // verwijder al users
+  @Mutation(() => [Month], { nullable: true })
+  async removeAllMonths(@Args('removeAll', { type: () => [String] }) id: string[]) {
+    // this.gateway.handleDeleteAllUsers(id)
+    const months = await this.monthsService.removeAllMonths(id);
+    return months;
+  }
+
+
 }

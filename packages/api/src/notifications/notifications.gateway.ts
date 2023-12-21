@@ -50,8 +50,6 @@ export class NotificationsGateway
     // Vraag alle todo's in de database op en stuur ze naar de client
     const todos = await this.todoService.findAll();
     client.emit('todos', todos);
-
-
     const users = await this.usersService.findAll();
     client.emit('users', users);
   }

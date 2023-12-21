@@ -316,12 +316,15 @@
                         </div>
                     </div>
                 </div>
-                <SecondaryButton label="Verwijder planning" @click="HandleDeletePlanning" />
+                <div class="flex gap-6">
+                    <PrimaryButton v-if="confirmation === true" label="Bevestigen" @click="handleDelete" />
+                    <SecondaryButton v-if="confirmation === true" label="Annuleren" @click="cancelDelete" />
+                    <SecondaryButton v-if="confirmation === false" label="Verwijder planning" @click="confirmDelete()" />
+                </div>
             </div>
         </div>
 
-        <!-- <ModalWindow @close-modal="closeModal" :isVisible="isModalVisible" :deleteOneUser="(modalDelete as string "
-            :deleteManyUsers="(modalDeleteMany as string[])" :updateOneUser="(modalUpdate as string)" /> -->
+
     </Container>
 </template>
 
@@ -331,13 +334,14 @@ import Schedule from '@/components/generic/Schedule.vue';
 
 import margotRobbie from "../../img/MargotRobbie.jpg"
 import { LifeBuoyIcon, UserCircle2, Cross, ChevronDown } from 'lucide-vue-next'
-import { ref, watch } from 'vue';
+import { ref, watch, defineEmits } from 'vue';
 import { User } from 'lucide-vue-next';
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import useFirebase from '@/composables/useFirebase'
 import { GET_USER_BY_UID, GET_USERS } from '@/graphql/user.query'
 import { ALL_MONTHS } from '@/graphql/month.query'
-import { ADD_POST } from '@/graphql/post.mutation'
+import { ADD_POST, DELETE_ALL_POSTEN } from '@/graphql/post.mutation'
+import { DELETE_ALL_MONTHS } from '@/graphql/month.mutation'
 import { ALL_POSTEN } from '@/graphql/post.query'
 import router from '@/router'
 import type { Iuser } from '@/interfaces/user.interface';
@@ -393,6 +397,12 @@ export default {
         ModalWindow
     },
 
+    methods: {
+        openModal(monthsId: string[], postenId: string[]) {
+            this.$emit('show-modal', { months: monthsId, posten: postenId })
+        }
+    },
+
     setup() {
 
         // Firebase
@@ -405,6 +415,7 @@ export default {
         const Post = ref<number>(1);
         const selectedMonth = ref('juni');
         const Role = ref<number>(1);
+        const confirmation = ref(false);
 
         // Guery's en mutations
         const { result: months, error: monthsError } = useQuery(ALL_MONTHS)
@@ -412,6 +423,9 @@ export default {
         const { mutate: addPost } = useMutation(ADD_POST)
         const { result: posten, error: postenError } = useQuery(ALL_POSTEN)
 
+        // Mutations
+        const { mutate: deleteAllMonths } = useMutation(DELETE_ALL_MONTHS)
+        const { mutate: deleteAllPosten } = useMutation(DELETE_ALL_POSTEN)
 
         // Constanten voor het maken van de planning
         const availability = ref<IAvalability[]>([])
@@ -424,7 +438,6 @@ export default {
         const OfficialSchedule = ref<IAvalability[]>([]);
 
         // Watch 
-
         watch([users, months, posten], ([usersValue, monthsValue, postenValue]) => {
             if (usersValue && monthsValue && postenValue) {
                 const { users: ArrayUsers } = usersValue;
@@ -440,7 +453,6 @@ export default {
 
             }
         })
-
 
         // Functie wordt uitgevoerd als de gebruiker niet de juiste rechten heeft
         const acces = (() => {
@@ -575,11 +587,10 @@ export default {
             }
         };
 
-        const isPostField = (field: string): field is keyof Ipost => {
-            // Controleer of de veldnaam overeenkomt met een veld in Ipost
-            return ['id', 'numberPost', 'uidRedderA', 'uidRedderB', 'uidRedderC', 'uidRedderD', 'uidRedderE', 'uidRedderF', 'uidRedderG', 'uidRedderH', 'uidRedderI'].includes(field);
-        };
-
+        // const isPostField = (field: string): field is keyof Ipost => {
+        //     // Controleer of de veldnaam overeenkomt met een veld in Ipost
+        //     return ['id', 'numberPost', 'uidRedderA', 'uidRedderB', 'uidRedderC', 'uidRedderD', 'uidRedderE', 'uidRedderF', 'uidRedderG', 'uidRedderH', 'uidRedderI'].includes(field);
+        // };
 
         const processDataOfficialplanning = (users: Iuser[], months: IMonth[], posten: Ipost[]) => {
             if (users && months && posten) {
@@ -621,44 +632,33 @@ export default {
             }
         };
 
-
-        // variabelen die ik kan meegeven aan de modalwindow
-        const modalDelete = ref<string | null>()
-        const modalDeleteMany = ref<string[] | null>()
-        const modalUpdate = ref<string | null>()
-        // Het modal venster is standaard niet zichtbaar
-        const isModalVisible = ref(false)
-
-
-
-        // const showModal = (: string[]}) => {
-        //     // Controleer of er een report of id beschikbaar is
-        //     if (options.ids) {
-        //         isModalVisible.value = true
-        //         modalDeleteMany.value = options.ids;
-        //         console.log('modalDeleteMany', modalDeleteMany.value);
-        //     } 
-        // }
-
-
-        const closeModal = () => {
-            isModalVisible.value = false
-            modalDelete.value = null
-            modalDeleteMany.value = null
+        const confirmDelete = () => {
+            confirmation.value = true;
         }
-
-
-        const HandleDeletePlanning = (() => {
-
+        const cancelDelete = () => {
+            confirmation.value = false;
+        }
+        const handleDelete = () => {
             const monthUids = monthList.value.map(month => month.uid);
             const postids = postenList.value.map(post => post.id);
-            console.log('Dit zijn de MONTH ids', monthUids)
-            console.log('----------------------------------------------')
-            console.log('Dit zijn de POST ids', postids)
-
-        })
 
 
+            // Verwijder zowel maanden als posten en herlaad de pagina na voltooiing
+            Promise.all([
+                deleteAllMonths({ uids: monthUids }),
+                deleteAllPosten({ ids: postids }),
+            ])
+                .then(() => {
+                    console.log('Maanden en posten verwijderd');
+                    confirmation.value = false;
+                    // Herlaad de pagina
+                    window.location.reload();
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+
+        }
 
 
         return {
@@ -672,7 +672,10 @@ export default {
             handleShifts,
             postenList,
             OfficialSchedule,
-            HandleDeletePlanning,
+            handleDelete,
+            confirmDelete,
+            cancelDelete,
+            confirmation,
         }
     }
 }
