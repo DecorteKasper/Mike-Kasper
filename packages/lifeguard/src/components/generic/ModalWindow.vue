@@ -21,14 +21,35 @@
                 <p class="font-lato text-xs text-greenx">{{ localTaskData.createdAt }}</p>
             </div> -->
 
-            <div v-if="localReportData">
-                <!-- Nog te bespreken met Kasper wat we allemaal zullen terug geven van dat -->
-                <div class="flex items-center justify-between">
-                    <h1 class="mb-8 font-lato font-bold text-xl text-greenx">Verslag post {{ localReportData.reddersPost }}
-                    </h1>
-                    <h2 class="font-lato text-lg mb-8 leading-6 text-grey">{{ formatDate(localReportData.createdAt) }}</h2>
-                </div>
-            </div>
+            <div v-if="localReportData" class="mb-8">
+                    <!-- Nog te bespreken met Kasper wat we allemaal zullen terug geven van dat -->
+                    <div class="flex items-center justify-between">
+                        <h1 class="mb-8 font-lato font-bold text-xl text-greenx">Verslag post {{ localReportData.reddersPost }}</h1>
+                        <h2 class="font-lato text-lg mb-8 leading-6 text-grey">{{ formatDate(localReportData.createdAt) }}</h2>
+                    </div>
+                    <div>
+                        <p class="font-bold">Aanwezigen:</p>
+                        <ul class="list-disc ml-6">
+                            <li v-for="attendee in localReportData.aanwezigen" :key="attendee">{{ attendee }}</li>
+                        </ul>
+                    </div>
+                    <div v-if="localReportData.textOefening" class="mt-4">
+                        <p class="font-bold">Oefeningen:</p>
+                        <p class="ml-3">{{ localReportData.textOefening }} </p>
+                    </div>
+                    <div v-if="localReportData.textInterventie" class="mt-4">
+                            <p class="font-bold">Interventie:</p>
+                            <p class="ml-3">{{ localReportData.textInterventie }} </p>
+                    </div>  
+                    <div v-if="localReportData.textMateriaal" class="mt-4">
+                            <p class="font-bold">Materiaal:</p>
+                            <p class="ml-3">{{ localReportData.textMateriaal }} </p>
+                    </div>
+                    <div v-if="localReportData.extraInfo" class="mt-4">
+                                <p class="font-bold">Extra info:</p>
+                                <p class="ml-3">{{ localReportData.extraInfo }} </p>
+                    </div>
+            </div> 
             <!-- Delete one -->
             <div class="flex flex-col">
                 <div>
