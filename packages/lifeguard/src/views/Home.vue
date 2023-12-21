@@ -4,27 +4,32 @@
     <Acces />
   </Container>
   <Container v-if="user.userByUid.accessPlatform">
-    <h1 class="text-3xl font-lato tracking-wide mb-6">Welkom, <span class="font-lato font-bold">{{ user.userByUid.name
-    }} {{ user.userByUid.surname }}
-      </span>
-    </h1>
-    <div class="flex gap-10">
-      <Schedule />
-      <Holidays />
+    <div v-if="activeUserRole === 300">
+         <h1 class="text-3xl font-lato tracking-wide mb-6">Welkom, <span class="font-lato font-bold">{{ user.userByUid.name
+            }} {{ user.userByUid.surname }}
+            </span>
+          </h1>
+          <div class="flex gap-10">
+            <Schedule />
+            <Holidays />
+          </div>
+          <div class="my-10">
+            <Tasks @show-modal="showModal" v-if="sortedTodos.length > 0" :todoData="sortedTodos" />
+          </div>
+          <div>
+            <ModalWindow @close-modal="closeModal" :isVisible="isModalVisible" :taskData="modalTaskData" />
+          </div>
     </div>
-    <div class="my-10">
-      <Tasks @show-modal="showModal" v-if="sortedTodos.length > 0" :todoData="sortedTodos" />
+    <div v-else>
+      <HomeRedder></HomeRedder>
     </div>
-    <div>
-      <ModalWindow @close-modal="closeModal" :isVisible="isModalVisible" :taskData="modalTaskData" />
-    </div>
-
   </Container>
 </template>
 
 <script lang="ts">
 import { useQuery } from '@vue/apollo-composable'
 import Container from '@/components/generic/Container.vue'
+import HomeRedder from '@/components/generic/HomeRedder.vue'
 import { GET_USER_BY_UID } from '@/graphql/user.query'
 import useFirebase from '@/composables/useFirebase'
 import { ref, watch, computed } from 'vue'
@@ -51,11 +56,12 @@ interface User {
 }
 
 export default {
-  components: { Container, Schedule, Holidays, Tasks, ModalWindow, Acces },
+  components: { Container, Schedule, Holidays, Tasks, ModalWindow, Acces, HomeRedder },
 
   setup() {
     const { firebaseUser } = useFirebase()
     const activeUser = ref<User | null>()
+    const activeUserRole = ref()
 
     const {
       loading: userLoading,
@@ -64,10 +70,22 @@ export default {
     } = useQuery(GET_USER_BY_UID, {
       uid: firebaseUser.value?.uid,
     })
-    // console.log(user.value.userByUid.accessPlatform)
 
     const { on } = UseRealtime()
     const Todos = ref<any>([])
+
+
+    //  watch(user, (Value:any) => {
+    //   console.log('Watch function triggered');
+    //    if (Value && Value.userByUid) {
+    //       console.log("Test",Value.userByUid.role);
+
+    //   }
+    // });
+    // if (user) {
+    //   activeUserRole.value = user.value?.uid
+    //   console.log("Role:", activeUserRole)
+    // }
 
 
     on('todos', (todos) => {
@@ -75,11 +93,15 @@ export default {
     })
 
 
-    // watch(user, (Value) => {
-    //   if (Value) {
-    //     activeUser.value = Value.userByUid
-    //   }
-    // })
+    watch(user, (Value) => {
+      if (Value) {
+        activeUser.value = Value.userByUid
+      }
+    })
+    if(user){
+      activeUserRole.value = user.value?.userByUid.role
+      console.log("Role:", activeUserRole.value)
+    }
 
     const sortedTodos = computed(() => {
       const todosCopy = [...Todos.value]
@@ -114,7 +136,8 @@ export default {
       showModal,
       closeModal,
       isModalVisible,
-      modalTaskData
+      modalTaskData,
+      activeUserRole,
     }
   },
 }
