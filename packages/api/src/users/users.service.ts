@@ -4,7 +4,6 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role, User } from './entities/user.entity';
 import { MongoRepository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
 
 
 @Injectable()
@@ -16,9 +15,9 @@ export class UsersService {
   ) { }
 
 
-  create(createUserInput: CreateUserInput) {
+  create(uid: string, createUserInput: CreateUserInput) {
     const user = new User()
-    user.uid = uuidv4()
+    user.uid = uid
     // user.locale = createUserInput.locale ?? 'nl'
     user.role = createUserInput.role ?? Role.REDDER
     user.name = createUserInput.name

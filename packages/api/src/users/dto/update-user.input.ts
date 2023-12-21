@@ -5,6 +5,10 @@ import { Role } from '../entities/user.entity';
 @InputType()
 export class UpdateUserInput extends PartialType(CreateUserInput) {
 
+
+    @Field(() => String, { description: 'uid of the current user' })
+  uid: string;
+
   // @Field(() => String, { description: 'First name of the current user' })
   // name?: string;
 

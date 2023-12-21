@@ -2,7 +2,6 @@ import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn } from 'typeorm';
 
 export enum Role {
-  // SUPERADMIN = 400,
   HOOFDREDDER = 300,
   REDDER = 200,
   EHBO = 100,

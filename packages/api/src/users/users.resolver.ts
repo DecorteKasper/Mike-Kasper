@@ -22,7 +22,7 @@ export class UsersResolver {
   @UseGuards(FirebaseGuard)
   @Mutation(() => User)
   createUser(@Args('createUserInput') createUserInput: CreateUserInput, @FirebaseUser() user: UserRecord,) {
-    return this.usersService.create(createUserInput);
+    return this.usersService.create(user.uid, createUserInput);
   }
 
   @UseGuards(FirebaseGuard)

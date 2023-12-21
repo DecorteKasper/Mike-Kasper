@@ -260,7 +260,7 @@ export default {
         register(newUser.name, newUser.email, newUser.password.password)
           .then(() => {
             addUser({
-              createUserInput: {
+              createUserInput: {  
                 name: newUser.name,
                 surname: newUser.surname,
                 email: newUser.email,
@@ -269,7 +269,8 @@ export default {
                 street: null,
                 numberOfHouse: null,
                 birth: null,
-                // locale: "nl",
+                status: false,
+                accessPlatform: false,
                 role: parseInt(newUser.job),
                 bathingPlace: newUser.badplaats,
               },
