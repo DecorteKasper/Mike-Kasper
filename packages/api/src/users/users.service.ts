@@ -3,8 +3,7 @@ import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role, User } from './entities/user.entity';
-import { MongoRepository, UpdateResult } from 'typeorm';
-import { ObjectId } from 'mongodb';
+import { MongoRepository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -64,7 +63,6 @@ export class UsersService {
   }
 
   findOneByUid(uid: string) {
-    const user = new User()
     return this.userRepository.findOneByOrFail({ uid })
   }
   findAll() {
@@ -96,7 +94,6 @@ export class UsersService {
       return users
     }
     return null;
-
   }
 
   // async remove(id: string) {

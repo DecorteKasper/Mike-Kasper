@@ -52,7 +52,7 @@ export class UsersResolver {
     return this.usersService.remove(id);
   }
 
-  // 
+  // verwijder al users
   @Mutation(() => [User], { nullable: true })
   async removeAllUsers(@Args('removeAll', { type: () => [String] }) id: string[]) {
     this.gateway.handleDeleteAllUsers(id)

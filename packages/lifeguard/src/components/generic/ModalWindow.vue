@@ -79,7 +79,7 @@
 
 <script lang="ts">
 import { X } from 'lucide-vue-next';
-import { ref, watch } from 'vue';
+import { ref, watch, defineProps } from 'vue';
 import type { Itask } from '@/interfaces/task.interface'
 import type { Ireport } from '@/interfaces/report.interface';
 import { useMutation, useQuery } from '@vue/apollo-composable';
@@ -134,13 +134,26 @@ export default {
         updateOneUser: {
             type: String,
             default: null
-        }
+        },
+        // Delete months en posten
+        deleteManyPosten: {
+            type: Array as () => string[],
+            default: () => []
+        },
+        deleteManyMonths: {
+            type: Array as () => string[],
+            default: () => []
+        },
+
 
     },
 
     setup(props, { emit }) {
-        // console.log('Dit is in de modalwindow')
-        // console.log(props.ReportsData)
+
+        const deleteManyMonths = ref([]);
+        const deleteManyPosten = ref([]);
+
+        console.log('Dit is de modal window', deleteManyMonths)
 
         // const localTaskData = ref<Itask>(props.taskData)
         const localReportData = ref<Ireport | null>()
@@ -156,6 +169,12 @@ export default {
         const { mutate: deleteAllReports } = useMutation(DELETE_ALL_REPORTS)
         const { mutate: deleteAllUsers } = useMutation(DELETE_ALL_USERS)
         const { mutate: updateUser } = useMutation(UPDATE_USER)
+
+
+        watch(([props.deleteManyMonths, props.deleteManyPosten]), ([monthsIds, postenIds]) => {
+            console.log('deleteManyMonths', props.deleteManyMonths)
+            console.log('deleteManyPosten', props.deleteManyPosten)
+        })
 
 
 

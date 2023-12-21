@@ -39,7 +39,6 @@ export class ReportsService {
 
   findOne(id: string) {
     if (!ObjectId.isValid(id)) throw new Error('Invalid ObjectId')
-    const obj = new ObjectId(id)
     // @ts-ignore
     return this.reportsRepository.findOne({ _id: new ObjectId(id) })
   }
@@ -67,7 +66,6 @@ export class ReportsService {
     }
     return null;
   }
-
 
   //seeding
   saveAll(reports: Report[]): Promise<Report[]> {

@@ -35,6 +35,14 @@ export class PostenResolver {
   //   return this.postenService.update(updatePostenInput.id, updatePostenInput);
   // }
 
+  // verwijder al users
+  @Mutation(() => [Posten], { nullable: true })
+  async removeAllPosten(@Args('removeAll', { type: () => [String] }) id: string[]) {
+    const posten = await this.postenService.removeAllPosten(id);
+    return posten;
+  }
+
+
   @Mutation(() => Posten)
   removePosten(@Args('id', { type: () => String }) id: string) {
     return this.postenService.remove(id);

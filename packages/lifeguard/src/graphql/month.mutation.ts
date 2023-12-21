@@ -8,3 +8,11 @@ mutation createMonth($createMonthInput: CreateMonthInput!) {
   }
 }
 `
+
+export const DELETE_ALL_MONTHS = gql`
+mutation RemoveAllMonths($uids: [String!]!) {
+  removeAllMonths(removeAll: $uids) {
+    uid
+  }
+}
+`

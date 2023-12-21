@@ -16,3 +16,11 @@ mutation createPosten($createPostenInput: CreatePostenInput!) {
   }
 }
 `
+
+export const DELETE_ALL_POSTEN = gql`
+mutation RemoveAllPosten($ids: [String!]!) {
+  removeAllPosten(removeAll: $ids) {
+    numberPost
+  }
+}
+`
