@@ -345,6 +345,7 @@ export default defineComponent({
       currentUserSeasideTown.value = user.value?.userByUid.bathingPlace;
     }
 
+    console.log("Current user seaside town: ", currentUserSeasideTown.value);
 
 
     onMounted(() => {
