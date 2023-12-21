@@ -132,7 +132,7 @@ export default {
                         post.uidRedderF === newUid ||
                         post.uidRedderG === newUid
                     ) {
-                        currentUserPost.value = post.numberPost;
+                        currentUserPost.value = post.numberPost ?? 0;
                     }
                 });
             }
