@@ -2,7 +2,7 @@
     <Container v-if="accesUser.userByUid.accessPlatform">
 
         <div class="w-full bg-dark_grey mb-5 rounded-inputFieldRadius">
-            <div class="px-6 w-1/3">
+            <div class="px-6 w-full md:w-1/3">
                 <div class="flex justify-between items-center">
                     <p class="font-lato font-bold text-black"> Laat redders beschikbare maanden invullen:</p>
                     <div class="">
@@ -21,10 +21,10 @@
 
         <!-- Dit is de frontend om de planning te maken -->
         <div v-if="OfficialSchedule.length <= 0">
-            <div class="flex gap-12 mb-10">
+            <div class="flex flex-col md:flex-row gap-12 mb-10 items-center">
 
                 <!-- Left side -->
-                <div class="w-1/2 shadow-cardShadow rounded-cardRadius p-14 h-116 my-custom-scrollbar overflow-auto">
+                <div class="w-full md:w-1/2 shadow-cardShadow rounded-cardRadius p-14 h-116 my-custom-scrollbar overflow-auto">
                     <!-- Header schedule -->
                     <div class="flex flex-wrap justify-between">
                         <h2 class="font-lato font-semibold text-lg"> {{ selectedMonth }}</h2>
@@ -137,7 +137,7 @@
 
 
                 <!-- Right side -->
-                <div class="w-1/2 shadow-cardShadow rounded-cardRadius p-14 h-116 my-custom-scrollbar overflow-auto">
+                <div class="w-full md:w-1/2 shadow-cardShadow rounded-cardRadius p-14 h-116 my-custom-scrollbar overflow-auto">
                     <!-- Header schedule -->
                     <div class="flex flex-wrap justify-between">
                         <div class="relative">

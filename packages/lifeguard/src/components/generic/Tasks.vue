@@ -27,10 +27,10 @@
         <table class="w-full">
             <tr class="border-b-2 border-dark_green py-4">
                 <td class="px-6"></td>
-                <td class="px-6">Post</td>
-                <td class="px-6">Datum</td>
-                <td class="px-6">Beschrijving</td>
-                <td class="px-6">Status</td>
+                <td class="px-0 md:px-6">Post</td>
+                <td class="px-0 md:px-6 invisible md:visible">Datum</td>
+                <td class="px-0 md:px-6 invisible md:visible">Beschrijving</td>
+                <td class="px-0 md:px-6">Status</td>
             </tr>
             <tr v-for="(task, index) in filteredTasks"
                 :class="index % 2 === 0 ? 'border-l-4 border-dark_green h-12' : 'border-l-4 border-red h-12 bg-dark_grey'">
@@ -49,11 +49,11 @@
                     </label>
                 </td>
                 <td class="">Post {{ task.post }}</td>
-                <td class="">{{ formatDate(task.createdAt) }}</td>
-                <td class="flex-col flex-wrap">{{ truncateDescription(task.description, 80) }}</td>
+                <td class="invisible md:visible">{{ formatDate(task.createdAt) }}</td>
+                <td class="flex-col flex-wrap invisible md:visible">{{ truncateDescription(task.description, 80) }}</td>
                 <td class=""> {{ task.status === false ? 'Incompleted' : 'Completed' }}</td>
-                <td class="">
-                    <button class="mr-6" @click="deleteTask(task.id)">
+                <td class="flex mt-2">
+                    <button class="mr-0 md:mr-6" @click="deleteTask(task.id)">
                         <Trash2 class="w-7 h-7 text-red" />
                     </button>
                     <button @click="openModal(task)">
