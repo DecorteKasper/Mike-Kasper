@@ -6,6 +6,7 @@ mutation updateCheck($updateCheckInput: UpdateCheckInput!) {
     id
     checkMonths
     checkHolidays
+    accessPlatform
   }
 }
 `
