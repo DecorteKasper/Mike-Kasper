@@ -49,6 +49,8 @@ export class SeedService {
       u.numberOfHouse = user.numberOfHouse
       u.birth = user.birth
       u.role = user.role
+      u.accessPlatform = user.accessPlatform
+      u.status = user.status
       u.bathingPlace = user.bathingPlace
       u.photoURL = user.photoURL
       u.city = user.city
