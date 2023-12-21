@@ -30,19 +30,22 @@ Platform two is designed to provide lifeguards with the information and tools th
   gh repo clone DecorteKasper/Mike-Kasper
 ```
 2. Navigate to the project directory
-3. Install project dependencies in the pwa and lifeguard folders with `npm i`
+3. Install project dependencies in the api and lifeguard folders with `npm i`
 <br/>
 
 ### Database Configuration
 1. Run the api folder `npm run dev:api`
 2. Open the app "MongoDB Compass"
 3. Make a new connection with the URI `mongodb://localhost:27027`
-4. Go to the api folder `cd packages/api`
+4. Type in the `cd packages/api` to go to the api folder
 5. Run following command to fill the database:
 ```
   npx nestjs-command seed:database:all
 ```
+> [!CAUTION]
+> This will create already existing posts and holidays for the users --> the planning page to create posten will not be usable on the platform for the head lifeguard (just be able to see the overview)
 6. Stop the running api folder `ctrl+c`
+7. Go back to the root folder `cd ../..`
 <br/>
 
 ### Running the project
