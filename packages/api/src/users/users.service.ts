@@ -47,8 +47,8 @@ export class UsersService {
     currentUser.birthPlace = updateUserInput.birthplace ?? currentUser.birthPlace
 
     currentUser.bathingPlace = updateUserInput.bathingPlace ?? currentUser.bathingPlace
-    currentUser.accessPlatform = updateUserInput.accessPlatform ?? false
-    currentUser.status = updateUserInput.status ?? false
+    currentUser.accessPlatform = updateUserInput.accessPlatform ?? currentUser.accessPlatform
+    currentUser.status = updateUserInput.status ?? currentUser.status
 
     currentUser.street = updateUserInput.street ?? currentUser.street
     currentUser.city = updateUserInput.city ?? currentUser.city

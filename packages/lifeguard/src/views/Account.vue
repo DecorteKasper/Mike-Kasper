@@ -32,11 +32,11 @@
 
         <div class="border-greenx border-b-2 mb-12">
           <div>
-            <img class="w-32 w-32 rounded-full bg-red mb-6" v-if="selectedFile" :src="imageUrl" alt="Uploaded Image" />
-            <input id="fileInput" type="file" @change="handleFileUpload" class="hidden" />
+            <img class="w-32 w-32 rounded-full bg-red mb-6" v-if="changeUser.photoUrl" :src="changeUser.photoUrl"
+              alt="Uploaded Image" />
+            <input id="fileInput" type="file" class="hidden" />
             <label for="fileInput"
-              class="px-4 py-3 rounded-buttonRadius bg-greenx text-sm font-lato text-white hover:bg-dark_green focus:outline-none focus-visible:bg-dark_green"
-              id="fileInput">
+              class="px-4 py-3 rounded-buttonRadius bg-greenx text-sm font-lato text-white hover:bg-dark_green focus:outline-none focus-visible:bg-dark_green">
               Upload foto
             </label>
           </div>
@@ -58,7 +58,7 @@
               <!-- <span class="text-red font-lato text-xs" v-if="v$.name.$error"> {{ v$.name.$errors[0].$message }}</span> -->
             </div>
             <div class="mr-6">
-               <label for="surname" class="text-sm mt-6 font-lato block mb-4 text-dark_grey2">
+              <label for="surname" class="text-sm mt-6 font-lato block mb-4 text-dark_grey2">
                 Achternaam
               </label>
               <input type="text" name="surname" id="surname" placeholder="naam" v-model="changeUser.surname"
@@ -233,6 +233,7 @@ import { useMutation, useQuery } from '@vue/apollo-composable'
 import { UPDATE_USER } from '@/graphql/user.mutation'
 import type { Iuser } from '@/interfaces/user.interface'
 import router from '@/router'
+import axios from 'axios';
 // import useCustomUser from '@/composables/useCustomUser'
 
 export default {
@@ -258,17 +259,6 @@ export default {
     },
   },
 
-  methods: {
-    handleFileUpload(event: Event) {
-      const inputElement = event.target as HTMLInputElement;
-      // console.log('inputElement.files')
-      // console.log(inputElement.files);
-      if (inputElement.files && inputElement.files[0]) {
-        this.selectedFile = inputElement.files[0];
-      }
-    },
-  },
-
   setup() {
     // const { customUser } = useCustomUser();
     const selectedForm = ref(1); // Houdt bij welk formulier moet worden weergegeven, standaard ingesteld op Form 1
@@ -282,17 +272,17 @@ export default {
       uid: firebaseUser.value?.uid,
     })
     const changeUser = ref({
-      photoUrl: '',
-      name: '',
-      surname: '',
-      email: '',
-      phoneNumber: '',
-      birth: '',
-      birthplace: '',
-      street: '',
-      numberOfHouse: '',
-      city: '',
-      zipCode: ''
+      photoUrl: null,
+      name: null,
+      surname: null,
+      email: null,
+      phoneNumber: null,
+      birth: null,
+      birthplace: null,
+      street: null,
+      numberOfHouse: null,
+      city: null,
+      zipCode: null
     });
 
     // Wordt gebruikt in HandleNewPassword
@@ -329,6 +319,7 @@ export default {
 
     const handleAccount = () => {
       const updateUserInput = {
+        uid: firebaseUser.value?.uid,
         photoURL: changeUser.value.photoUrl,
         name: changeUser.value.name,
         surname: changeUser.value.surname,

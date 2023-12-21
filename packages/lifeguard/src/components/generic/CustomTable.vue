@@ -33,7 +33,7 @@
                 </td>
                 <td v-if="ReportsData.length > 0" class="font-lato font-semibold text-sm py-4">Post</td>
                 <td v-if="ReportsData.length > 0" class="font-lato font-semibold text-sm py-4">Datum</td>
-                <td v-if="ReportsData.length > 0" class="font-lato font-semibold text-sm py-4">Ingevuld</td>
+                <td v-if="ReportsData.length > 0" class="font-lato font-semibold text-sm py-4"></td>
                 <td v-if="jobsData.length > 0 || sollisData.length > 0" class="font-lato font-semibold text-sm py-4">
                     Voornaam</td>
                 <td v-if="jobsData.length > 0 || sollisData.length > 0" class="font-lato font-semibold text-sm py-4">Naam
@@ -60,6 +60,7 @@
                     <label class="checkbox-status">
                         <input v-if="ReportsData.length > 0" type="checkbox" name="status" class="hidden"
                             v-model="item.status" @click="getItemIds(item.id)">
+
                         <input v-if="sollisData.length > 0 || jobsData.length > 0" type="checkbox" name="status"
                             class="hidden" v-model="item.status" @click="getItemIds(item.uid)">
                         <div :class="{
@@ -73,9 +74,6 @@
                     </label>
                 </td>
                 <!-- Reports -->
-                <!-- <td v-if="ReportsData.length > 0 && 'title' in item" class="font-lato text-sm">{{ item.title }}</td>
-                <td v-if="ReportsData.length > 0 && 'date' in item" class="font-lato text-sm">{{ item.date }}</td>
-                <td v-if="ReportsData.length > 0 && 'description' in item" class="font-lato text-sm">{{ item.description }} -->
                 <td v-if="ReportsData.length > 0 && 'reddersPost' in item" class="font-lato text-sm">Post {{
                     item.reddersPost
                 }}
@@ -262,6 +260,9 @@ export default {
         const itemIds = ref<string[]>([]);
 
         const getItemIds = (id: string) => {
+
+            console.log('id', id)
+
             const index = itemIds.value.indexOf(id);
 
             if (index === -1) {
@@ -297,7 +298,6 @@ export default {
         watch(() => props.deleteEvent, (newValue) => {
             reports.value = reports.value.filter(report => report.id !== newValue);
         });
-
         watch(() => props.deleteEvents, (newValue) => {
             reports.value = reports.value.filter(report => !newValue.includes(report.id));
         });

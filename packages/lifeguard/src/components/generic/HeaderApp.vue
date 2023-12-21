@@ -62,58 +62,80 @@
 
           <!-- HOME PAGINA HOOFDREDDER -->
           <li v-if="userData?.role === 300">
-            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/">Home</RouterLink>
+            <RouterLink class="text-black font-lato text-base font-semibold" :class="{ 'text-red': isRouteActive('/') }"
+              to="/">
+              <span class="hover:text-red transition-all duration-150">Home</span>
+            </RouterLink>
           </li>
+
 
           <!-- HOME PAGINA REDDER -->
           <li v-if="userData?.role === 200">
-            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/redder">Home</RouterLink>
+            <RouterLink class="text-black font-lato text-base font-semibold"
+              :class="{ 'text-red': isRouteActive('/redder') }" to="/redder">
+              <span class="hover:text-red transition-all duration-150">Home</span>
+            </RouterLink>
           </li>
 
           <!-- PLANNING PAGINA HOOFDREDDER -->
           <li v-if="userData?.role === 300">
-            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/schedule">Planning</RouterLink>
+            <RouterLink class="text-black font-lato text-base font-semibold"
+              :class="{ 'text-red': isRouteActive('/schedule') }" to="/schedule">
+              <span class="hover:text-red transition-all duration-150">Planning</span>
+            </RouterLink>
           </li>
 
           <!-- PLANNING PAGINA REDDER + CHECKS -->
           <li v-if="userData?.role === 200 && checkMonths && !checkHolidays">
-            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/redder/months">Keuze maanden</RouterLink>
+            <RouterLink class="text-black font-lato text-base font-semibold"
+              :class="{ 'text-red': isRouteActive('/redder/months') }" to="/redder/months">
+              <span class="hover:text-red transition-all duration-150">Keuze maanden</span>
+            </RouterLink>
+
           </li>
           <li v-if="userData?.role === 200 && checkHolidays && !checkMonths">
-            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/redder/chooseschedule">Keuze verlofdagen</RouterLink>
+            <RouterLink class="text-black font-lato text-base font-semibold"
+              :class="{ 'text-red': isRouteActive('/redder/chooseschedule') }" to="/redder/chooseschedule">
+              <span class="hover:text-red transition-all duration-150">Keuze verlofdagen</span>
+            </RouterLink>
           </li>
           <li v-if="userData?.role === 200 && checkHolidays && checkMonths">
-            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/redder/schedule">Planning</RouterLink>
+            <RouterLink class="text-black font-lato text-base font-semibold"
+              :class="{ 'text-red': isRouteActive('/redder/schedule') }" to="/redder/schedule">
+              <span class="hover:text-red transition-all duration-150">Planning</span>
+            </RouterLink>
           </li>
 
           <!-- VERSLAGEN PAGINA HOOFDREDDER -->
           <li v-if="userData?.role === 300">
-            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/reports">Verslagen</RouterLink>
+            <RouterLink class="text-black font-lato text-base font-semibold"
+              :class="{ 'text-red': isRouteActive('/reports') }" to="/reports">
+              <span class="hover:text-red transition-all duration-150">Verslagen</span>
+            </RouterLink>
           </li>
 
           <!-- VERSLAGEN PAGINA REDDER -->
           <li v-if="userData?.role === 200 && checkHolidays && checkMonths">
-            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/redder/report">Dagverslag</RouterLink>
+            <RouterLink class="text-black font-lato text-base font-semibold"
+              :class="{ 'text-red': isRouteActive('/redder/report') }" to="/redder/report">
+              <span class="hover:text-red transition-all duration-150">Dagverslag</span>
+            </RouterLink>
           </li>
 
           <!-- SOS PAGINA -->
           <li>
-            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/sos">SOS</RouterLink>
+            <RouterLink class="text-black font-lato text-base font-semibold "
+              :class="{ 'text-red': isRouteActive('/sos') }" to="/sos">
+              <span class="hover:text-red transition-all duration-150">SOS</span>
+            </RouterLink>
           </li>
 
           <!-- JOBS PAGINA HOOFDREDDER-->
           <li v-if="userData?.role === 300">
-            <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-              active-class="text-dark_green font-semibold" to="/jobs">Jobs</RouterLink>
+            <RouterLink class="text-black font-lato text-base font-semibold"
+              :class="{ 'text-red': isRouteActive('/jobs') }" to="/jobs">
+              <span class="hover:text-red transition-all duration-150">Jobs</span>
+            </RouterLink>
           </li>
 
 
@@ -131,12 +153,14 @@
             </button>
             <!-- Submenu -->
             <div
-              class="bg-dark_grey top-18 p-6 rounded-inputFieldRadius w-full absolute transition-all delay-50 origin-top ease-in-out"
+              class="bg-dark_grey top-18 p-6 rounded-inputFieldRadius w-full absolute transition-all delay-50 origin-top ease-in-out z-50"
               :class="{ 'scale-y-0': !isSubmenuOpen, 'scale-y-100': isSubmenuOpen }">
               <ul class=" flex flex-col gap-2">
                 <li>
-                  <RouterLink class="text-black font-lato text-xs hover:text-dark_green"
-                    active-class="text-dark_green font-semibold" to="/account">Account</RouterLink>
+                  <RouterLink class="text-black font-lato text-xs" :class="{ 'text-red': isRouteActive('/account') }"
+                    to="/account">
+                    <span class="hover:text-red transition-all duration-150">Account</span>
+                  </RouterLink>
                 </li>
                 <li>
                   <button @click="logoutUser"
@@ -163,64 +187,86 @@
       </button>
       <ul class="flex flex-col gap-4">
         <li v-if="userData?.role === 300">
-              <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-                active-class="text-dark_green font-semibold" to="/">Home</RouterLink>
-            </li>
+          <RouterLink class="text-black font-lato text-base font-semibold" :class="{ 'text-red': isRouteActive('/') }"
+            to="/">
+            <span class="hover:text-red transition-all duration-150">Home</span>
+          </RouterLink>
+        </li>
 
-            <!-- HOME PAGINA REDDER -->
-            <li v-if="userData?.role === 200">
-              <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-                active-class="text-dark_green font-semibold" to="/redder">Home</RouterLink>
-            </li>
+        <!-- HOME PAGINA REDDER -->
+        <li v-if="userData?.role === 200">
+          <RouterLink class="text-black font-lato text-base font-semibold"
+            :class="{ 'text-red': isRouteActive('/redder') }" to="/redder">
+            <span class="hover:text-red transition-all duration-150">Home</span>
+          </RouterLink>
+        </li>
 
-            <!-- PLANNING PAGINA HOOFDREDDER -->
-            <li v-if="userData?.role === 300">
-              <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-                active-class="text-dark_green font-semibold" to="/schedule">Planning</RouterLink>
-            </li>
+        <!-- PLANNING PAGINA HOOFDREDDER -->
+        <li v-if="userData?.role === 300">
+          <RouterLink class="text-black font-lato text-base font-semibold"
+            :class="{ 'text-red': isRouteActive('/schedule') }" to="/schedule">
+            <span class="hover:text-red transition-all duration-150">Planning</span>
+          </RouterLink>
+        </li>
 
-            <!-- PLANNING PAGINA REDDER + CHECKS -->
-            <li v-if="userData?.role === 200 && checkMonths && !checkHolidays">
-              <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-                active-class="text-dark_green font-semibold" to="/redder/months">Keuze maanden</RouterLink>
-            </li>
-            <li v-if="userData?.role === 200 && checkHolidays && !checkMonths">
-              <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-                active-class="text-dark_green font-semibold" to="/redder/chooseschedule">Keuze verlofdagen</RouterLink>
-            </li>
-            <li v-if="userData?.role === 200 && checkHolidays && checkMonths">
-              <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-                active-class="text-dark_green font-semibold" to="/redder/schedule">Planning</RouterLink>
-            </li>
+        <!-- PLANNING PAGINA REDDER + CHECKS -->
+        <li v-if="userData?.role === 200 && checkMonths && !checkHolidays">
+          <RouterLink class="text-black font-lato text-base font-semibold "
+            :class="{ 'text-red': isRouteActive('/redder/months') }" to="/redder/months">
+            <span class="hover:text-red transition-all duration-150">Keuze maanden</span>
+          </RouterLink>
+        </li>
+        <li v-if="userData?.role === 200 && checkHolidays && !checkMonths">
+          <RouterLink class="text-black font-lato text-base font-semibold"
+            :class="{ 'text-red': isRouteActive('/redder/chooseschedule') }" to="/redder/chooseschedule">
+            <span class="hover:text-red transition-all duration-150">Keuze verlofdagen</span>
+          </RouterLink>
+        </li>
+        <li v-if="userData?.role === 200 && checkHolidays && checkMonths">
+          <RouterLink class="text-black font-lato text-base font-semibold"
+            :class="{ 'text-red': isRouteActive('/redder/schedule') }" to="/redder/schedule">
+            <span class="hover:text-red transition-all duration-150">Planing</span>
+          </RouterLink>
+        </li>
 
-            <!-- VERSLAGEN PAGINA HOOFDREDDER -->
-            <li v-if="userData?.role === 300">
-              <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-                active-class="text-dark_green font-semibold" to="/reports">Verslagen</RouterLink>
-            </li>
+        <!-- VERSLAGEN PAGINA HOOFDREDDER -->
+        <li v-if="userData?.role === 300">
+          <RouterLink class="text-black font-lato text-base font-semibold"
+            :class="{ 'text-red': isRouteActive('/reports') }" to="/reports">
+            <span class="hover:text-red transition-all duration-150">Verslagen</span>
+          </RouterLink>
+        </li>
 
-            <!-- VERSLAGEN PAGINA REDDER -->
-            <li v-if="userData?.role === 200">
-              <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-                active-class="text-dark_green font-semibold" to="/redder/report">Dagverslag</RouterLink>
-            </li>
+        <!-- VERSLAGEN PAGINA REDDER -->
+        <li v-if="userData?.role === 200">
+          <RouterLink class="text-black font-lato text-base font-semibold"
+            :class="{ 'text-red': isRouteActive('/redder/report') }" to="/redder/report">
+            <span class="hover:text-red transition-all duration-150">Dagverslag</span>
+          </RouterLink>
+        </li>
 
-            <!-- SOS PAGINA -->
-            <li>
-              <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-                active-class="text-dark_green font-semibold" to="/sos">SOS</RouterLink>
-            </li>
+        <!-- SOS PAGINA -->
+        <li>
+          <RouterLink class="text-black font-lato text-base font-semibold " :class="{ 'text-red': isRouteActive('/sos') }"
+            to="/sos">
+            <span class="hover:text-red transition-all duration-150">SOS</span>
+          </RouterLink>
+        </li>
 
-            <!-- JOBS PAGINA HOOFDREDDER-->
-            <li v-if="userData?.role === 300">
-              <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-                active-class="text-dark_green font-semibold" to="/jobs">Jobs</RouterLink>
-            </li>
+        <!-- JOBS PAGINA HOOFDREDDER-->
+        <li v-if="userData?.role === 300">
+          <RouterLink class="text-black font-lato text-base font-semibold "
+            :class="{ 'text-red': isRouteActive('/jobs') }" to="/jobs">
+            <span class="hover:text-red transition-all duration-150">Jobs</span>
+          </RouterLink>
+        </li>
 
-            <li>
-              <RouterLink class="text-black font-lato text-base font-semibold hover:text-dark_green"
-                      active-class="text-dark_green font-semibold" to="/account">Account</RouterLink>
-            </li>
+        <li>
+          <RouterLink class="text-black font-lato text-base font-semibold "
+            :class="{ 'text-red': isRouteActive('/account') }" to="/account">
+            <span class="hover:text-red transition-all duration-150">Account</span>
+          </RouterLink>
+        </li>
       </ul>
     </div>
 
@@ -238,7 +284,7 @@ import { ref, watch } from 'vue'
 import { MenuIcon, XIcon } from 'lucide-vue-next';
 
 import { UserCircle2 } from 'lucide-vue-next'
-import { useRouter } from 'vue-router'
+import { useRouter, RouterLink } from 'vue-router'
 
 //Checks
 import { ALL_CHECKS } from '@/graphql/check.query'
@@ -274,7 +320,13 @@ export default {
       if (submenu && !submenu.contains(event.target)) {
         this.isSubmenuOpen = false;
       }
-    }
+    },
+
+
+    isRouteActive(route) {
+      return this.$route.path === route;
+    },
+
   },
 
   computed: {
@@ -343,6 +395,9 @@ export default {
   },
 }
 </script>
+
+
+
 
 
 
