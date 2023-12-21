@@ -333,7 +333,7 @@ import Schedule from '@/components/generic/Schedule.vue';
 
 import margotRobbie from "../../img/MargotRobbie.jpg"
 import { LifeBuoyIcon, UserCircle2, Cross, ChevronDown } from 'lucide-vue-next'
-import { ref, watch, defineEmits } from 'vue';
+import { ref, watch } from 'vue';
 import { User } from 'lucide-vue-next';
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import useFirebase from '@/composables/useFirebase'
@@ -532,8 +532,6 @@ export default {
         // Functie om de planning op te slaan
         const handleShifts = () => {
             const postUids: Record<number, string[]> = {};
-
-
 
             // Itereer over shifts.value om de uids per post te groeperen
             for (let i = 0; i < shifts.value.length; i++) {
