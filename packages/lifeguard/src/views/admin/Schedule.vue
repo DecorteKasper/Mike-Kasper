@@ -333,7 +333,7 @@ import Schedule from '@/components/generic/Schedule.vue';
 
 import margotRobbie from "../../img/MargotRobbie.jpg"
 import { LifeBuoyIcon, UserCircle2, Cross, ChevronDown } from 'lucide-vue-next'
-import { ref, watch, defineEmits } from 'vue';
+import { ref, watch } from 'vue';
 import { User } from 'lucide-vue-next';
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import useFirebase from '@/composables/useFirebase'
@@ -348,39 +348,9 @@ import PrimaryButton from '@/components/generic/PrimaryButton.vue';
 import SecondaryButton from '@/components/generic/SecondaryButton.vue';
 import type { Ipost } from '@/interfaces/post.interface';
 import ModalWindow from '@/components/generic/ModalWindow.vue';
+import type { Imonth } from '@/interfaces/month.interface';
 
 
-
-interface IAvalability {
-    uid: string;
-    role: number | null;
-    name: string | null;
-    surname: string | null;
-    photoURL: string | null;
-    post: number | null;
-    months: string[] | [];
-}
-
-interface IMonth {
-    id: string;
-    uid: string;
-    months: string;
-}
-
-interface IPost {
-    id: string;
-    numberPost: number | null;
-    uidRedderA: string | null
-    uidRedderB: string | null
-    uidRedderC: string | null
-    uidRedderD: string | null
-    uidRedderE: string | null
-    uidRedderF: string | null
-    uidRedderG: string | null
-    uidRedderH: string | null
-    uidRedderI: string | null
-
-}
 
 export default {
 
@@ -421,14 +391,14 @@ export default {
         const { mutate: addPost } = useMutation(ADD_POST)
 
         // Constanten voor het maken van de planning
-        const availability = ref<IAvalability[]>([])
-        const shifts = ref<IAvalability[]>([]);
+        const availability = ref<Iavalability[]>([])
+        const shifts = ref<Iavalability[]>([]);
 
         // Constanten voor de officieële planning
         // const usersList = ref<Iuser[]>([]);
-        const monthList = ref<IMonth[]>([]);
-        const postenList = ref<IPost[]>([]);
-        const OfficialSchedule = ref<IAvalability[]>([]);
+        const monthList = ref<Imonth[]>([]);
+        const postenList = ref<Ipost[]>([]);
+        const OfficialSchedule = ref<Iavalability[]>([]);
 
         // Watch 
         watch([users, months, posten], ([usersValue, monthsValue, postenValue]) => {
@@ -455,7 +425,7 @@ export default {
         })()
 
         // Functies om de planning te maken
-        const CheckAvailability = (ArrayUsers: Iuser[], ArrayMonths: IMonth[]) => {
+        const CheckAvailability = (ArrayUsers: Iuser[], ArrayMonths: Imonth[]) => {
             // console.log(ArrayUsers);
             // console.log(ArrayMonths);
             if (ArrayUsers.length > 0 && ArrayMonths.length > 0) {
@@ -482,11 +452,11 @@ export default {
         }
 
 
-        const moveCard = ((user: IAvalability, direction: string, currentMonth: string, post: number) => {
+        const moveCard = ((user: Iavalability, direction: string, currentMonth: string, post: number) => {
 
             // console.log('Dit is de user in moveCard function:', user.name + ' ' + user.surname + ' ' + post + ' ' + currentMonth)
 
-            let sourceArray: IAvalability[], destinationArray: IAvalability[];
+            let sourceArray: Iavalability[], destinationArray: Iavalability[];
 
             // Bepaal de bron- en doelarray op basis van de richting
             if (direction === 'left') {
@@ -532,8 +502,6 @@ export default {
         // Functie om de planning op te slaan
         const handleShifts = () => {
             const postUids: Record<number, string[]> = {};
-
-
 
             // Itereer over shifts.value om de uids per post te groeperen
             for (let i = 0; i < shifts.value.length; i++) {
@@ -585,10 +553,10 @@ export default {
         //     return ['id', 'numberPost', 'uidRedderA', 'uidRedderB', 'uidRedderC', 'uidRedderD', 'uidRedderE', 'uidRedderF', 'uidRedderG', 'uidRedderH', 'uidRedderI'].includes(field);
         // };
 
-        const processDataOfficialplanning = (users: Iuser[], months: IMonth[], posten: Ipost[]) => {
+        const processDataOfficialplanning = (users: Iuser[], months: Imonth[], posten: Ipost[]) => {
             if (users && months && posten) {
 
-                const combinedData: IAvalability[] = [];
+                const combinedData: Iavalability[] = [];
 
                 const isPostField = (field: string): field is keyof Ipost => {
                     return ['uidRedderA', 'uidRedderB', 'uidRedderC', 'uidRedderD', 'uidRedderE', 'uidRedderF', 'uidRedderG', 'uidRedderH', 'uidRedderI'].includes(field);

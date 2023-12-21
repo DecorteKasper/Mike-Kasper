@@ -1,13 +1,13 @@
 export interface Ipost {
     id: string
-    numberPost: number
-    uidRedderA: string
-    uidRedderB: string
-    uidRedderC: string
-    uidRedderD: string
-    uidRedderE: string
-    uidRedderF: string
-    uidRedderG: string
-    uidRedderH: string
-    uidRedderI: string
+    numberPost: number | null
+    uidRedderA: string | null
+    uidRedderB: string | null
+    uidRedderC: string | null
+    uidRedderD: string | null
+    uidRedderE: string | null
+    uidRedderF: string | null
+    uidRedderG: string | null
+    uidRedderH: string | null
+    uidRedderI: string | null
 }
