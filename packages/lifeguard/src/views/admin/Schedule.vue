@@ -408,7 +408,7 @@ export default {
         const { result: users, error: usersError } = useQuery(GET_USERS)
         const { result: posten, error: postenError } = useQuery(ALL_POSTEN)
         const { result: check, error: checksError } = useQuery(FIND_ONE_CHECK_BY_ID, {
-            id: "658463a5393b2d95c4850080",
+            id: "65833918fb96b342a91e5c11",
         })
 
 
@@ -638,7 +638,7 @@ export default {
 
         watch(toggleSwitchMonths, (toggleSwitchMonthsValue) => {
             const checkMonths = {
-                id: "658463a5393b2d95c4850080",
+                id: "65833918fb96b342a91e5c11",
                 checkMonths: toggleSwitchMonthsValue,
                 checkHolidays: toggleSwitchHolidays.value,
                 accessPlatform: true,
@@ -655,7 +655,7 @@ export default {
 
         watch(toggleSwitchHolidays, (toggleSwitchHolidaysValue) => {
             const checkHolidays = {
-                id: "658463a5393b2d95c4850080",
+                id: "65833918fb96b342a91e5c11",
                 checkMonths: toggleSwitchMonths.value,
                 checkHolidays: toggleSwitchHolidaysValue,
                 accessPlatform: true,
