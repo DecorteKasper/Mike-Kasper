@@ -9,47 +9,48 @@
         <div v-if="isVisible"
             class="ModalWindow shadow-cardShadow rounded-cardRadius w-md py-8 px-8 bg-white fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
 
-            <div v-if="localReportData" class="flex justify-end mb-6">
+            <div v-if="localReportData || localTaskData" class="flex justify-end mb-6">
                 <button class="bg-greenx p-1 rounded-full" @click="CloseModal">
                     <X :stroke-width="2" :size="25" class="text-white" />
                 </button>
             </div>
-            <!-- 
+
             <h1 v-if="taskData" class="mb-8 font-lato font-bold text-xl text-greenx">Post {{ localTaskData.post }}</h1>
             <p v-if="taskData" class="font-lato text-sm mb-8 leading-6 text-black">{{ localTaskData.description }}</p>
-            <div v-if="taskData" class="flex justify-end">
-                <p class="font-lato text-xs text-greenx">{{ localTaskData.createdAt }}</p>
-            </div> -->
+            <div v-if="taskData" class="flex justify-end mb-5">
+                <p class="font-lato text-xs text-greenx">{{ formatDate(localTaskData.createdAt) }}</p>
+            </div>
 
             <div v-if="localReportData" class="mb-8">
-                    <!-- Nog te bespreken met Kasper wat we allemaal zullen terug geven van dat -->
-                    <div class="flex items-center justify-between">
-                        <h1 class="mb-8 font-lato font-bold text-xl text-greenx">Verslag post {{ localReportData.reddersPost }}</h1>
-                        <h2 class="font-lato text-lg mb-8 leading-6 text-grey">{{ formatDate(localReportData.createdAt) }}</h2>
-                    </div>
-                    <div>
-                        <p class="font-bold">Aanwezigen:</p>
-                        <ul class="list-disc ml-6">
-                            <li v-for="attendee in localReportData.aanwezigen" :key="attendee">{{ attendee }}</li>
-                        </ul>
-                    </div>
-                    <div v-if="localReportData.textOefening" class="mt-4">
-                        <p class="font-bold">Oefeningen:</p>
-                        <p class="ml-3">{{ localReportData.textOefening }} </p>
-                    </div>
-                    <div v-if="localReportData.textInterventie" class="mt-4">
-                            <p class="font-bold">Interventie:</p>
-                            <p class="ml-3">{{ localReportData.textInterventie }} </p>
-                    </div>  
-                    <div v-if="localReportData.textMateriaal" class="mt-4">
-                            <p class="font-bold">Materiaal:</p>
-                            <p class="ml-3">{{ localReportData.textMateriaal }} </p>
-                    </div>
-                    <div v-if="localReportData.extraInfo" class="mt-4">
-                                <p class="font-bold">Extra info:</p>
-                                <p class="ml-3">{{ localReportData.extraInfo }} </p>
-                    </div>
-            </div> 
+                <!-- Nog te bespreken met Kasper wat we allemaal zullen terug geven van dat -->
+                <div class="flex items-center justify-between">
+                    <h1 class="mb-8 font-lato font-bold text-xl text-greenx">Verslag post {{ localReportData.reddersPost }}
+                    </h1>
+                    <h2 class="font-lato text-lg mb-8 leading-6 text-grey">{{ formatDate(localReportData.createdAt) }}</h2>
+                </div>
+                <div>
+                    <p class="font-bold">Aanwezigen:</p>
+                    <ul class="list-disc ml-6">
+                        <li v-for="attendee in localReportData.aanwezigen" :key="attendee">{{ attendee }}</li>
+                    </ul>
+                </div>
+                <div v-if="localReportData.textOefening" class="mt-4">
+                    <p class="font-bold">Oefeningen:</p>
+                    <p class="ml-3">{{ localReportData.textOefening }} </p>
+                </div>
+                <div v-if="localReportData.textInterventie" class="mt-4">
+                    <p class="font-bold">Interventie:</p>
+                    <p class="ml-3">{{ localReportData.textInterventie }} </p>
+                </div>
+                <div v-if="localReportData.textMateriaal" class="mt-4">
+                    <p class="font-bold">Materiaal:</p>
+                    <p class="ml-3">{{ localReportData.textMateriaal }} </p>
+                </div>
+                <div v-if="localReportData.extraInfo" class="mt-4">
+                    <p class="font-bold">Extra info:</p>
+                    <p class="ml-3">{{ localReportData.extraInfo }} </p>
+                </div>
+            </div>
             <!-- Delete one -->
             <div class="flex flex-col">
                 <div>
@@ -83,7 +84,8 @@
                     <PrimaryButton v-if="userUpdateId" label="Accepteren" @click="HandleUpdateUser(userUpdateId)" />
 
                     <!-- Dit zal de secundary button zijn -->
-                    <SecondaryButton label="Annuleren" @click="CloseModal" />
+                    <SecondaryButton v-if="reportId || reportIds || userId || userIds || userUpdateId" label="Annuleren"
+                        @click="CloseModal" />
                 </div>
             </div>
 
@@ -171,12 +173,9 @@ export default {
 
     setup(props, { emit }) {
 
-        const deleteManyMonths = ref([]);
-        const deleteManyPosten = ref([]);
+        // console.log('Dit is de modal window', props.taskData)
 
-        console.log('Dit is de modal window', deleteManyMonths)
-
-        // const localTaskData = ref<Itask>(props.taskData)
+        const localTaskData = ref<Itask>(props.taskData)
         const localReportData = ref<Ireport | null>()
         const reportId = ref<string | null>()
         const userId = ref<string | null>()
@@ -247,6 +246,8 @@ export default {
                 })
             }
         };
+
+
         const HandleDeleteOneUser = (id: string) => {
             console.log('userId', id)
             if (id) {
@@ -328,9 +329,9 @@ export default {
             }
         }
 
-        // watch(() => props.taskData, (newValue) => {
-        //     localTaskData.value = newValue;
-        // });
+        watch(() => props.taskData, (newValue) => {
+            localTaskData.value = newValue;
+        });
 
         const CloseModal = () => {
             emit('close-modal')
@@ -339,7 +340,7 @@ export default {
 
         return {
             CloseModal,
-            // localTaskData,
+            localTaskData,
             localReportData,
             formatDate,
             deleteItem,

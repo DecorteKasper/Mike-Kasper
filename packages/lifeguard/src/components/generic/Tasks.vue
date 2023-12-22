@@ -1,8 +1,8 @@
 <template>
-    <div class="w-full h-72 shadow-cardShadow rounded-cardRadius my-custom-scrollbar overflow-auto">
-        <div class="flex justify-between px-14 pt-8 mb-8">
+    <div class="w-full h-72 shadow-cardShadow mb-28">
+        <div class="sm:flex justify-between pl-6 sm:pl-0 sm:px-14 pt-8 mb-8">
             <h2 class="font-lato font-semibold text-lg">Takenlijst</h2>
-            <div>
+            <div class="mt-4">
                 <label class="radio-status">
                     <input type="radio" value="true" name="status" class="hidden" v-model="completed">
                     <span :class="{
@@ -24,44 +24,47 @@
             </div>
         </div>
 
-        <table class="w-full">
-            <tr class="border-b-2 border-dark_green py-4">
-                <td class="px-6"></td>
-                <td class="px-0 md:px-6">Post</td>
-                <td class="px-0 md:px-6 invisible md:visible">Datum</td>
-                <td class="px-0 md:px-6 invisible md:visible">Beschrijving</td>
-                <td class="px-0 md:px-6">Status</td>
-            </tr>
-            <tr v-for="(task, index) in filteredTasks"
-                :class="index % 2 === 0 ? 'border-l-4 border-dark_green h-12' : 'border-l-4 border-red h-12 bg-dark_grey'">
-                <td class="pl-12">
-                    <label class="checkbox-status">
-                        <input type="checkbox" name="status" class="hidden" v-model="task.status"
-                            @click="toggleTaskStatus(task.status, task)">
-                        <div :class="{
-                            'group border-2 p-1 border-dark_green w-fit rounded-full focus:outline-none cursor-pointer': task.status === true,
-                            'group border-2 p-1 border-black w-fit rounded-full focus:outline-none cursor-pointer': task.status !== true
-                        }">
-                            <Check
-                                :class="{ 'text-dark_green': task.status === true, 'opacity-0 group-hover:opacity-100': task.status !== true }"
-                                :stroke-width="4" :size="14" />
-                        </div>
-                    </label>
-                </td>
-                <td class="">Post {{ task.post }}</td>
-                <td class="invisible md:visible">{{ formatDate(task.createdAt) }}</td>
-                <td class="flex-col flex-wrap invisible md:visible">{{ truncateDescription(task.description, 80) }}</td>
-                <td class=""> {{ task.status === false ? 'Incompleted' : 'Completed' }}</td>
-                <td class="flex mt-2">
-                    <button class="mr-0 md:mr-6" @click="deleteTask(task.id)">
-                        <Trash2 class="w-7 h-7 text-red" />
-                    </button>
-                    <button @click="openModal(task)">
-                        <Eye class="w-7 h-7 text-dark_green" />
-                    </button>
-                </td>
-            </tr>
-        </table>
+
+        <div class="my-custom-scrollbar overflow-auto h-full rounded-cardRadiusSm">
+            <table class="w-full">
+                <tr class="border-b-2 border-dark_green py-4">
+                    <td class="px-6 hidden sm:table-cell"></td>
+                    <td class="px-6">Post</td>
+                    <td class="px-0 md:px-6 hidden sm:table-cell">Datum</td>
+                    <td class="px-0 md:px-6 hidden sm:table-cell">Beschrijving</td>
+                    <td class="px-0 md:px-6 hidden sm:table-cell">Status</td>
+                </tr>
+                <tr v-for="(task, index) in filteredTasks"
+                    :class="index % 2 === 0 ? 'border-l-4 border-dark_green h-12' : 'border-l-4 border-red h-12 bg-dark_grey'">
+                    <td class="pl-12 hidden sm:table-cell">
+                        <label class="checkbox-status">
+                            <input type="checkbox" name="status" class="hidden" v-model="task.status"
+                                @click="toggleTaskStatus(task.status, task)">
+                            <div :class="{
+                                'group border-2 p-1 border-dark_green w-fit rounded-full focus:outline-none cursor-pointer': task.status === true,
+                                'group border-2 p-1 border-black w-fit rounded-full focus:outline-none cursor-pointer': task.status !== true
+                            }">
+                                <Check
+                                    :class="{ 'text-dark_green': task.status === true, 'opacity-0 group-hover:opacity-100': task.status !== true }"
+                                    :stroke-width="4" :size="14" />
+                            </div>
+                        </label>
+                    </td>
+                    <td class="px-6 sm:px-0">Post {{ task.post }}</td>
+                    <td class="sm:mr-11">{{ formatDate(task.createdAt) }}</td>
+                    <td class="flex-col flex-wrap hidden sm:table-cell">{{ truncateDescription(task.description, 80) }}</td>
+                    <td class="hidden sm:table-cell"> {{ task.status === false ? 'Incompleted' : 'Completed' }}</td>
+                    <td class="flex mt-2">
+                        <button class="mr-6" @click="deleteTask(task.id)">
+                            <Trash2 class="w-7 h-7 text-red" />
+                        </button>
+                        <button @click="openModal(task)">
+                            <Eye class="w-7 h-7 text-dark_green" />
+                        </button>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
 </template>
 
@@ -93,7 +96,7 @@ export default {
 
     methods: {
         openModal(task: Itask) {
-            this.$emit('show-modal', task); 
+            this.$emit('show-modal', task);
             // Geeft een 'show-modal' event door naar de oudercomponent
             console.log(task)
         }

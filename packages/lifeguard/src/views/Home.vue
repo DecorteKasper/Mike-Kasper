@@ -5,20 +5,20 @@
   </Container>
   <Container v-if="user.userByUid.accessPlatform">
     <div v-if="activeUserRole === 300">
-         <h1 class="text-3xl font-lato tracking-wide mb-6">Welkom, <span class="font-lato font-bold">{{ user.userByUid.name
-            }} {{ user.userByUid.surname }}
-            </span>
-          </h1>
-          <div class="flex flex-col md:flex-row items-center gap-10">
-            <Schedule />
-            <Holidays />
-          </div>
-          <div class="my-10">
-            <Tasks @show-modal="showModal" v-if="sortedTodos.length > 0" :todoData="sortedTodos" />
-          </div>
-          <div>
-            <ModalWindow @close-modal="closeModal" :isVisible="isModalVisible" :taskData="modalTaskData" />
-          </div>
+      <h1 class="text-3xl font-lato tracking-wide mb-6">Welkom, <span class="font-lato font-bold">{{ user.userByUid.name
+      }} {{ user.userByUid.surname }}
+        </span>
+      </h1>
+      <div class="flex flex-col md:flex-row items-center gap-10">
+        <Schedule />
+        <Holidays />
+      </div>
+      <div class="my-10">
+        <Tasks @show-modal="showModal" v-if="sortedTodos.length > 0" :todoData="sortedTodos" />
+      </div>
+      <div>
+        <ModalWindow @close-modal="closeModal" :isVisible="isModalVisible" :taskData="modalTaskData" />
+      </div>
     </div>
     <div v-else>
       <HomeRedder></HomeRedder>
@@ -40,27 +40,16 @@ import UseRealtime from "@/composables/useRealtime"
 import ModalWindow from '@/components/generic/ModalWindow.vue'
 import type { Itask } from '@/interfaces/task.interface'
 import Acces from '@/components/generic/Acces.vue'
+import type { Iuser } from '@/interfaces/user.interface'
 
-// TODO: refactor to interface
 
-interface User {
-  id: string
-  uid: string
-  name: string
-  surname: string
-  email: string
-  phoneNumber: string
-  zipCode: number
-  street: string
-  role: string
-}
 
 export default {
   components: { Container, Schedule, Holidays, Tasks, ModalWindow, Acces, HomeRedder },
 
   setup() {
     const { firebaseUser } = useFirebase()
-    const activeUser = ref<User | null>()
+    const activeUser = ref<Iuser | null>()
     const activeUserRole = ref()
 
     const {
@@ -98,7 +87,7 @@ export default {
         activeUser.value = Value.userByUid
       }
     })
-    if(user){
+    if (user) {
       activeUserRole.value = user.value?.userByUid.role
       console.log("Role:", activeUserRole.value)
     }
