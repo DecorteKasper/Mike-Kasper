@@ -43,6 +43,7 @@ export class ReportsService {
     return this.reportsRepository.findOne({ _id: new ObjectId(id) })
   }
 
+
   // update(id: string, updateReportInput: UpdateReportInput) {
   //   return `This action updates a #${id} report`;
   // }

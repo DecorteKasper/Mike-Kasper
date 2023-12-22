@@ -14,7 +14,7 @@
         <Holidays />
       </div>
       <div class="my-10">
-        <Tasks @show-modal="showModal" v-if="sortedTodos.length > 0" :todoData="sortedTodos" />
+        <Tasks @show-modal="showModal" :todoData="sortedTodos" />
       </div>
       <div>
         <ModalWindow @close-modal="closeModal" :isVisible="isModalVisible" :taskData="modalTaskData" />
@@ -41,7 +41,6 @@ import ModalWindow from '@/components/generic/ModalWindow.vue'
 import type { Itask } from '@/interfaces/task.interface'
 import Acces from '@/components/generic/Acces.vue'
 import type { Iuser } from '@/interfaces/user.interface'
-
 
 
 export default {
@@ -87,6 +86,8 @@ export default {
         activeUser.value = Value.userByUid
       }
     })
+
+
     if (user) {
       activeUserRole.value = user.value?.userByUid.role
       console.log("Role:", activeUserRole.value)
@@ -127,6 +128,7 @@ export default {
       isModalVisible,
       modalTaskData,
       activeUserRole,
+      Todos
     }
   },
 }

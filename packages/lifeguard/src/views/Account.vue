@@ -93,15 +93,6 @@
                 class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx" />
               <!-- <span class="text-red font-lato text-xs" v-if="v$.name.$error"> {{ v$.name.$errors[0].$message }}</span> -->
             </div>
-            <div class="mr-6">
-              <label for="birthplace" class="text-sm font-lato block mt-6 mb-4 text-dark_grey2">
-                Geboorteplaats
-              </label>
-              <input type="text" name="birthplace" id="birthplace" placeholder="Knokke Heist"
-                v-model="changeUser.birthplace"
-                class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx" />
-              <!-- <span class="text-red font-lato text-xs" v-if="v$.name.$error"> {{ v$.name.$errors[0].$message }}</span> -->
-            </div>
           </div>
         </div>
         <!-- Blok 3 -->
@@ -126,14 +117,6 @@
             </div>
           </div>
           <div class="flex flex-col md:flex-row mt-2 mb-12">
-            <div class="mr-6">
-              <label for="city" class="text-sm font-lato mt-6 block mb-4 text-dark_grey2">
-                Gemeente
-              </label>
-              <input type="text" name="city" id="city" placeholder="Knokke Heist" v-model="changeUser.city"
-                class="mt-1 text-sm font-lato block w-full bg-dark_grey rounded-inputFieldRadius px-2 py-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-greenx" />
-              <!-- <span class="text-red font-lato text-xs" v-if="v$.name.$error"> {{ v$.name.$errors[0].$message }}</span> -->
-            </div>
             <div class="mr-6">
               <label for="Zipcode" class="text-sm font-lato mt-6 block mb-4 text-dark_grey2">
                 Postcode
@@ -271,19 +254,23 @@ export default {
     const { result: user, error: userError } = useQuery(GET_USER_BY_UID, {
       uid: firebaseUser.value?.uid,
     })
+
+
     const changeUser = ref({
-      photoUrl: null,
-      name: null,
-      surname: null,
-      email: null,
-      phoneNumber: null,
-      birth: null,
-      birthplace: null,
-      street: null,
-      numberOfHouse: null,
-      city: null,
-      zipCode: null
+      photoUrl: user.value?.userByUid.photoURL,
+      name: user.value?.userByUid.name,
+      surname: user.value?.userByUid.surname,
+      email: user.value?.userByUid.email,
+      phoneNumber: user.value?.userByUid.phoneNumber,
+      birth: user.value?.userByUid.birth,
+      birthplace: user.value?.userByUid.birthplace,
+      street: user.value?.userByUid.street,
+      numberOfHouse: user.value?.userByUid.numberOfHouse,
+      city: user.value?.userByUid.city,
+      zipCode: user.value?.userByUid.zipCode,
     });
+
+
 
     // Wordt gebruikt in HandleNewPassword
     const newPassword = ref('')
@@ -326,7 +313,6 @@ export default {
         email: changeUser.value.email,
         phoneNumber: parseInt(changeUser.value.phoneNumber), // Zet de tekenreeks om naar een getal
         birth: changeUser.value.birth,
-        birthplace: changeUser.value.birthplace, // Zorg ervoor dat de naam overeenkomt met de mutatie
         city: changeUser.value.city,
         zipCode: parseInt(changeUser.value.zipCode), // Zet de tekenreeks om naar een getal
         street: changeUser.value.street,
