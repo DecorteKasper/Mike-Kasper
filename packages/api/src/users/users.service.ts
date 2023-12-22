@@ -18,7 +18,6 @@ export class UsersService {
   create(uid: string, createUserInput: CreateUserInput) {
     const user = new User()
     user.uid = uid
-    // user.locale = createUserInput.locale ?? 'nl'
     user.role = createUserInput.role ?? Role.REDDER
     user.name = createUserInput.name
     user.surname = createUserInput.surname

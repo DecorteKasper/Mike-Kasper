@@ -7,7 +7,7 @@
 
     <Transition name="slide-fade">
         <div v-if="isVisible"
-            class="ModalWindow shadow-cardShadow rounded-cardRadius w-md py-8 px-8 bg-white fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            class="ModalWindow shadow-cardShadow rounded-cardRadius w-10/12 sm:w-md py-8 px-8 bg-white fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
 
             <div v-if="localReportData || localTaskData" class="flex justify-end mb-6">
                 <button class="bg-greenx p-1 rounded-full" @click="CloseModal">

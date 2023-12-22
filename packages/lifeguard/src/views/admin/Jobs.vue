@@ -1,8 +1,8 @@
 <template>
     <!-- {{ firebaseUser }} -->
     <Container v-if="accesUser.userByUid.accessPlatform">
-        <div class="flex gap-6">
-            <ul class="shadow-cardShadow rounded-cardRadius p-10 h-fit">
+        <div class="lg:flex gap-6">
+            <ul class="shadow-cardShadow rounded-cardRadius p-10 h-fit mb-10 sm:mb-10">
                 <li @click="showJobs"
                     class="font-lato rounded-inputFieldRadius cursor-pointer  hover:translate-x-2 py-2 px-4 mb-4 transition-all duration-75 ease-in"
                     :class="{ 'bg-greenx text-white': currentMenuItem === 'jobs' }">
@@ -15,10 +15,6 @@
                 </li>
             </ul>
 
-
-            <!-- <div>DIT ZIJN DE JOBS {{ jobs }}</div>
-            <div>-----------------------------------------------</div>
-            <div>DIT ZIJN DE SOLLIS {{ solli }}</div> -->
 
             <CostumTable @show-modal="showModal" v-if="currentMenuItem === 'jobs'" :jobsData="jobs" class="flex-1" />
             <CostumTable @show-modal="showModal" v-if="currentMenuItem === 'solli'" :sollisData="solli" class="flex-1" />

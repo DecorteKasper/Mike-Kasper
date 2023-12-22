@@ -1,24 +1,27 @@
 <template>
     <div class="w-full h-130 shadow-cardShadow rounded-cardRadius my-custom-scrollbar overflow-auto">
-        <div class="flex justify-between px-14 pt-8 mb-8">
+        <div class="sm:flex justify-between px-14 pt-8 mb-8">
             <h2 class="font-lato font-semibold text-lg flex items-center">
                 {{ getTitle }}
             </h2>
-            <div class="flex gap-4 relative">
-                <input class="max-w-lg p-2 bg-gray rounded-inputFieldRadius outline-none " type="search"
-                    placeholder="Zoeken..." v-model="searchTerm" @input="filterItems">
-                <span class="absolute right-3 top-2">
-                    <!-- Hier komt een icon -->
-                    <Search class="w-6 h-6 text-dark_green" />
-                </span>
+            <div class="w-fit">
+                <div class="flex gap-4 relative mt-8 sm:mt-0">
+                    <input class="max-w-lg p-2 bg-gray rounded-inputFieldRadius outline-none " type="search"
+                        placeholder="Zoeken..." v-model="searchTerm" @input="filterItems">
+                    <span class="absolute right-3 top-2">
+                        <!-- Hier komt een icon -->
+                        <Search class="w-6 h-6 text-dark_green" />
+                    </span>
+                </div>
             </div>
         </div>
 
         <table class=" w-full">
             <!-- Titles -->
-            <tr class="border-b-2 border-dark_green">
-                <td class="pl-14 ">
-                    <label class="checkbox-status">
+            <tr class=" border-b-2 border-dark_green">
+                <td class="pl-14 hidden sm:table-cell">
+                    <!-- Bovenste checkbox -->
+                    <label class="-status">
                         <input type="checkbox" name="selectAll" class="hidden" v-model="selectAll"
                             @change="toggleSelectAll" />
                         <div :class="{
@@ -31,40 +34,43 @@
                         </div>
                     </label>
                 </td>
-                <td v-if="ReportsData.length > 0" class="font-lato font-semibold text-sm py-4">Post</td>
-                <td v-if="ReportsData.length > 0" class="font-lato font-semibold text-sm py-4">Datum</td>
-                <td v-if="ReportsData.length > 0" class="font-lato font-semibold text-sm py-4"></td>
-                <td v-if="jobsData.length > 0 || sollisData.length > 0" class="font-lato font-semibold text-sm py-4">
+                <td v-if="ReportsData.length > 0" class="font-lato font-semibold text-sm py-4 pl-8 sm:pl-0">Post</td>
+                <td v-if="ReportsData.length > 0" class="font-lato font-semibold text-sm py-4 hidden sm:table-cell">Datum
+                </td>
+                <td v-if="ReportsData.length > 0" class="font-lato font-semibold text-sm py-4 hidden sm:table-cell"></td>
+                <td v-if="jobsData.length > 0 || sollisData.length > 0"
+                    class="pl-4 sm:pl-0 font-lato font-semibold text-sm py-4">
                     Voornaam</td>
-                <td v-if="jobsData.length > 0 || sollisData.length > 0" class="font-lato font-semibold text-sm py-4">Naam
+                <td v-if="jobsData.length > 0 || sollisData.length > 0"
+                    class="font-lato font-semibold text-sm py-4 hidden sm:table-cell">Naam
                 </td>
                 <td v-if="jobsData.length > 0 || sollisData.length > 0" class="font-lato font-semibold text-sm py-4">Functie
                 </td>
 
                 <td class="flex justify-end gap-4 pr-14">
                     <!-- Reports -->
-                    <SecondaryButton v-if="ReportsData.length > 0" label="Verwijderen"
+                    <SecondaryButton class="hidden sm:table-cell" v-if="ReportsData.length > 0" label="Verwijderen"
                         @click="openModalDeleteAll(itemIds)" />
-                    <!-- Sollicitaties  -->
-                    <PrimaryButton v-if="sollisData.length > 0" label="Accepteer" @click="" />
-                    <SecondaryButton v-if="sollisData.length > 0" label="Afwijzen" @click="openModalDeleteAll(itemIds)" />
+                    <!-- Sollicitaties -->
+                    <SecondaryButton class="hidden md:table-cell" v-if="sollisData.length > 0" label="Afwijzen"
+                        @click="openModalDeleteAll(itemIds)" />
                     <!-- Jobs -->
-                    <SecondaryButton v-if="jobsData.length > 0" label="Verwijderen" @click="openModalDeleteAll(itemIds)" />
+                    <SecondaryButton class="hidden sm:table-cell" v-if="jobsData.length > 0" label="Verwijderen"
+                        @click="openModalDeleteAll(itemIds)" />
                 </td>
-
             </tr>
-
             <!-- Data -->
             <tr v-for="(item, index) in filteredItems" :class="index % 2 === 0 ? ' h-12' : ' h-12 bg-gray'">
-                <td class="pl-14">
+                <td class="pl-14 hidden sm:table-cell">
                     <label class="checkbox-status">
                         <input v-if="ReportsData.length > 0" type="checkbox" name="status" class="hidden"
                             v-model="item.status" @click="getItemIds(item.id)">
-
                         <input v-if="sollisData.length > 0 || jobsData.length > 0" type="checkbox" name="status"
                             class="hidden" v-model="item.status" @click="getItemIds(item.uid)">
+
+
                         <div :class="{
-                            'group p-1 w-fit bg-light_green rounded-full focus:outline-none cursor-pointer': item.status === true,
+                            'group p-1 w-fit bg-light_green rounded-full focus:outline-none cursor-pointer ': item.status === true,
                             'group  p-1 w-fit bg-light_green rounded-full focus:outline-none cursor-pointer': item.status !== true
                         }">
                             <Check
@@ -74,20 +80,20 @@
                     </label>
                 </td>
                 <!-- Reports -->
-                <td v-if="ReportsData.length > 0 && 'reddersPost' in item" class="font-lato text-sm">Post {{
+                <td v-if="ReportsData.length > 0 && 'reddersPost' in item" class="font-lato text-sm pl-8 sm:pl-0">Post {{
                     item.reddersPost
                 }}
                 </td>
-                <td v-if="ReportsData.length > 0 && 'reddersPost' in item" class="font-lato text-sm">{{
+                <td v-if="ReportsData.length > 0 && 'reddersPost' in item" class="font-lato text-sm hidden sm:table-cell">{{
                     formatDate(item.createdAt) }}
                 </td>
-                <td v-if="ReportsData.length > 0" class="font-lato text-sm"></td>
+                <td v-if="ReportsData.length > 0" class="font-lato text-sm hidden sm:table-cell"></td>
 
                 <!-- Jobs -->
                 <td v-if="jobsData.length > 0 && 'name' in item || sollisData.length > 0 && 'name' in item"
-                    class="font-lato text-sm">{{ item.name }}</td>
+                    class="font-lato text-sm pl-4 sm:pl-0">{{ item.name }}</td>
                 <td v-if="jobsData.length > 0 && 'surname' in item || sollisData.length > 0 && 'surname' in item"
-                    class="font-lato text-sm">{{ item.surname }}</td>
+                    class="font-lato text-sm hidden sm:table-cell ">{{ item.surname }}</td>
 
 
 
@@ -116,7 +122,7 @@
                         <!-- Reports -->
                         <!-- Button om te downloaden als pdf -->
                         <button v-if="ReportsData.length > 0" class="mr-6" @click="downloadPdf(item)">
-                            <ArrowDownToLine class="w-7 h-7 text-greenx" />
+                            <ArrowDownToLine class="hidden sm:table-cell w-7 h-7 text-greenx" />
                         </button>
                         <button v-if="ReportsData.length > 0" class="mr-6" @click="openModalDelete(item.id)">
                             <Trash2 class="w-7 h-7 text-red" />

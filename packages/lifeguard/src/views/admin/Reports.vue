@@ -111,6 +111,20 @@ export default {
 
         })
 
+        if (reports) {
+            const value = reports.value?.reports;
+            if (Array.isArray(value)) {
+                // Update ReportsData met de array van objecten
+                value.forEach(element => {
+                    ReportsData.value.push(element)
+                });
+            } else {
+                console.log('Geen array van objecten beschikbaar');
+            }
+        }
+
+
+
         // Functie om de report te deleten
         const DeletedOne = (id: string) => {
             DeletedId.value = id
